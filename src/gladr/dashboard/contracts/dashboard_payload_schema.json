@@ -1,0 +1,33 @@
+{
+  "version": "1.0.0",
+  "required_fields": [
+    "generated_at",
+    "latest",
+    "summary",
+    "ingestion_runs",
+    "analyses",
+    "pipeline",
+    "stage_summaries"
+  ],
+  "summary_fields": ["ingestion_runs", "analysis_artifacts", "visualizations"],
+  "stage_summary": {
+    "required_fields": ["id", "label", "status", "current", "history"],
+    "allowed_statuses": ["completed", "failed", "pending"],
+    "stage_item_fields": ["title", "run_id", "run_datetime", "description", "metrics", "outputs", "files", "is_latest"]
+  },
+  "analysis_item_required_fields": [
+    "filename",
+    "script_id",
+    "run_id",
+    "manifest_run_id",
+    "run_datetime",
+    "title",
+    "description",
+    "category",
+    "priority",
+    "metadata",
+    "data",
+    "is_latest"
+  ]
+}
+

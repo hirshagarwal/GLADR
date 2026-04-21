@@ -1,0 +1,4 @@
+Histo Report?,Contributor,K-number,DOB,Sex,Presentation Date,Age at presentation,Neutrophils (presentation),Lymphocytes (presentation),First contrast MRI,Side,Lobe,Peri-ventricular,Multifocal,Resection,Post-op MRI Date,5-ALA,Residual contrast enhancement,Radiotherapy,TMZ,First recurrence evidence,Recurrence side,Recurrence lobe,Local,DOD,Notes,QMC Local
+Yes,Hirsh,K000001,1980-01-01,M,2024-01-15,,4.2,1.4,2024-01-12,Left,Temporal,Yes,No,2024-01-20,2024-01-21,Yes,None,Yes,Concurrent,Residual,Left,Temporal,Yes,,Example row,QMC
+?,April,K000002,,F,2024-02-01,61,3.8,1.9,2024-01-28,Right,Frontal,No,No,,,,,No,,,Right,Frontal,No,,Missing dates example,No
+

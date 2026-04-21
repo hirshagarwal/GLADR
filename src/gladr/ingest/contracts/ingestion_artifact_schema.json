@@ -1,0 +1,32 @@
+{
+  "version": "1.0.0",
+  "artifacts": {
+    "clean_dataset": {
+      "required_fields": ["run_id", "run_datetime", "canonical_schema_version", "records"],
+      "record_contract": "canonical_schema.json"
+    },
+    "run_manifest": {
+      "required_fields": [
+        "run_id",
+        "pipeline_version",
+        "run_datetime",
+        "sources",
+        "total_rows",
+        "canonical_schema_version",
+        "notes"
+      ],
+      "source_summary_fields": ["adapter", "file", "rows_raw", "rows_stub", "rows_ingested"]
+    },
+    "ingestion_report": {
+      "item_fields": ["patient_id", "source_file", "flags"],
+      "flags": {
+        "type": "array",
+        "description": "Non-blocking row-level quality flags."
+      }
+    },
+    "latest_pointer": {
+      "fields": ["clean_dataset", "run_manifest", "ingestion_report"]
+    }
+  }
+}
+

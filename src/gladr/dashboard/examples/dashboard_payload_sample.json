@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-01-01T12:10:00-05:00",
+  "latest": {
+    "clean": {
+      "clean_dataset": "clean_dataset_20260101_120000.json",
+      "run_manifest": "run_manifest_20260101_120000.json",
+      "ingestion_report": "ingestion_report_20260101_120000.json"
+    },
+    "stats": {
+      "cohort_summary": "cohort_summary_20260101_120500.json"
+    }
+  },
+  "summary": {
+    "ingestion_runs": 1,
+    "analysis_artifacts": 1,
+    "visualizations": 1
+  },
+  "ingestion_runs": [
+    {
+      "run_id": "20260101_120000",
+      "run_datetime": "2026-01-01T12:00:00-05:00",
+      "pipeline_version": "0.1.0",
+      "canonical_schema_version": "1.0.0",
+      "total_rows": 2,
+      "sources": [{"adapter": "gbm_registry", "file": "sample.csv", "rows_raw": 2, "rows_stub": 0, "rows_ingested": 2}],
+      "notes": "",
+      "manifest_filename": "run_manifest_20260101_120000.json",
+      "clean_dataset_filename": "clean_dataset_20260101_120000.json",
+      "ingestion_report_filename": "ingestion_report_20260101_120000.json",
+      "flagged_records": 0,
+      "quality_flags": 0,
+      "is_latest": true
+    }
+  ],
+  "analyses": [
+    {
+      "filename": "cohort_summary_20260101_120500.json",
+      "script_id": "cohort_summary",
+      "run_id": "20260101_120500",
+      "manifest_run_id": "20260101_120000",
+      "run_datetime": "2026-01-01T12:05:00-05:00",
+      "title": "Cohort Demographics",
+      "description": "Example dashboard artifact.",
+      "category": "Demographics",
+      "priority": 1,
+      "metadata": {"n": 2},
+      "visualization": {"type": "scalar_cards", "library": "generic", "config": {"cards": []}},
+      "data": {"total_patients": 2},
+      "is_latest": true,
+      "latest_script_id": "cohort_summary",
+      "visualization_type": "scalar_cards"
+    }
+  ],
+  "pipeline": [],
+  "stage_summaries": [
+    {
+      "id": "ingestion",
+      "label": "Ingestion",
+      "status": "completed",
+      "current": {
+        "title": "Ingestion run 20260101_120000",
+        "run_id": "20260101_120000",
+        "run_datetime": "2026-01-01T12:00:00-05:00",
+        "description": "Example ingestion stage.",
+        "metrics": [{"label": "Rows", "value": 2}],
+        "outputs": [{"label": "sample.csv", "detail": "2 ingested"}],
+        "files": ["run_manifest_20260101_120000.json"],
+        "is_latest": true
+      },
+      "history": []
+    }
+  ]
+}
+

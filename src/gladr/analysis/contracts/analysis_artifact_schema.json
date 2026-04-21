@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "required_fields": [
+    "script_id",
+    "run_id",
+    "manifest_run_id",
+    "run_datetime",
+    "title",
+    "description",
+    "category",
+    "priority",
+    "metadata",
+    "data"
+  ],
+  "optional_fields": ["visualization"],
+  "field_descriptions": {
+    "script_id": "Stable script identifier. Also used as the latest.json key.",
+    "run_id": "Stats-stage run identifier.",
+    "manifest_run_id": "Ingestion manifest run id used as input.",
+    "run_datetime": "Stats-stage timestamp.",
+    "title": "Human-readable title shown in the dashboard.",
+    "description": "Short description of the analysis output.",
+    "category": "Dashboard grouping label.",
+    "priority": "Lower numbers sort earlier.",
+    "metadata": "Small summary fields such as n, exclusions, and notes.",
+    "visualization": "Optional dashboard render contract.",
+    "data": "JSON-serializable analysis results."
+  },
+  "metadata_recommended_fields": ["n", "exclusions", "notes"]
+}
+

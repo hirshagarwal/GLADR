@@ -1,10 +1,18 @@
 # GLADR
 
-GLADR is a package-first clinical registry analysis pipeline. The current scaffold is built around a GBM registry, but the structure is designed so new sources and new analyses can be added with isolated files rather than pipeline rewrites.
+GLADR is a package-first clinical registry analysis pipeline. It is currently built around a GBM registry, but the code is organized so new data sources, statistics, and dashboard views can be added through isolated pipeline modules rather than broad rewrites.
+
+The system has three runtime stages:
+
+1. **Ingestion** converts raw source files into a canonical clean dataset.
+2. **Analysis** reads the latest clean dataset and writes versioned stats artifacts.
+3. **Dashboard** discovers generated artifacts and renders pipeline status, history, stats, and visualization contracts.
+
+Every pipeline output is versioned by run id. `latest.json` files point downstream code to the current artifact, but older outputs remain available for history and comparison.
 
 ## Quick Start
 
-Run the full pipeline against the current raw data:
+Run the full pipeline:
 
 ```bash
 python main.py run-all
@@ -16,57 +24,66 @@ Serve the dynamic dashboard:
 python main.py dashboard --serve
 ```
 
-Open the dashboard in a browser:
+Open:
 
 ```text
 http://127.0.0.1:8765
 ```
 
-If you add new raw data or create new analysis outputs while the server is running, refresh the browser. The dashboard scans the runtime output folders on each request, so it does not need to be rebuilt to show new analysis artifacts.
+If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans `outputs/clean/` and `outputs/stats/` on each request.
 
-## What The Pipeline Does
+## Current Commands
 
-The pipeline has three stages:
+```bash
+# Ingestion
+python main.py ingest
+python main.py ingest --adapter gbm_registry
+python main.py ingest --adapter gbm_registry --file data/raw/main_sheet/main_sheet_19.04.26.csv
 
-1. Ingestion
-   Raw files are normalized into one canonical dataset and run metadata is written to `outputs/clean/`.
-2. Analysis
-   Modular scripts consume the latest canonical dataset and emit self-describing stats artifacts in `outputs/stats/`.
-3. Dashboard
-   A local dashboard server scans `outputs/clean/` and `outputs/stats/`, lets you select analysis artifacts, renders visualization contracts, and summarizes the pipeline runs.
+# Analysis
+python main.py analyze
+python main.py analyze --scripts cohort_summary age_distribution sex_breakdown
 
-All stage outputs are versioned by timestamp. Nothing is overwritten. Each stage also maintains a `latest.json` pointer for downstream consumers.
+# Dashboard
+python main.py dashboard
+python main.py dashboard --serve
 
-The runtime flow is:
-
-```text
-data/raw/*
-  -> outputs/clean/run_manifest_<timestamp>.json
-  -> outputs/clean/clean_dataset_<timestamp>.json
-  -> outputs/stats/<analysis_id>_<timestamp>.json
-  -> dashboard API scans outputs and renders the browser UI
+# Full pipeline
+python main.py run-all
 ```
 
-## Current Repository Layout
+## Runtime Flow
+
+```text
+data/raw/main_sheet/*.csv
+  -> outputs/clean/clean_dataset_<run_id>.json
+  -> outputs/clean/run_manifest_<run_id>.json
+  -> outputs/clean/ingestion_report_<run_id>.json
+  -> outputs/clean/latest.json
+  -> outputs/stats/<script_id>_<run_id>.json
+  -> outputs/stats/latest.json
+  -> dashboard API discovers artifacts and renders the browser UI
+```
+
+The dashboard shell can be rebuilt into `outputs/dashboard/index.html` with:
+
+```bash
+python main.py dashboard
+```
+
+For normal use, prefer `python main.py dashboard --serve`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
+
+## Repository Layout
 
 ```text
 GLADR/
-├── context.md
-├── plan.md
 ├── data/
 │   └── raw/
-│       ├── histology_csv/
-│       ├── histology_txt/
-│       ├── images/
-│       ├── main_sheet/
-│       ├── xlsx/
-│       └── xlsx_backup/
 ├── notebooks/
 ├── outputs/
 │   ├── clean/
 │   ├── stats/
 │   └── dashboard/
-├── scripts/
 ├── src/
 │   └── gladr/
 │       ├── analysis/
@@ -74,297 +91,218 @@ GLADR/
 │       ├── core/
 │       ├── dashboard/
 │       └── ingest/
-└── tests/
+├── tests/
+├── main.py
+├── pyproject.toml
+└── readme.md
 ```
 
-## Core Concepts
+## Module-Local LLM Context
 
-### Canonical Dataset
+The pipeline is designed so a small LLM can work inside one stage folder with enough local context to make safe changes.
 
-The ingestion stage converts source-specific columns and values into one shared schema defined in [src/gladr/contracts/canonical_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/contracts/canonical_schema.json).
+Each stage module now contains:
 
-The clean output is intentionally JSON so it stays human readable:
+- `README.md`: human and LLM-oriented instructions.
+- `module.yaml`: machine-readable module metadata, commands, ownership, contracts, examples, and LLM rules.
+- `contracts/`: local copies or module-specific contracts.
+- `examples/`: small representative inputs and outputs.
+- implementation files for that stage.
 
-- `outputs/clean/clean_dataset_<timestamp>.json`
-- `outputs/clean/run_manifest_<timestamp>.json`
-- `outputs/clean/ingestion_report_<timestamp>.json`
-- `outputs/clean/latest.json`
+The intended rule is:
 
-The clean dataset file has this shape:
+> A small LLM should be able to make a safe stage-specific change by reading only that module's README, module.yaml, contracts, examples, tests, and one nearby implementation file.
 
-```json
-{
-  "run_id": "20260419_192001",
-  "run_datetime": "2026-04-19T19:20:01-04:00",
-  "canonical_schema_version": "1.0.0",
-  "records": [
-    {
-      "patient_id": "K1234567",
-      "source": "gbm_registry",
-      "contributor": "Hirsh"
-    }
-  ]
-}
-```
+### Ingestion Module
 
-### Analysis Outputs
+Location:
 
-Each analysis script writes a standalone JSON artifact in `outputs/stats/`. These already use JSON and include both the data payload and the visualization contract needed by the dashboard.
+- [src/gladr/ingest](/Users/hirsh/Documents/GLADR/src/gladr/ingest)
 
-### Dashboard
+Primary files:
 
-The dashboard is designed to be served dynamically. The local dashboard server scans `outputs/clean/` and `outputs/stats/` on each request, so newly generated analysis artifacts appear after a browser refresh without rebuilding the dashboard shell.
+- [src/gladr/ingest/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingest/README.md)
+- [src/gladr/ingest/module.yaml](/Users/hirsh/Documents/GLADR/src/gladr/ingest/module.yaml)
+- [src/gladr/ingest/adapters/base_adapter.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/base_adapter.py)
+- [src/gladr/ingest/adapters/gbm_registry.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/gbm_registry.py)
+- [src/gladr/ingest/contracts/canonical_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/ingest/contracts/canonical_schema.json)
 
-Run the dynamic dashboard:
+Use this module when changing how raw source data is read, normalized, validated, flagged, or converted into canonical records.
 
-```bash
-python main.py dashboard --serve
-```
-
-Then open:
+Ingestion writes:
 
 ```text
-http://127.0.0.1:8765
+outputs/clean/clean_dataset_<run_id>.json
+outputs/clean/run_manifest_<run_id>.json
+outputs/clean/ingestion_report_<run_id>.json
+outputs/clean/latest.json
 ```
 
-The dashboard includes:
+Do not edit these generated files manually. Change ingestion code and rerun ingestion.
 
-- an analysis browser that discovers every stats artifact, not just `outputs/stats/latest.json`
-- category and run selectors for choosing what to inspect
-- renderers for current scalar cards, tables, bars, and histograms
-- a pipeline page that shows ingestion runs, stats runs, and visualization contracts from left to right
+### Analysis Module
 
-The server exposes one runtime API endpoint:
+Location:
 
-- `GET /api/dashboard-data`
+- [src/gladr/analysis](/Users/hirsh/Documents/GLADR/src/gladr/analysis)
 
-That endpoint returns the discovered ingestion runs, stats artifacts, latest pointers, and pipeline summary. The browser UI uses that payload to render the Analysis and Pipeline pages.
+Primary files:
 
-You can still refresh the static HTML shell copied to `outputs/dashboard/index.html` with:
-
-```bash
-python main.py dashboard
-```
-
-This is mainly for updating the packaged HTML file. For normal use, prefer `python main.py dashboard --serve` because browser security rules can block local `file://` pages from fetching runtime JSON files directly.
-
-## How The Code Is Organized
-
-### Shared Runtime
-
-- [src/gladr/core/paths.py](/Users/hirsh/Documents/GLADR/src/gladr/core/paths.py)
-  Central project path discovery.
-- [src/gladr/core/run_context.py](/Users/hirsh/Documents/GLADR/src/gladr/core/run_context.py)
-  Run IDs and timestamps.
-- [src/gladr/core/latest_pointer.py](/Users/hirsh/Documents/GLADR/src/gladr/core/latest_pointer.py)
-  Reads and writes `latest.json`.
-- [src/gladr/core/discovery.py](/Users/hirsh/Documents/GLADR/src/gladr/core/discovery.py)
-  Auto-discovers adapters and analysis scripts.
-
-### Ingestion
-
-- [src/gladr/ingest/runner.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/runner.py)
-  Runs one or more adapters and writes clean-stage artifacts.
-- [src/gladr/ingest/adapters/base_adapter.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/base_adapter.py)
-  Adapter interface.
-- [src/gladr/ingest/adapters/gbm_registry.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/gbm_registry.py)
-  Current GBM registry adapter.
-
-### Analysis
-
-- [src/gladr/analysis/runner.py](/Users/hirsh/Documents/GLADR/src/gladr/analysis/runner.py)
-  Loads the latest clean dataset and runs selected analysis scripts.
+- [src/gladr/analysis/README.md](/Users/hirsh/Documents/GLADR/src/gladr/analysis/README.md)
+- [src/gladr/analysis/module.yaml](/Users/hirsh/Documents/GLADR/src/gladr/analysis/module.yaml)
 - [src/gladr/analysis/base_script.py](/Users/hirsh/Documents/GLADR/src/gladr/analysis/base_script.py)
-  Base class for discoverable analysis scripts.
+- [src/gladr/analysis/runner.py](/Users/hirsh/Documents/GLADR/src/gladr/analysis/runner.py)
 - [src/gladr/analysis/scripts](/Users/hirsh/Documents/GLADR/src/gladr/analysis/scripts)
-  Current baseline scripts.
+- [src/gladr/analysis/contracts/analysis_artifact_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/analysis/contracts/analysis_artifact_schema.json)
 
-### Dashboard
+Use this module when adding or changing stats, experiments, or visualization contracts emitted by analysis scripts.
 
-- [src/gladr/dashboard/build.py](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/build.py)
-  Copies the current dashboard shell into the outputs directory.
-- [src/gladr/dashboard/server.py](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/server.py)
-  Serves the dashboard HTML and dynamic dashboard API.
+Current scripts:
+
+- `cohort_summary`
+- `age_distribution`
+- `sex_breakdown`
+
+Analysis writes:
+
+```text
+outputs/stats/<script_id>_<run_id>.json
+outputs/stats/latest.json
+```
+
+Each stats artifact is self-describing. It includes metadata, data, and optionally a `visualization` block that tells the dashboard how to render it.
+
+### Dashboard Module
+
+Location:
+
+- [src/gladr/dashboard](/Users/hirsh/Documents/GLADR/src/gladr/dashboard)
+
+Primary files:
+
+- [src/gladr/dashboard/README.md](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/README.md)
+- [src/gladr/dashboard/module.yaml](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/module.yaml)
 - [src/gladr/dashboard/manifest_loader.py](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/manifest_loader.py)
-  Scans runtime artifacts and builds the dashboard payload.
+- [src/gladr/dashboard/server.py](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/server.py)
 - [src/gladr/dashboard/static_app/index.html](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/static_app/index.html)
-  Browser UI for selecting, rendering, and summarizing analysis outputs.
+- [src/gladr/dashboard/contracts/dashboard_payload_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/contracts/dashboard_payload_schema.json)
 
-## Full Process
+Use this module when changing how artifacts are discovered, summarized, or rendered.
 
-### 1. Add Or Update Raw Files
+The current dashboard has:
 
-Put new raw files in the appropriate folder under `data/raw/`.
+- a default overview page with a visual pipeline stage summary
+- stage status marks for ingestion, stats, and visualization
+- clickable stage details
+- previous/next history cycling for stage outputs
+- summary metrics
+- an analysis browser with filters
+- renderers for scalar cards, tables, bars, histograms, and multi-panel outputs
+- a runs view showing versioned ingestion lanes and downstream artifacts
 
-For the current GBM registry flow, the main sheet files live in:
+The dashboard should remain a reader over artifacts. It should not become the source of truth for pipeline state or execute pipeline logic.
 
-- `data/raw/main_sheet/`
+## Shared Runtime
 
-### 2. Run Ingestion
+Shared utilities live under [src/gladr/core](/Users/hirsh/Documents/GLADR/src/gladr/core):
 
-Run all available adapters:
+- [paths.py](/Users/hirsh/Documents/GLADR/src/gladr/core/paths.py): project path discovery.
+- [run_context.py](/Users/hirsh/Documents/GLADR/src/gladr/core/run_context.py): run ids and timestamps.
+- [latest_pointer.py](/Users/hirsh/Documents/GLADR/src/gladr/core/latest_pointer.py): `latest.json` reads and writes.
+- [discovery.py](/Users/hirsh/Documents/GLADR/src/gladr/core/discovery.py): adapter and analysis script discovery.
 
-```bash
-python main.py ingest
-```
+Central runtime contracts live under [src/gladr/contracts](/Users/hirsh/Documents/GLADR/src/gladr/contracts). Module folders mirror relevant contracts locally so stage-specific agents can stay folder-scoped.
 
-Run one adapter only:
+Tests verify that mirrored contracts remain synchronized.
 
-```bash
-python main.py ingest --adapter gbm_registry
-```
+## Artifact Versioning
 
-Run one adapter against a specific file:
+The current policy is append-only:
 
-```bash
-python main.py ingest --adapter gbm_registry --file data/raw/main_sheet/main_sheet_19.04.26.csv
-```
+- A new ingestion run creates a new clean dataset, manifest, and ingestion report.
+- A new analysis run creates new stats artifacts.
+- `latest.json` files move forward to point at the current artifacts.
+- The dashboard discovers both latest and historical artifacts.
 
-What ingestion does:
+There is no pruning command yet. Old outputs should be kept unless intentionally archived or deleted in a future artifact-management command.
 
-- discovers adapters
-- loads raw source files
-- filters stub rows
-- normalizes nulls, booleans, dates, and selected categoricals
-- derives fields such as `age_at_presentation`, `nlr`, `resection_type`, `qmc_local`, and `referring_centre`
-- writes clean JSON artifacts
-- updates `outputs/clean/latest.json`
-
-### 3. Run Analysis
-
-Run all current analysis scripts:
+Recommended future cleanup behavior:
 
 ```bash
-python main.py analyze
+python main.py artifacts list
+python main.py artifacts prune --keep-latest 10 --archive
 ```
 
-Run selected scripts:
+That command does not exist yet; for now, artifact cleanup is manual and should be done carefully.
+
+## Adding A New Data Source
+
+1. Read [src/gladr/ingest/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingest/README.md).
+2. Review the canonical schema in `src/gladr/ingest/contracts/`.
+3. Add a new adapter under `src/gladr/ingest/adapters/`.
+4. Return an `AdapterRunResult` with a canonical dataframe, ingestion report, and source summary.
+5. Run ingestion.
+6. Verify the clean artifacts and dashboard overview.
+
+The adapter discovery system picks up `BaseAdapter` subclasses automatically.
+
+## Adding A New Analysis
+
+1. Read [src/gladr/analysis/README.md](/Users/hirsh/Documents/GLADR/src/gladr/analysis/README.md).
+2. Review `contracts/clean_dataset_schema.json`, `contracts/analysis_artifact_schema.json`, and `contracts/visualization_schema.json`.
+3. Inspect one similar script in `src/gladr/analysis/scripts/`.
+4. Add a new `BaseAnalysisScript` subclass.
+5. Run:
 
 ```bash
-python main.py analyze --scripts cohort_summary age_distribution sex_breakdown
+python main.py analyze --scripts <script_id>
 ```
 
-What analysis does:
+6. Open the dashboard and inspect the artifact in the Analysis tab and pipeline overview.
 
-- loads `outputs/clean/latest.json`
-- reads the latest clean dataset JSON
-- executes selected scripts from `src/gladr/analysis/scripts/`
-- writes versioned JSON outputs into `outputs/stats/`
-- updates `outputs/stats/latest.json`
+Prefer one focused script per analysis question so outputs stay easy to version and compare.
 
-### 4. Serve The Dashboard
+## Updating The Dashboard
 
-```bash
-python main.py dashboard --serve
-```
-
-This serves:
-
-- `http://127.0.0.1:8765`
-
-The dashboard scans the current runtime artifacts when the page loads. Run new analysis jobs, refresh the browser, and the new outputs are selectable without rebuilding.
-
-Useful options:
-
-```bash
-python main.py dashboard --serve --host 127.0.0.1 --port 8765
-```
-
-Use the dashboard this way:
-
-1. Open the Analysis page to browse all stats artifacts.
-2. Use the Analysis, Category, and Stats run selectors to choose what to inspect.
-3. Use Refresh after running `python main.py analyze` again.
-4. Open the Pipeline page to see ingestion runs on the left, stats runs in the middle, and generated visualization contracts on the right.
-
-If you only need to refresh the packaged static shell, run:
+1. Read [src/gladr/dashboard/README.md](/Users/hirsh/Documents/GLADR/src/gladr/dashboard/README.md).
+2. If the data is already present in artifacts, update only dashboard code.
+3. If the dashboard needs a new payload field, add it in `manifest_loader.py`.
+4. If a new visualization type is needed, update the visualization contract and renderer.
+5. Rebuild the static shell:
 
 ```bash
 python main.py dashboard
 ```
 
-This writes `outputs/dashboard/index.html`.
-
-### 5. Run The Whole Pipeline
-
-```bash
-python main.py run-all
-```
-
-Or via the installed CLI:
-
-```bash
-gladr run-all
-```
-
-`run-all` performs ingestion, then analysis, then refreshes `outputs/dashboard/index.html`. To view the dynamic dashboard after `run-all`, start the server with `python main.py dashboard --serve`.
-
-## How To Add A New Source Adapter
-
-1. Create a new module in `src/gladr/ingest/adapters/`.
-2. Subclass `BaseAdapter`.
-3. Set `adapter_id`.
-4. Set `source_glob`.
-5. Implement `load_raw`.
-6. Implement `transform` so it returns canonical columns plus `data_quality_flags`.
-
-The ingestion runner auto-discovers adapters, so no central registry file is required.
-
-## How To Add A New Analysis Script
-
-1. Create a new module in `src/gladr/analysis/scripts/`.
-2. Subclass `BaseAnalysisScript`.
-3. Set `script_id`, title, description, category, and priority.
-4. Implement `build`.
-5. Return a JSON-serializable artifact with:
-   top-level metadata, a visualization contract, and the data payload.
-
-The analysis runner auto-discovers scripts, so no manual registration is required.
-
-## Running Tests
-
-```bash
-python -m unittest discover -s tests
-```
-
-Current tests cover:
-
-- latest pointer read/write behavior
-- discovery of adapters and analysis scripts
-- dashboard runtime artifact discovery and pipeline summary generation
-
-## Troubleshooting
-
-### Dashboard Shows No Analysis
-
-Run analysis first:
-
-```bash
-python main.py analyze
-```
-
-Then refresh the browser. Confirm `outputs/stats/` contains files named like `<analysis_id>_<timestamp>.json`.
-
-### Dashboard API Is Not Available
-
-Start the server instead of opening the HTML file directly:
+6. Serve and verify:
 
 ```bash
 python main.py dashboard --serve
 ```
 
-Then open `http://127.0.0.1:8765`. The dynamic dashboard expects the local server because it reads runtime artifacts through `/api/dashboard-data`.
+## Testing
 
-### New Outputs Do Not Appear
+Run the test suite:
 
-Refresh the browser. The server scans the output folders at request time, but the already-loaded page will not automatically update until you click Refresh or reload the page.
+```bash
+python -B -m unittest discover -s tests
+```
 
-## Current Starting Point
+Current test coverage includes:
 
-The current scaffold is intentionally small:
+- adapter and analysis discovery
+- latest-pointer reads and writes
+- dashboard payload discovery
+- module-local LLM context packet integrity
+- mirrored contract synchronization
 
-- one real ingestion adapter
-- three baseline analysis scripts
-- a dynamic dashboard that renders the current visualization contracts
+## Design Direction
 
-That is enough to keep the project coherent while the clinical normalization rules, survival analyses, and richer renderers are added incrementally.
+The most important design constraint is that pipeline behavior should live in small, stage-owned modules:
+
+- ingestion owns source normalization and clean artifacts
+- analysis owns statistics and visualization contracts
+- dashboard owns artifact discovery and rendering
+
+Generated artifacts should be produced by running the pipeline, not by editing output files directly. This keeps the system reproducible, easier to automate with small LLMs, and easier to open source later.
+

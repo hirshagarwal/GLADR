@@ -6,17 +6,24 @@
     <title>GLADR Dashboard</title>
     <style>
       :root {
-        --bg: #eef0e8;
-        --ink: #18211f;
-        --muted: #64706c;
-        --surface: rgba(255, 252, 244, 0.92);
-        --surface-strong: #fff9ed;
-        --line: #d2c8b8;
-        --accent: #0d6b63;
-        --accent-dark: #084f49;
-        --gold: #bd762c;
-        --blue: #315f83;
-        --shadow: 0 22px 70px rgba(29, 40, 35, 0.12);
+        --bg: #f6f8fb;
+        --ink: #111827;
+        --muted: #64748b;
+        --muted-2: #94a3b8;
+        --surface: #ffffff;
+        --surface-soft: #f8fafc;
+        --line: #dbe3ef;
+        --line-strong: #c7d2e0;
+        --accent: #0f766e;
+        --accent-2: #2563eb;
+        --success: #15803d;
+        --success-bg: #ecfdf3;
+        --failed: #b42318;
+        --failed-bg: #fff1f0;
+        --pending: #a16207;
+        --pending-bg: #fffbeb;
+        --shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+        --radius: 8px;
       }
 
       * {
@@ -26,48 +33,19 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at 18% 10%, rgba(13, 107, 99, 0.16), transparent 28%),
-          radial-gradient(circle at 86% 4%, rgba(189, 118, 44, 0.15), transparent 30%),
-          linear-gradient(135deg, #fbf5e8 0%, var(--bg) 54%, #e5ece8 100%);
+          linear-gradient(rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+          var(--bg);
+        background-size: 32px 32px;
       }
 
-      body::before {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        content: "";
-        background-image:
-          linear-gradient(rgba(24, 33, 31, 0.035) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(24, 33, 31, 0.035) 1px, transparent 1px);
-        background-size: 34px 34px;
-        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 82%);
-      }
-
-      header {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto;
-        gap: 24px;
-        align-items: end;
-        padding: 48px clamp(18px, 4vw, 56px) 22px;
-      }
-
-      h1 {
-        margin: 0 0 8px;
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(2.3rem, 6vw, 5.5rem);
-        font-weight: 500;
-        letter-spacing: -0.06em;
-        line-height: 0.95;
-      }
-
+      h1,
       h2,
-      h3 {
-        margin: 0;
-      }
-
+      h3,
       p {
         margin: 0;
       }
@@ -77,105 +55,341 @@
         font: inherit;
       }
 
-      .lede {
-        max-width: 850px;
+      button {
+        color: inherit;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: end;
+        padding: 28px clamp(18px, 4vw, 52px) 18px;
+        border-bottom: 1px solid rgba(219, 227, 239, 0.72);
+        background: rgba(246, 248, 251, 0.88);
+        backdrop-filter: blur(16px);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .brand-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .brand-mark {
+        display: inline-grid;
+        width: 32px;
+        height: 32px;
+        place-items: center;
+        border-radius: var(--radius);
+        background: var(--ink);
+        color: white;
+        font-weight: 800;
+      }
+
+      .eyebrow,
+      label,
+      th,
+      .metric-label {
         color: var(--muted);
-        font-size: 1.02rem;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-weight: 760;
+        letter-spacing: 0;
+        line-height: 1;
+      }
+
+      .lede {
+        max-width: 760px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 1rem;
         line-height: 1.55;
       }
 
       .toolbar {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         justify-content: flex-end;
       }
 
-      .pill,
       .tab,
-      select {
+      select,
+      .icon-button,
+      .stage-button,
+      .artifact-button {
         border: 1px solid var(--line);
-        border-radius: 999px;
-        background: rgba(255, 252, 244, 0.72);
-        color: var(--ink);
+        border-radius: var(--radius);
+        background: var(--surface);
       }
 
-      .pill {
-        padding: 9px 13px;
-        color: var(--muted);
-      }
-
-      .tab {
-        padding: 10px 15px;
+      .tab,
+      .icon-button {
+        min-height: 40px;
+        padding: 9px 12px;
         cursor: pointer;
-        transition: 160ms ease;
+        transition:
+          border-color 160ms ease,
+          background 160ms ease,
+          color 160ms ease,
+          transform 160ms ease;
       }
 
       .tab.active,
-      .tab:hover {
-        border-color: var(--accent);
-        background: var(--accent);
+      .tab:hover,
+      .icon-button:hover {
+        border-color: var(--ink);
+        background: var(--ink);
         color: white;
       }
 
       main {
         display: grid;
         gap: 18px;
-        padding: 0 clamp(18px, 4vw, 56px) 44px;
+        padding: 22px clamp(18px, 4vw, 52px) 44px;
       }
 
       .panel {
-        border: 1px solid rgba(210, 200, 184, 0.86);
-        border-radius: 26px;
-        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: rgba(255, 255, 255, 0.92);
         box-shadow: var(--shadow);
-        backdrop-filter: blur(14px);
       }
 
       .panel-pad {
         padding: clamp(18px, 3vw, 28px);
       }
 
+      .section-header {
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .section-title,
+      .visual-title {
+        font-size: clamp(1.45rem, 3vw, 2.35rem);
+        font-weight: 760;
+        line-height: 1.08;
+        letter-spacing: 0;
+      }
+
+      .subtle {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
       .summary-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
+        gap: 12px;
       }
 
       .metric {
-        min-height: 112px;
-        padding: 18px;
-        overflow: hidden;
-        position: relative;
-      }
-
-      .metric::after {
-        position: absolute;
-        right: -18px;
-        bottom: -30px;
-        width: 104px;
-        height: 104px;
-        content: "";
-        border: 18px solid rgba(13, 107, 99, 0.08);
-        border-radius: 50%;
-      }
-
-      .metric-label,
-      .eyebrow,
-      label,
-      th {
-        color: var(--muted);
-        font-size: 0.77rem;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
+        min-height: 108px;
+        padding: 16px;
       }
 
       .metric-value {
         margin-top: 10px;
-        font-size: clamp(2rem, 5vw, 3.3rem);
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 820;
+        letter-spacing: 0;
+      }
+
+      .meta {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.38;
+      }
+
+      .pipeline-hero {
+        overflow: hidden;
+        padding: clamp(10px, 2vw, 18px) 0 4px;
+      }
+
+      .pipeline-map {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .stage-button {
+        position: relative;
+        display: grid;
+        gap: 12px;
+        min-height: 172px;
+        padding: 16px;
+        text-align: left;
+        cursor: pointer;
+        transition:
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          transform 160ms ease;
+      }
+
+      .stage-button::after {
+        position: absolute;
+        top: 50%;
+        right: -22px;
+        z-index: 2;
+        width: 32px;
+        height: 1px;
+        content: "";
+        background: var(--line-strong);
+      }
+
+      .stage-button:last-child::after {
+        display: none;
+      }
+
+      .stage-button.active,
+      .stage-button:hover {
+        border-color: var(--accent-2);
+        box-shadow: 0 18px 44px rgba(37, 99, 235, 0.12);
+        transform: translateY(-1px);
+      }
+
+      .stage-top {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .stage-icon {
+        display: inline-grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 50%;
+        font-weight: 900;
+      }
+
+      .stage-icon.completed {
+        background: var(--success-bg);
+        color: var(--success);
+      }
+
+      .stage-icon.failed {
+        background: var(--failed-bg);
+        color: var(--failed);
+      }
+
+      .stage-icon.pending {
+        background: var(--pending-bg);
+        color: var(--pending);
+      }
+
+      .stage-name {
+        font-size: 1.05rem;
+        font-weight: 800;
+      }
+
+      .status-pill,
+      .badge,
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 3px 8px;
+        border-radius: var(--radius);
+        font-size: 0.72rem;
+        font-weight: 850;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .status-pill.completed,
+      .badge {
+        background: var(--success-bg);
+        color: var(--success);
+      }
+
+      .status-pill.failed {
+        background: var(--failed-bg);
+        color: var(--failed);
+      }
+
+      .status-pill.pending,
+      .badge.gold {
+        background: var(--pending-bg);
+        color: var(--pending);
+      }
+
+      .stage-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .mini-metric {
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .mini-value {
+        margin-top: 5px;
+        font-size: 1.15rem;
+        font-weight: 820;
+      }
+
+      .stage-detail {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
+        gap: 18px;
+        margin-top: 18px;
+        align-items: start;
+      }
+
+      .detail-summary {
+        display: grid;
+        gap: 14px;
+      }
+
+      .detail-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .output-list {
+        display: grid;
+        gap: 9px;
+      }
+
+      .output-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 11px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .output-title {
         font-weight: 750;
-        letter-spacing: -0.06em;
       }
 
       .controls {
@@ -191,8 +405,9 @@
 
       select {
         width: 100%;
-        min-height: 44px;
-        padding: 0 13px;
+        min-height: 42px;
+        padding: 0 12px;
+        color: var(--ink);
       }
 
       .analysis-layout {
@@ -204,7 +419,7 @@
 
       .artifact-list {
         display: grid;
-        gap: 10px;
+        gap: 9px;
         max-height: 680px;
         overflow: auto;
         padding: 8px;
@@ -212,19 +427,16 @@
 
       .artifact-button {
         width: 100%;
-        padding: 14px;
+        padding: 13px;
         text-align: left;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.42);
         color: var(--ink);
         cursor: pointer;
       }
 
-      .artifact-button.active {
+      .artifact-button.active,
+      .artifact-button:hover {
         border-color: var(--accent);
-        background: rgba(13, 107, 99, 0.1);
-        box-shadow: inset 4px 0 0 var(--accent);
+        background: #f0fdfa;
       }
 
       .artifact-title {
@@ -232,35 +444,7 @@
         gap: 10px;
         align-items: center;
         justify-content: space-between;
-        font-weight: 750;
-      }
-
-      .artifact-meta,
-      .meta {
-        margin-top: 7px;
-        color: var(--muted);
-        font-size: 0.9rem;
-        line-height: 1.35;
-      }
-
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        min-height: 22px;
-        padding: 3px 8px;
-        border-radius: 999px;
-        background: rgba(13, 107, 99, 0.12);
-        color: var(--accent-dark);
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        white-space: nowrap;
-      }
-
-      .badge.gold {
-        background: rgba(189, 118, 44, 0.14);
-        color: #87500f;
+        font-weight: 780;
       }
 
       .visual-shell {
@@ -275,13 +459,6 @@
         justify-content: space-between;
       }
 
-      .visual-title {
-        font-family: Georgia, "Times New Roman", serif;
-        font-size: clamp(1.7rem, 4vw, 3rem);
-        font-weight: 500;
-        letter-spacing: -0.04em;
-      }
-
       .cards {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -290,16 +467,16 @@
 
       .card {
         border: 1px solid var(--line);
-        border-radius: 20px;
-        background: rgba(255, 255, 255, 0.44);
-        padding: 16px;
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        padding: 14px;
       }
 
       .card-value {
         margin-top: 8px;
-        font-size: clamp(1.8rem, 4vw, 3rem);
-        font-weight: 800;
-        letter-spacing: -0.05em;
+        font-size: clamp(1.65rem, 3vw, 2.5rem);
+        font-weight: 820;
+        letter-spacing: 0;
       }
 
       .chart {
@@ -315,17 +492,17 @@
       }
 
       .bar-track {
-        height: 18px;
+        height: 16px;
         overflow: hidden;
-        border-radius: 999px;
-        background: rgba(24, 33, 31, 0.08);
+        border-radius: var(--radius);
+        background: #e5edf6;
       }
 
       .bar-fill {
         width: var(--value);
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, var(--accent), var(--blue));
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
       }
 
       .histogram {
@@ -343,8 +520,8 @@
         min-width: 8px;
         height: var(--value);
         min-height: 2px;
-        border-radius: 10px 10px 0 0;
-        background: linear-gradient(180deg, var(--gold), var(--accent));
+        border-radius: 6px 6px 0 0;
+        background: linear-gradient(180deg, var(--accent-2), var(--accent));
       }
 
       .hist-bin:hover::after {
@@ -355,7 +532,7 @@
         padding: 5px 7px;
         content: attr(data-label);
         transform: translateX(-50%);
-        border-radius: 8px;
+        border-radius: var(--radius);
         background: var(--ink);
         color: white;
         font-size: 0.78rem;
@@ -366,13 +543,13 @@
         width: 100%;
         border-collapse: collapse;
         overflow: hidden;
-        border-radius: 16px;
+        border-radius: var(--radius);
       }
 
       th,
       td {
         padding: 11px 12px;
-        border-bottom: 1px solid rgba(210, 200, 184, 0.75);
+        border-bottom: 1px solid var(--line);
         text-align: left;
       }
 
@@ -385,8 +562,8 @@
         max-height: 420px;
         overflow: auto;
         padding: 16px;
-        border-radius: 16px;
-        background: rgba(24, 33, 31, 0.07);
+        border-radius: var(--radius);
+        background: #eef3f8;
       }
 
       .pipeline {
@@ -404,8 +581,8 @@
       .pipeline-arrow {
         display: grid;
         place-items: center;
-        color: var(--accent);
-        font-size: 1.8rem;
+        color: var(--accent-2);
+        font-size: 1.25rem;
         font-weight: 900;
       }
 
@@ -417,51 +594,67 @@
       }
 
       .node {
-        padding: 14px;
+        padding: 13px;
         border: 1px solid var(--line);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.42);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
       }
 
       .node.latest {
-        border-color: rgba(13, 107, 99, 0.65);
-        box-shadow: inset 0 0 0 2px rgba(13, 107, 99, 0.08);
+        border-color: rgba(15, 118, 110, 0.65);
+        box-shadow: inset 3px 0 0 var(--accent);
       }
 
       .empty,
       .error {
-        padding: 20px;
-        border: 1px dashed var(--line);
-        border-radius: 20px;
+        padding: 18px;
+        border: 1px dashed var(--line-strong);
+        border-radius: var(--radius);
         color: var(--muted);
         line-height: 1.5;
       }
 
       .error {
-        border-color: rgba(173, 62, 38, 0.55);
-        color: #8f2f1e;
-        background: rgba(173, 62, 38, 0.07);
+        border-color: rgba(180, 35, 24, 0.45);
+        color: var(--failed);
+        background: var(--failed-bg);
       }
 
       .hidden {
         display: none !important;
       }
 
-      @media (max-width: 960px) {
-        header,
+      @media (max-width: 1080px) {
+        .stage-detail,
         .analysis-layout,
-        .summary-grid,
-        .controls,
         .pipeline-row {
           grid-template-columns: 1fr;
+        }
+
+        .pipeline-arrow {
+          transform: rotate(90deg);
+        }
+      }
+
+      @media (max-width: 860px) {
+        header,
+        .summary-grid,
+        .pipeline-map,
+        .controls,
+        .cards {
+          grid-template-columns: 1fr;
+        }
+
+        header {
+          position: static;
         }
 
         .toolbar {
           justify-content: flex-start;
         }
 
-        .pipeline-arrow {
-          transform: rotate(90deg);
+        .stage-button::after {
+          display: none;
         }
       }
     </style>
@@ -469,24 +662,38 @@
   <body>
     <header>
       <div>
+        <div class="brand-row">
+          <span class="brand-mark">G</span>
+          <span class="eyebrow">Pipeline Console</span>
+        </div>
         <h1>GLADR Dashboard</h1>
-        <p class="lede">
-          Dynamic analysis browser for the GLADR runtime outputs. Serve this dashboard with
-          <code>python main.py dashboard --serve</code>; refresh the page after running new ingestion or
-          analysis jobs and the artifacts will be discovered automatically.
-        </p>
+        <p class="lede">Pipeline status, data quality, analysis outputs, and visualization artifacts for the current GLADR workspace.</p>
       </div>
       <nav class="toolbar" aria-label="Dashboard sections">
-        <button class="tab active" data-tab="analysis" type="button">Analysis</button>
-        <button class="tab" data-tab="pipeline" type="button">Pipeline</button>
+        <button class="tab active" data-tab="overview" type="button">Overview</button>
+        <button class="tab" data-tab="analysis" type="button">Analysis</button>
+        <button class="tab" data-tab="runs" type="button">Runs</button>
         <button class="tab" id="refresh" type="button">Refresh</button>
       </nav>
     </header>
 
     <main>
+      <section class="pipeline-hero" id="overview-view">
+        <div class="section-header">
+          <div>
+            <div class="eyebrow">Latest Pipeline</div>
+            <h2 class="section-title">Stage Health</h2>
+            <p class="subtle">Click a stage to inspect its latest output and browse previous versions.</p>
+          </div>
+          <span class="pill" id="stage-generated">Loading</span>
+        </div>
+        <div class="pipeline-map" id="stage-map"></div>
+        <div class="stage-detail" id="stage-detail"></div>
+      </section>
+
       <section class="summary-grid" id="summary"></section>
 
-      <section class="panel panel-pad" id="analysis-view">
+      <section class="panel panel-pad hidden" id="analysis-view">
         <div class="controls" aria-label="Analysis filters">
           <div class="control">
             <label for="analysis-select">Analysis</label>
@@ -503,16 +710,16 @@
         </div>
       </section>
 
-      <section class="analysis-layout" id="analysis-browser">
+      <section class="analysis-layout hidden" id="analysis-browser">
         <aside class="panel artifact-list" id="artifact-list"></aside>
         <section class="panel panel-pad visual-shell" id="visual-output"></section>
       </section>
 
       <section class="panel panel-pad hidden" id="pipeline-view">
-        <div class="visual-header">
+        <div class="section-header">
           <div>
-            <div class="eyebrow">Runtime Summary</div>
-            <h2 class="visual-title">Pipeline Runs</h2>
+            <div class="eyebrow">Versioned Runs</div>
+            <h2 class="section-title">Pipeline Lanes</h2>
           </div>
           <span class="pill" id="pipeline-count"></span>
         </div>
@@ -525,11 +732,17 @@
         payload: null,
         filtered: [],
         selectedFilename: null,
-        tab: "analysis",
+        selectedStage: "ingestion",
+        stageHistoryIndex: 0,
+        tab: "overview",
       };
 
       const els = {
         summary: document.getElementById("summary"),
+        overviewView: document.getElementById("overview-view"),
+        stageMap: document.getElementById("stage-map"),
+        stageDetail: document.getElementById("stage-detail"),
+        stageGenerated: document.getElementById("stage-generated"),
         analysisView: document.getElementById("analysis-view"),
         analysisBrowser: document.getElementById("analysis-browser"),
         pipelineView: document.getElementById("pipeline-view"),
@@ -573,9 +786,11 @@
           const response = await fetch("/api/dashboard-data", { cache: "no-store" });
           if (!response.ok) throw new Error(`Dashboard API returned ${response.status}`);
           state.payload = await response.json();
+          if (!currentStage()) state.selectedStage = state.payload?.stage_summaries?.[0]?.id ?? "ingestion";
           populateFilters();
           applyFilters();
           renderSummary();
+          renderStageOverview();
           renderPipeline();
         } catch (error) {
           renderApiError(error);
@@ -584,14 +799,16 @@
 
       function showLoading() {
         els.summary.innerHTML = metricCard("Loading", "...", "Scanning runtime artifacts");
+        els.stageMap.innerHTML = '<div class="empty">Loading pipeline state...</div>';
+        els.stageDetail.innerHTML = "";
         els.artifactList.innerHTML = '<div class="empty">Loading analysis artifacts...</div>';
         els.visualOutput.innerHTML = '<div class="empty">Waiting for dashboard data...</div>';
       }
 
       function renderApiError(error) {
         els.summary.innerHTML = "";
-        els.artifactList.innerHTML = "";
-        els.visualOutput.innerHTML = `
+        els.stageMap.innerHTML = "";
+        els.stageDetail.innerHTML = `
           <div class="error">
             <strong>Dashboard API is not available.</strong><br />
             Start the dynamic dashboard with <code>python main.py dashboard --serve</code>, then open
@@ -636,10 +853,151 @@
         const latestIngestion = (state.payload?.ingestion_runs ?? []).find((run) => run.is_latest);
         els.summary.innerHTML = [
           metricCard("Ingestion runs", summary.ingestion_runs ?? 0, "Versioned clean-stage manifests"),
-          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "All stats JSON files discovered"),
-          metricCard("Visualizations", summary.visualizations ?? 0, "Renderable visualization contracts"),
+          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Stats outputs discovered"),
+          metricCard("Visualizations", summary.visualizations ?? 0, "Renderable chart contracts"),
           metricCard("Latest cohort", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
         ].join("");
+      }
+
+      function renderStageOverview() {
+        const stages = state.payload?.stage_summaries ?? [];
+        els.stageGenerated.textContent = `Updated ${formatDate(state.payload?.generated_at)}`;
+        if (!stages.length) {
+          els.stageMap.innerHTML = '<div class="empty">No pipeline stages discovered yet.</div>';
+          els.stageDetail.innerHTML = "";
+          return;
+        }
+
+        els.stageMap.innerHTML = stages.map(renderStageButton).join("");
+        renderStageDetail();
+      }
+
+      function renderStageButton(stage) {
+        const current = stage.current;
+        const metrics = current?.metrics ?? [];
+        return `
+          <button class="stage-button ${stage.id === state.selectedStage ? "active" : ""}" type="button" data-stage-id="${escapeHtml(stage.id)}">
+            <div class="stage-top">
+              <span class="stage-icon ${escapeHtml(stage.status)}">${stageIcon(stage.status)}</span>
+              <span class="status-pill ${escapeHtml(stage.status)}">${escapeHtml(stage.status)}</span>
+            </div>
+            <div>
+              <div class="stage-name">${escapeHtml(stage.label)}</div>
+              <div class="meta">${escapeHtml(current?.title ?? "No output yet")}</div>
+            </div>
+            <div class="stage-metrics">
+              ${metrics.slice(0, 3).map((metric) => `
+                <div class="mini-metric">
+                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                  <div class="mini-value">${escapeHtml(metric.value)}</div>
+                </div>
+              `).join("")}
+            </div>
+          </button>
+        `;
+      }
+
+      function renderStageDetail() {
+        const stage = currentStage();
+        if (!stage) {
+          els.stageDetail.innerHTML = '<div class="empty">Select a pipeline stage.</div>';
+          return;
+        }
+
+        const history = stage.history ?? [];
+        const selected = history[state.stageHistoryIndex] ?? stage.current;
+        if (!selected) {
+          els.stageDetail.innerHTML = `
+            <div class="detail-summary">
+              <div>
+                <div class="eyebrow">${escapeHtml(stage.label)}</div>
+                <h3 class="section-title">No stage output</h3>
+                <p class="meta">This stage has not produced a discoverable output.</p>
+              </div>
+            </div>
+            <div class="empty">Status: ${escapeHtml(stage.status)}</div>
+          `;
+          return;
+        }
+
+        const versionLabel = history.length ? `${state.stageHistoryIndex + 1} of ${history.length}` : "Latest";
+        els.stageDetail.innerHTML = `
+          <div class="panel panel-pad detail-summary">
+            <div>
+              <div class="eyebrow">${escapeHtml(stage.label)} Detail</div>
+              <h3 class="section-title">${escapeHtml(selected.title)}</h3>
+              <p class="meta">${escapeHtml(selected.description ?? "")}</p>
+            </div>
+            <div class="stage-metrics">
+              ${(selected.metrics ?? []).map((metric) => `
+                <div class="mini-metric">
+                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                  <div class="mini-value">${escapeHtml(metric.value)}</div>
+                </div>
+              `).join("")}
+            </div>
+            <div class="detail-actions">
+              <button class="icon-button" type="button" data-history-step="previous">Previous version</button>
+              <button class="icon-button" type="button" data-history-step="next">Next version</button>
+              <span class="pill">${escapeHtml(versionLabel)}</span>
+              ${selected.is_latest ? '<span class="badge">latest</span>' : ""}
+            </div>
+            <div class="meta">
+              Run ${escapeHtml(selected.run_id ?? "NA")} | ${escapeHtml(formatDate(selected.run_datetime))}
+            </div>
+          </div>
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Outputs</div>
+                <h3 class="section-title">Stage Artifacts</h3>
+              </div>
+            </div>
+            ${renderStageOutputs(selected)}
+          </div>
+        `;
+      }
+
+      function renderStageOutputs(stageItem) {
+        const outputs = stageItem.outputs ?? [];
+        const files = stageItem.files ?? [];
+        if (!outputs.length && !files.length) return '<div class="empty">No output details available.</div>';
+        const outputRows = outputs.map((item) => `
+          <div class="output-row">
+            <div>
+              <div class="output-title">${escapeHtml(item.label)}</div>
+              <div class="meta">${escapeHtml(item.detail ?? "")}</div>
+            </div>
+          </div>
+        `);
+        const fileRows = files.map((filename) => `
+          <div class="output-row">
+            <div>
+              <div class="output-title">${escapeHtml(filename)}</div>
+              <div class="meta">Runtime artifact</div>
+            </div>
+          </div>
+        `);
+        return `<div class="output-list">${outputRows.concat(fileRows).join("")}</div>`;
+      }
+
+      function currentStage() {
+        return (state.payload?.stage_summaries ?? []).find((stage) => stage.id === state.selectedStage);
+      }
+
+      function stageIcon(status) {
+        if (status === "completed") return "✓";
+        if (status === "failed") return "×";
+        return "!";
+      }
+
+      function moveStageHistory(direction) {
+        const stage = currentStage();
+        const historyLength = stage?.history?.length ?? 0;
+        if (historyLength <= 1) return;
+        const delta = direction === "next" ? 1 : -1;
+        state.stageHistoryIndex = (state.stageHistoryIndex + delta + historyLength) % historyLength;
+        renderStageDetail();
       }
 
       function renderArtifactList() {
@@ -655,7 +1013,7 @@
                 <span>${escapeHtml(analysis.title)}</span>
                 ${analysis.is_latest ? '<span class="badge">latest</span>' : ""}
               </div>
-              <div class="artifact-meta">
+              <div class="meta">
                 ${escapeHtml(analysis.category)} | ${escapeHtml(analysis.visualization_type || "data")} | ${escapeHtml(formatDate(analysis.run_datetime))}
               </div>
             </button>
@@ -815,12 +1173,12 @@
                 <div class="eyebrow">Ingestion</div>
                 ${lane.ingestion ? renderPipelineNode(lane.ingestion, ["total_rows", "source_count"]) : '<div class="node">Missing ingestion manifest</div>'}
               </div>
-              <div class="pipeline-arrow">-></div>
+              <div class="pipeline-arrow">→</div>
               <div class="pipeline-column">
                 <div class="eyebrow">Stats Runs</div>
                 ${lane.stats_runs.length ? lane.stats_runs.map((node) => renderPipelineNode(node, ["script_id", "n"])).join("") : '<div class="node">No stats artifacts</div>'}
               </div>
-              <div class="pipeline-arrow">-></div>
+              <div class="pipeline-arrow">→</div>
               <div class="pipeline-column">
                 <div class="eyebrow">Visualizations</div>
                 ${lane.visualizations.length ? lane.visualizations.map((node) => renderPipelineNode(node, ["type", "script_id"])).join("") : '<div class="node">No visualizations generated</div>'}
@@ -849,10 +1207,10 @@
       function setTab(tab) {
         state.tab = tab;
         els.tabs.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-        const showingPipeline = tab === "pipeline";
-        els.pipelineView.classList.toggle("hidden", !showingPipeline);
-        els.analysisView.classList.toggle("hidden", showingPipeline);
-        els.analysisBrowser.classList.toggle("hidden", showingPipeline);
+        els.overviewView.classList.toggle("hidden", tab !== "overview");
+        els.analysisView.classList.toggle("hidden", tab !== "analysis");
+        els.analysisBrowser.classList.toggle("hidden", tab !== "analysis");
+        els.pipelineView.classList.toggle("hidden", tab !== "runs");
       }
 
       function metricCard(label, value, detail) {
@@ -887,6 +1245,18 @@
         els.analysisSelect.value = state.selectedFilename;
         renderArtifactList();
         renderSelectedAnalysis();
+      });
+      els.stageMap.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-stage-id]");
+        if (!button) return;
+        state.selectedStage = button.dataset.stageId;
+        state.stageHistoryIndex = 0;
+        renderStageOverview();
+      });
+      els.stageDetail.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-history-step]");
+        if (!button) return;
+        moveStageHistory(button.dataset.historyStep);
       });
       els.refresh.addEventListener("click", loadDashboard);
       els.tabs.forEach((button) => button.addEventListener("click", () => setTab(button.dataset.tab)));

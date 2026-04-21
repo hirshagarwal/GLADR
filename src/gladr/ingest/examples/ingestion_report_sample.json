@@ -1,0 +1,13 @@
+[
+  {
+    "patient_id": "K000001",
+    "source_file": "gbm_registry_raw_sample.csv",
+    "flags": []
+  },
+  {
+    "patient_id": "K000002",
+    "source_file": "gbm_registry_raw_sample.csv",
+    "flags": []
+  }
+]
+

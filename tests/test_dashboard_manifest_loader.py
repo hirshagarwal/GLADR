@@ -58,6 +58,10 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             self.assertEqual(len(payload["pipeline"]), 1)
             self.assertEqual(len(payload["pipeline"][0]["stats_runs"]), 2)
             self.assertEqual(len(payload["pipeline"][0]["visualizations"]), 2)
+            self.assertEqual([stage["id"] for stage in payload["stage_summaries"]], ["ingestion", "stats", "visualization"])
+            self.assertEqual(payload["stage_summaries"][0]["status"], "completed")
+            self.assertEqual(payload["stage_summaries"][1]["current"]["metrics"][0]["value"], 1)
+            self.assertEqual(payload["stage_summaries"][2]["current"]["metrics"][0]["value"], 1)
 
 
 def _project_paths(root: Path) -> ProjectPaths:

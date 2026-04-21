@@ -1,0 +1,24 @@
+module_id: dashboard
+stage: dashboard
+purpose: Discover, summarize, and render GLADR pipeline artifacts.
+owner_files:
+  - build.py
+  - manifest_loader.py
+  - server.py
+  - static_app/
+contracts:
+  inputs:
+    - contracts/dashboard_payload_schema.json
+    - contracts/visualization_schema.json
+examples:
+  - examples/dashboard_payload_sample.json
+commands:
+  build: python main.py dashboard
+  serve: python main.py dashboard --serve
+  test: python -B -m unittest discover -s tests
+llm_rules:
+  - Treat outputs/clean and outputs/stats as read-only inputs.
+  - Keep dashboard changes compatible with contracts/dashboard_payload_schema.json.
+  - Prefer adding payload fields in manifest_loader.py over hard-coding artifact assumptions in the UI.
+  - Do not make dashboard code responsible for pipeline execution.
+
