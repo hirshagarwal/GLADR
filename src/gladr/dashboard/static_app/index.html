@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GLADR Dashboard</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --surface: #fffaf2;
+        --border: #d8cfbe;
+        --text: #1f2a2e;
+        --muted: #637077;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 32%),
+          linear-gradient(180deg, #f8f4ec 0%, var(--bg) 100%);
+        color: var(--text);
+      }
+
+      header {
+        padding: 48px 24px 24px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        max-width: 800px;
+      }
+
+      main {
+        display: grid;
+        gap: 16px;
+        padding: 24px;
+      }
+
+      .panel {
+        background: rgba(255, 250, 242, 0.9);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .meta {
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        overflow-x: auto;
+        background: #f1ebde;
+        padding: 16px;
+        border-radius: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>GLADR Dashboard</h1>
+      <p>
+        Starting dashboard shell. This page is intentionally generic and expects
+        analysis artifacts in <code>outputs/stats/latest.json</code>.
+      </p>
+    </header>
+    <main id="app">
+      <section class="panel">
+        <strong>Waiting for analysis artifacts</strong>
+        <div class="meta">Run ingestion and analysis first, then rebuild the dashboard.</div>
+      </section>
+    </main>
+    <script>
+      const app = document.getElementById("app");
+
+      async function loadDashboard() {
+        try {
+          const latestResponse = await fetch("../stats/latest.json");
+          if (!latestResponse.ok) {
+            return;
+          }
+
+          const latest = await latestResponse.json();
+          const entries = Object.entries(latest);
+          if (!entries.length) {
+            return;
+          }
+
+          app.innerHTML = "";
+
+          for (const [scriptId, filename] of entries) {
+            const response = await fetch(`../stats/${filename}`);
+            if (!response.ok) {
+              continue;
+            }
+
+            const artifact = await response.json();
+            const panel = document.createElement("section");
+            panel.className = "panel";
+            panel.innerHTML = `
+              <h2>${artifact.title}</h2>
+              <p>${artifact.description}</p>
+              <div class="meta">
+                ${artifact.category} • n=${artifact.metadata?.n ?? "?"} • run ${artifact.run_datetime}
+              </div>
+              <pre>${JSON.stringify(artifact.visualization, null, 2)}</pre>
+            `;
+            app.appendChild(panel);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+
+      loadDashboard();
+    </script>
+  </body>
+</html>

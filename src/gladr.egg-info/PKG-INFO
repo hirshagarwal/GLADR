@@ -1,0 +1,13 @@
+Metadata-Version: 2.4
+Name: gladr
+Version: 0.1.0
+Summary: Clinical registry analysis pipeline scaffold for GLADR
+Requires-Python: >=3.13
+Description-Content-Type: text/markdown
+Requires-Dist: dotenv>=0.9.9
+Requires-Dist: jupyterlab>=4.5.0
+Requires-Dist: notebook>=7.5.0
+Requires-Dist: pandas>=2.3.3
+Requires-Dist: pyarrow>=18.0.0
+
+Project to predict recurrence patterns in GBM

@@ -1,0 +1,2 @@
+[console_scripts]
+gladr = gladr.cli:main

@@ -1,0 +1,10 @@
+{
+  "frontal": "Frontal",
+  "fronto-parietal": "Fronto-Parietal",
+  "parietal": "Parietal",
+  "temporal": "Temporal",
+  "occipital": "Occipital",
+  "insula": "Insula",
+  "deep": "Deep",
+  "midline": "Midline"
+}

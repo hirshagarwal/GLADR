@@ -1,0 +1,5 @@
+dotenv>=0.9.9
+jupyterlab>=4.5.0
+notebook>=7.5.0
+pandas>=2.3.3
+pyarrow>=18.0.0

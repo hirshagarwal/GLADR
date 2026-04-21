@@ -1,0 +1,7 @@
+README.md
+pyproject.toml
+gladr.egg-info/PKG-INFO
+gladr.egg-info/SOURCES.txt
+gladr.egg-info/dependency_links.txt
+gladr.egg-info/requires.txt
+gladr.egg-info/top_level.txt

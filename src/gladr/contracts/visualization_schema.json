@@ -1,0 +1,19 @@
+{
+  "version": "1.0.0",
+  "supported_types": {
+    "kaplan_meier": [
+      "x_field",
+      "y_field",
+      "group_field",
+      "confidence_intervals",
+      "show_censoring_marks",
+      "annotations"
+    ],
+    "histogram": ["x_field", "x_label", "bin_count", "overlay_normal"],
+    "bar": ["x_field", "y_field", "x_label", "y_label", "orientation", "sort_by"],
+    "scatter": ["x_field", "y_field", "x_label", "y_label", "group_field", "regression_line"],
+    "table": ["columns"],
+    "scalar_cards": ["cards"],
+    "multi": ["panels"]
+  }
+}
