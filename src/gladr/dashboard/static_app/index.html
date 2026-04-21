@@ -6,11 +6,17 @@
     <title>GLADR Dashboard</title>
     <style>
       :root {
-        --bg: #f4f1ea;
-        --surface: #fffaf2;
-        --border: #d8cfbe;
-        --text: #1f2a2e;
-        --muted: #637077;
+        --bg: #eef0e8;
+        --ink: #18211f;
+        --muted: #64706c;
+        --surface: rgba(255, 252, 244, 0.92);
+        --surface-strong: #fff9ed;
+        --line: #d2c8b8;
+        --accent: #0d6b63;
+        --accent-dark: #084f49;
+        --gold: #bd762c;
+        --blue: #315f83;
+        --shadow: 0 22px 70px rgba(29, 40, 35, 0.12);
       }
 
       * {
@@ -19,111 +25,871 @@
 
       body {
         margin: 0;
-        font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+        min-height: 100vh;
+        font-family: "Avenir Next", "Gill Sans", "Trebuchet MS", sans-serif;
+        color: var(--ink);
         background:
-          radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 32%),
-          linear-gradient(180deg, #f8f4ec 0%, var(--bg) 100%);
-        color: var(--text);
+          radial-gradient(circle at 18% 10%, rgba(13, 107, 99, 0.16), transparent 28%),
+          radial-gradient(circle at 86% 4%, rgba(189, 118, 44, 0.15), transparent 30%),
+          linear-gradient(135deg, #fbf5e8 0%, var(--bg) 54%, #e5ece8 100%);
+      }
+
+      body::before {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        content: "";
+        background-image:
+          linear-gradient(rgba(24, 33, 31, 0.035) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(24, 33, 31, 0.035) 1px, transparent 1px);
+        background-size: 34px 34px;
+        mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent 82%);
       }
 
       header {
-        padding: 48px 24px 24px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 24px;
+        align-items: end;
+        padding: 48px clamp(18px, 4vw, 56px) 22px;
       }
 
       h1 {
         margin: 0 0 8px;
-        font-size: clamp(2rem, 5vw, 3.5rem);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.3rem, 6vw, 5.5rem);
+        font-weight: 500;
+        letter-spacing: -0.06em;
+        line-height: 0.95;
+      }
+
+      h2,
+      h3 {
+        margin: 0;
       }
 
       p {
         margin: 0;
+      }
+
+      button,
+      select {
+        font: inherit;
+      }
+
+      .lede {
+        max-width: 850px;
         color: var(--muted);
-        max-width: 800px;
+        font-size: 1.02rem;
+        line-height: 1.55;
+      }
+
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .pill,
+      .tab,
+      select {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 252, 244, 0.72);
+        color: var(--ink);
+      }
+
+      .pill {
+        padding: 9px 13px;
+        color: var(--muted);
+      }
+
+      .tab {
+        padding: 10px 15px;
+        cursor: pointer;
+        transition: 160ms ease;
+      }
+
+      .tab.active,
+      .tab:hover {
+        border-color: var(--accent);
+        background: var(--accent);
+        color: white;
       }
 
       main {
         display: grid;
-        gap: 16px;
-        padding: 24px;
+        gap: 18px;
+        padding: 0 clamp(18px, 4vw, 56px) 44px;
       }
 
       .panel {
-        background: rgba(255, 250, 242, 0.9);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 20px;
+        border: 1px solid rgba(210, 200, 184, 0.86);
+        border-radius: 26px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
       }
 
-      .meta {
-        margin-top: 12px;
+      .panel-pad {
+        padding: clamp(18px, 3vw, 28px);
+      }
+
+      .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .metric {
+        min-height: 112px;
+        padding: 18px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .metric::after {
+        position: absolute;
+        right: -18px;
+        bottom: -30px;
+        width: 104px;
+        height: 104px;
+        content: "";
+        border: 18px solid rgba(13, 107, 99, 0.08);
+        border-radius: 50%;
+      }
+
+      .metric-label,
+      .eyebrow,
+      label,
+      th {
         color: var(--muted);
-        font-size: 0.95rem;
+        font-size: 0.77rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .metric-value {
+        margin-top: 10px;
+        font-size: clamp(2rem, 5vw, 3.3rem);
+        font-weight: 750;
+        letter-spacing: -0.06em;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .control {
+        display: grid;
+        gap: 7px;
+      }
+
+      select {
+        width: 100%;
+        min-height: 44px;
+        padding: 0 13px;
+      }
+
+      .analysis-layout {
+        display: grid;
+        grid-template-columns: 340px minmax(0, 1fr);
+        gap: 18px;
+        align-items: start;
+      }
+
+      .artifact-list {
+        display: grid;
+        gap: 10px;
+        max-height: 680px;
+        overflow: auto;
+        padding: 8px;
+      }
+
+      .artifact-button {
+        width: 100%;
+        padding: 14px;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.42);
+        color: var(--ink);
+        cursor: pointer;
+      }
+
+      .artifact-button.active {
+        border-color: var(--accent);
+        background: rgba(13, 107, 99, 0.1);
+        box-shadow: inset 4px 0 0 var(--accent);
+      }
+
+      .artifact-title {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        font-weight: 750;
+      }
+
+      .artifact-meta,
+      .meta {
+        margin-top: 7px;
+        color: var(--muted);
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        min-height: 22px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(13, 107, 99, 0.12);
+        color: var(--accent-dark);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .badge.gold {
+        background: rgba(189, 118, 44, 0.14);
+        color: #87500f;
+      }
+
+      .visual-shell {
+        display: grid;
+        gap: 18px;
+      }
+
+      .visual-header {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .visual-title {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.7rem, 4vw, 3rem);
+        font-weight: 500;
+        letter-spacing: -0.04em;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.44);
+        padding: 16px;
+      }
+
+      .card-value {
+        margin-top: 8px;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-weight: 800;
+        letter-spacing: -0.05em;
+      }
+
+      .chart {
+        display: grid;
+        gap: 10px;
+      }
+
+      .bar-row {
+        display: grid;
+        grid-template-columns: minmax(90px, 180px) minmax(0, 1fr) 62px;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .bar-track {
+        height: 18px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: rgba(24, 33, 31, 0.08);
+      }
+
+      .bar-fill {
+        width: var(--value);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--accent), var(--blue));
+      }
+
+      .histogram {
+        display: flex;
+        gap: 5px;
+        align-items: end;
+        min-height: 280px;
+        padding: 18px 8px 4px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .hist-bin {
+        position: relative;
+        flex: 1;
+        min-width: 8px;
+        height: var(--value);
+        min-height: 2px;
+        border-radius: 10px 10px 0 0;
+        background: linear-gradient(180deg, var(--gold), var(--accent));
+      }
+
+      .hist-bin:hover::after {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        z-index: 3;
+        padding: 5px 7px;
+        content: attr(data-label);
+        transform: translateX(-50%);
+        border-radius: 8px;
+        background: var(--ink);
+        color: white;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border-radius: 16px;
+      }
+
+      th,
+      td {
+        padding: 11px 12px;
+        border-bottom: 1px solid rgba(210, 200, 184, 0.75);
+        text-align: left;
+      }
+
+      td:last-child,
+      th:last-child {
+        text-align: right;
       }
 
       pre {
-        white-space: pre-wrap;
-        overflow-x: auto;
-        background: #f1ebde;
+        max-height: 420px;
+        overflow: auto;
         padding: 16px;
-        border-radius: 12px;
+        border-radius: 16px;
+        background: rgba(24, 33, 31, 0.07);
+      }
+
+      .pipeline {
+        display: grid;
+        gap: 18px;
+      }
+
+      .pipeline-row {
+        display: grid;
+        grid-template-columns: minmax(220px, 0.9fr) 44px minmax(260px, 1.2fr) 44px minmax(260px, 1.2fr);
+        gap: 12px;
+        align-items: stretch;
+      }
+
+      .pipeline-arrow {
+        display: grid;
+        place-items: center;
+        color: var(--accent);
+        font-size: 1.8rem;
+        font-weight: 900;
+      }
+
+      .pipeline-column {
+        display: grid;
+        gap: 10px;
+        align-content: start;
+        min-height: 118px;
+      }
+
+      .node {
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.42);
+      }
+
+      .node.latest {
+        border-color: rgba(13, 107, 99, 0.65);
+        box-shadow: inset 0 0 0 2px rgba(13, 107, 99, 0.08);
+      }
+
+      .empty,
+      .error {
+        padding: 20px;
+        border: 1px dashed var(--line);
+        border-radius: 20px;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .error {
+        border-color: rgba(173, 62, 38, 0.55);
+        color: #8f2f1e;
+        background: rgba(173, 62, 38, 0.07);
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      @media (max-width: 960px) {
+        header,
+        .analysis-layout,
+        .summary-grid,
+        .controls,
+        .pipeline-row {
+          grid-template-columns: 1fr;
+        }
+
+        .toolbar {
+          justify-content: flex-start;
+        }
+
+        .pipeline-arrow {
+          transform: rotate(90deg);
+        }
       }
     </style>
   </head>
   <body>
     <header>
-      <h1>GLADR Dashboard</h1>
-      <p>
-        Starting dashboard shell. This page is intentionally generic and expects
-        analysis artifacts in <code>outputs/stats/latest.json</code>.
-      </p>
+      <div>
+        <h1>GLADR Dashboard</h1>
+        <p class="lede">
+          Dynamic analysis browser for the GLADR runtime outputs. Serve this dashboard with
+          <code>python main.py dashboard --serve</code>; refresh the page after running new ingestion or
+          analysis jobs and the artifacts will be discovered automatically.
+        </p>
+      </div>
+      <nav class="toolbar" aria-label="Dashboard sections">
+        <button class="tab active" data-tab="analysis" type="button">Analysis</button>
+        <button class="tab" data-tab="pipeline" type="button">Pipeline</button>
+        <button class="tab" id="refresh" type="button">Refresh</button>
+      </nav>
     </header>
-    <main id="app">
-      <section class="panel">
-        <strong>Waiting for analysis artifacts</strong>
-        <div class="meta">Run ingestion and analysis first, then rebuild the dashboard.</div>
+
+    <main>
+      <section class="summary-grid" id="summary"></section>
+
+      <section class="panel panel-pad" id="analysis-view">
+        <div class="controls" aria-label="Analysis filters">
+          <div class="control">
+            <label for="analysis-select">Analysis</label>
+            <select id="analysis-select"></select>
+          </div>
+          <div class="control">
+            <label for="category-filter">Category</label>
+            <select id="category-filter"></select>
+          </div>
+          <div class="control">
+            <label for="run-filter">Stats run</label>
+            <select id="run-filter"></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="analysis-layout" id="analysis-browser">
+        <aside class="panel artifact-list" id="artifact-list"></aside>
+        <section class="panel panel-pad visual-shell" id="visual-output"></section>
+      </section>
+
+      <section class="panel panel-pad hidden" id="pipeline-view">
+        <div class="visual-header">
+          <div>
+            <div class="eyebrow">Runtime Summary</div>
+            <h2 class="visual-title">Pipeline Runs</h2>
+          </div>
+          <span class="pill" id="pipeline-count"></span>
+        </div>
+        <div class="pipeline" id="pipeline"></div>
       </section>
     </main>
+
     <script>
-      const app = document.getElementById("app");
+      const state = {
+        payload: null,
+        filtered: [],
+        selectedFilename: null,
+        tab: "analysis",
+      };
+
+      const els = {
+        summary: document.getElementById("summary"),
+        analysisView: document.getElementById("analysis-view"),
+        analysisBrowser: document.getElementById("analysis-browser"),
+        pipelineView: document.getElementById("pipeline-view"),
+        analysisSelect: document.getElementById("analysis-select"),
+        categoryFilter: document.getElementById("category-filter"),
+        runFilter: document.getElementById("run-filter"),
+        artifactList: document.getElementById("artifact-list"),
+        visualOutput: document.getElementById("visual-output"),
+        pipeline: document.getElementById("pipeline"),
+        pipelineCount: document.getElementById("pipeline-count"),
+        refresh: document.getElementById("refresh"),
+        tabs: Array.from(document.querySelectorAll(".tab[data-tab]")),
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#039;");
+      }
+
+      function formatDate(value) {
+        if (!value) return "Unknown time";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return value;
+        return date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" });
+      }
+
+      function formatValue(value, format, unit) {
+        if (value === null || value === undefined || value === "") return "NA";
+        if (format === "int") return `${Math.round(Number(value)).toLocaleString()}${unit ? ` ${unit}` : ""}`;
+        if (format === "float1") return `${Number(value).toFixed(1)}${unit ? ` ${unit}` : ""}`;
+        return `${value}${unit ? ` ${unit}` : ""}`;
+      }
 
       async function loadDashboard() {
+        showLoading();
         try {
-          const latestResponse = await fetch("../stats/latest.json");
-          if (!latestResponse.ok) {
-            return;
-          }
-
-          const latest = await latestResponse.json();
-          const entries = Object.entries(latest);
-          if (!entries.length) {
-            return;
-          }
-
-          app.innerHTML = "";
-
-          for (const [scriptId, filename] of entries) {
-            const response = await fetch(`../stats/${filename}`);
-            if (!response.ok) {
-              continue;
-            }
-
-            const artifact = await response.json();
-            const panel = document.createElement("section");
-            panel.className = "panel";
-            panel.innerHTML = `
-              <h2>${artifact.title}</h2>
-              <p>${artifact.description}</p>
-              <div class="meta">
-                ${artifact.category} • n=${artifact.metadata?.n ?? "?"} • run ${artifact.run_datetime}
-              </div>
-              <pre>${JSON.stringify(artifact.visualization, null, 2)}</pre>
-            `;
-            app.appendChild(panel);
-          }
+          const response = await fetch("/api/dashboard-data", { cache: "no-store" });
+          if (!response.ok) throw new Error(`Dashboard API returned ${response.status}`);
+          state.payload = await response.json();
+          populateFilters();
+          applyFilters();
+          renderSummary();
+          renderPipeline();
         } catch (error) {
-          console.error(error);
+          renderApiError(error);
         }
       }
+
+      function showLoading() {
+        els.summary.innerHTML = metricCard("Loading", "...", "Scanning runtime artifacts");
+        els.artifactList.innerHTML = '<div class="empty">Loading analysis artifacts...</div>';
+        els.visualOutput.innerHTML = '<div class="empty">Waiting for dashboard data...</div>';
+      }
+
+      function renderApiError(error) {
+        els.summary.innerHTML = "";
+        els.artifactList.innerHTML = "";
+        els.visualOutput.innerHTML = `
+          <div class="error">
+            <strong>Dashboard API is not available.</strong><br />
+            Start the dynamic dashboard with <code>python main.py dashboard --serve</code>, then open
+            <code>http://127.0.0.1:8765</code>. Details: ${escapeHtml(error.message)}
+          </div>
+        `;
+      }
+
+      function populateFilters() {
+        const analyses = state.payload?.analyses ?? [];
+        const categories = uniqueValues(analyses.map((item) => item.category || "Uncategorized"));
+        const runIds = uniqueValues(analyses.map((item) => item.run_id).filter(Boolean));
+
+        els.categoryFilter.innerHTML = option("all", "All categories") + categories.map((value) => option(value, value)).join("");
+        els.runFilter.innerHTML = option("all", "All stats runs") + runIds.map((value) => option(value, value)).join("");
+      }
+
+      function applyFilters() {
+        const analyses = state.payload?.analyses ?? [];
+        const category = els.categoryFilter.value;
+        const runId = els.runFilter.value;
+        state.filtered = analyses.filter((analysis) => {
+          const categoryMatches = category === "all" || (analysis.category || "Uncategorized") === category;
+          const runMatches = runId === "all" || analysis.run_id === runId;
+          return categoryMatches && runMatches;
+        });
+
+        if (!state.filtered.some((analysis) => analysis.filename === state.selectedFilename)) {
+          state.selectedFilename = state.filtered[0]?.filename ?? null;
+        }
+
+        els.analysisSelect.innerHTML = state.filtered.length
+          ? state.filtered.map((analysis) => option(analysis.filename, `${analysis.title} | ${analysis.run_id}`)).join("")
+          : option("", "No analysis artifacts");
+        els.analysisSelect.value = state.selectedFilename ?? "";
+        renderArtifactList();
+        renderSelectedAnalysis();
+      }
+
+      function renderSummary() {
+        const summary = state.payload?.summary ?? {};
+        const latestIngestion = (state.payload?.ingestion_runs ?? []).find((run) => run.is_latest);
+        els.summary.innerHTML = [
+          metricCard("Ingestion runs", summary.ingestion_runs ?? 0, "Versioned clean-stage manifests"),
+          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "All stats JSON files discovered"),
+          metricCard("Visualizations", summary.visualizations ?? 0, "Renderable visualization contracts"),
+          metricCard("Latest cohort", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
+        ].join("");
+      }
+
+      function renderArtifactList() {
+        if (!state.filtered.length) {
+          els.artifactList.innerHTML = '<div class="empty">No analysis artifacts match the selected filters.</div>';
+          return;
+        }
+
+        els.artifactList.innerHTML = state.filtered
+          .map((analysis) => `
+            <button class="artifact-button ${analysis.filename === state.selectedFilename ? "active" : ""}" type="button" data-filename="${escapeHtml(analysis.filename)}">
+              <div class="artifact-title">
+                <span>${escapeHtml(analysis.title)}</span>
+                ${analysis.is_latest ? '<span class="badge">latest</span>' : ""}
+              </div>
+              <div class="artifact-meta">
+                ${escapeHtml(analysis.category)} | ${escapeHtml(analysis.visualization_type || "data")} | ${escapeHtml(formatDate(analysis.run_datetime))}
+              </div>
+            </button>
+          `)
+          .join("");
+      }
+
+      function renderSelectedAnalysis() {
+        const analysis = state.filtered.find((item) => item.filename === state.selectedFilename);
+        if (!analysis) {
+          els.visualOutput.innerHTML = '<div class="empty">Select an analysis artifact to inspect.</div>';
+          return;
+        }
+
+        els.visualOutput.innerHTML = `
+          <div class="visual-header">
+            <div>
+              <div class="eyebrow">${escapeHtml(analysis.category)}</div>
+              <h2 class="visual-title">${escapeHtml(analysis.title)}</h2>
+              <p class="meta">${escapeHtml(analysis.description)}</p>
+            </div>
+            <div>${analysis.is_latest ? '<span class="badge">latest</span>' : ""}</div>
+          </div>
+          <div class="meta">
+            Stats run ${escapeHtml(analysis.run_id)} | Ingestion run ${escapeHtml(analysis.manifest_run_id)} |
+            n=${escapeHtml(analysis.metadata?.n ?? "NA")} | ${escapeHtml(formatDate(analysis.run_datetime))}
+          </div>
+          ${renderVisualization(analysis)}
+          ${renderNotes(analysis)}
+        `;
+      }
+
+      function renderVisualization(analysis) {
+        const visualization = analysis.visualization ?? {};
+        if (visualization.type === "multi") {
+          return (visualization.panels ?? []).map((panel) => renderPanel(panel, analysis.data)).join("");
+        }
+        return renderPanel(visualization, analysis.data);
+      }
+
+      function renderPanel(panel, data) {
+        if (panel.type === "scalar_cards") return renderScalarCards(panel.config?.cards ?? [], data);
+        if (panel.type === "table") return renderTable(panel.config?.columns ?? [], data.contributor_rows ?? data.rows ?? []);
+        if (panel.type === "bar") return renderBarChart(panel.config ?? {}, data.rows ?? []);
+        if (panel.type === "histogram") return renderHistogram(panel.config ?? {}, data.values ?? []);
+        return `<pre>${escapeHtml(JSON.stringify({ visualization: panel, data }, null, 2))}</pre>`;
+      }
+
+      function renderScalarCards(cards, data) {
+        return `
+          <div class="cards">
+            ${cards
+              .map((card) => `
+                <div class="card">
+                  <div class="metric-label">${escapeHtml(card.label)}</div>
+                  <div class="card-value">${escapeHtml(formatValue(data[card.value_field], card.format, card.unit))}</div>
+                </div>
+              `)
+              .join("")}
+          </div>
+        `;
+      }
+
+      function renderTable(columns, rows) {
+        if (!rows.length) return '<div class="empty">No table rows available.</div>';
+        return `
+          <table>
+            <thead>
+              <tr>${columns.map((column) => `<th>${escapeHtml(column.label || column.field)}</th>`).join("")}</tr>
+            </thead>
+            <tbody>
+              ${rows
+                .map((row) => `
+                  <tr>
+                    ${columns.map((column) => `<td>${escapeHtml(formatValue(row[column.field], column.format))}</td>`).join("")}
+                  </tr>
+                `)
+                .join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function renderBarChart(config, rows) {
+        if (!rows.length) return '<div class="empty">No bar chart rows available.</div>';
+        const xField = config.x_field ?? "label";
+        const yField = config.y_field ?? "value";
+        const maxValue = Math.max(...rows.map((row) => Number(row[yField]) || 0), 1);
+        return `
+          <div class="chart" aria-label="${escapeHtml(config.y_label || "Bar chart")}">
+            ${rows
+              .map((row) => {
+                const value = Number(row[yField]) || 0;
+                const width = `${Math.max((value / maxValue) * 100, 2)}%`;
+                return `
+                  <div class="bar-row">
+                    <div>${escapeHtml(row[xField] ?? "Unknown")}</div>
+                    <div class="bar-track"><div class="bar-fill" style="--value:${width}"></div></div>
+                    <strong>${escapeHtml(value)}</strong>
+                  </div>
+                `;
+              })
+              .join("")}
+          </div>
+        `;
+      }
+
+      function renderHistogram(config, values) {
+        if (!values.length) return '<div class="empty">No histogram values available.</div>';
+        const binCount = Math.max(Number(config.bin_count) || 12, 1);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const width = Math.max((max - min) / binCount, 1);
+        const bins = Array.from({ length: binCount }, (_, index) => ({
+          start: min + index * width,
+          end: index === binCount - 1 ? max : min + (index + 1) * width,
+          count: 0,
+        }));
+        for (const value of values) {
+          const index = Math.min(Math.floor((value - min) / width), binCount - 1);
+          bins[index].count += 1;
+        }
+        const maxCount = Math.max(...bins.map((bin) => bin.count), 1);
+        return `
+          <div>
+            <div class="histogram" aria-label="${escapeHtml(config.x_label || "Histogram")}">
+              ${bins
+                .map((bin) => {
+                  const height = `${Math.max((bin.count / maxCount) * 100, 2)}%`;
+                  const label = `${Math.round(bin.start)}-${Math.round(bin.end)}: ${bin.count}`;
+                  return `<div class="hist-bin" style="--value:${height}" data-label="${escapeHtml(label)}"></div>`;
+                })
+                .join("")}
+            </div>
+            <div class="meta">${escapeHtml(config.x_label || "")}</div>
+          </div>
+        `;
+      }
+
+      function renderNotes(analysis) {
+        const notes = [analysis.metadata?.exclusions, analysis.metadata?.notes].filter(Boolean);
+        if (!notes.length) return "";
+        return `<div class="empty">${notes.map(escapeHtml).join("<br />")}</div>`;
+      }
+
+      function renderPipeline() {
+        const pipeline = state.payload?.pipeline ?? [];
+        els.pipelineCount.textContent = `${pipeline.length} ingestion lane${pipeline.length === 1 ? "" : "s"}`;
+        if (!pipeline.length) {
+          els.pipeline.innerHTML = '<div class="empty">No pipeline runs discovered yet.</div>';
+          return;
+        }
+        els.pipeline.innerHTML = pipeline
+          .map((lane) => `
+            <div class="pipeline-row">
+              <div class="pipeline-column">
+                <div class="eyebrow">Ingestion</div>
+                ${lane.ingestion ? renderPipelineNode(lane.ingestion, ["total_rows", "source_count"]) : '<div class="node">Missing ingestion manifest</div>'}
+              </div>
+              <div class="pipeline-arrow">-></div>
+              <div class="pipeline-column">
+                <div class="eyebrow">Stats Runs</div>
+                ${lane.stats_runs.length ? lane.stats_runs.map((node) => renderPipelineNode(node, ["script_id", "n"])).join("") : '<div class="node">No stats artifacts</div>'}
+              </div>
+              <div class="pipeline-arrow">-></div>
+              <div class="pipeline-column">
+                <div class="eyebrow">Visualizations</div>
+                ${lane.visualizations.length ? lane.visualizations.map((node) => renderPipelineNode(node, ["type", "script_id"])).join("") : '<div class="node">No visualizations generated</div>'}
+              </div>
+            </div>
+          `)
+          .join("");
+      }
+
+      function renderPipelineNode(node, fields) {
+        const details = fields
+          .map((field) => node[field] !== null && node[field] !== undefined ? `${field.replaceAll("_", " ")}: ${node[field]}` : null)
+          .filter(Boolean)
+          .join(" | ");
+        return `
+          <div class="node ${node.is_latest ? "latest" : ""}">
+            <div class="artifact-title">
+              <span>${escapeHtml(node.label)}</span>
+              ${node.is_latest ? '<span class="badge gold">latest</span>' : ""}
+            </div>
+            <div class="meta">${escapeHtml(formatDate(node.run_datetime))}${details ? ` | ${escapeHtml(details)}` : ""}</div>
+          </div>
+        `;
+      }
+
+      function setTab(tab) {
+        state.tab = tab;
+        els.tabs.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+        const showingPipeline = tab === "pipeline";
+        els.pipelineView.classList.toggle("hidden", !showingPipeline);
+        els.analysisView.classList.toggle("hidden", showingPipeline);
+        els.analysisBrowser.classList.toggle("hidden", showingPipeline);
+      }
+
+      function metricCard(label, value, detail) {
+        return `
+          <section class="panel metric">
+            <div class="metric-label">${escapeHtml(label)}</div>
+            <div class="metric-value">${escapeHtml(value)}</div>
+            <div class="meta">${escapeHtml(detail)}</div>
+          </section>
+        `;
+      }
+
+      function uniqueValues(values) {
+        return Array.from(new Set(values)).sort((a, b) => String(a).localeCompare(String(b)));
+      }
+
+      function option(value, label) {
+        return `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
+      }
+
+      els.categoryFilter.addEventListener("change", applyFilters);
+      els.runFilter.addEventListener("change", applyFilters);
+      els.analysisSelect.addEventListener("change", () => {
+        state.selectedFilename = els.analysisSelect.value;
+        renderArtifactList();
+        renderSelectedAnalysis();
+      });
+      els.artifactList.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-filename]");
+        if (!button) return;
+        state.selectedFilename = button.dataset.filename;
+        els.analysisSelect.value = state.selectedFilename;
+        renderArtifactList();
+        renderSelectedAnalysis();
+      });
+      els.refresh.addEventListener("click", loadDashboard);
+      els.tabs.forEach((button) => button.addEventListener("click", () => setTab(button.dataset.tab)));
 
       loadDashboard();
     </script>

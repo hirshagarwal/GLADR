@@ -6,6 +6,7 @@ import argparse
 
 from gladr.analysis.runner import run_analysis
 from gladr.dashboard.build import build_dashboard
+from gladr.dashboard.server import DEFAULT_HOST, DEFAULT_PORT, serve_dashboard
 from gladr.ingest.runner import run_ingestion
 
 
@@ -20,7 +21,10 @@ def build_parser() -> argparse.ArgumentParser:
     analyze_parser = subparsers.add_parser("analyze", help="Run analysis scripts")
     analyze_parser.add_argument("--scripts", nargs="+", help="Specific analysis script ids")
 
-    subparsers.add_parser("dashboard", help="Build the dashboard HTML shell")
+    dashboard_parser = subparsers.add_parser("dashboard", help="Build or serve the dashboard")
+    dashboard_parser.add_argument("--serve", action="store_true", help="Run a local dynamic dashboard server")
+    dashboard_parser.add_argument("--host", default=DEFAULT_HOST, help="Dashboard server host")
+    dashboard_parser.add_argument("--port", default=DEFAULT_PORT, type=int, help="Dashboard server port")
 
     run_all_parser = subparsers.add_parser("run-all", help="Run ingestion, analysis, and dashboard")
     run_all_parser.add_argument("--adapter", help="Specific adapter id to run")
@@ -43,6 +47,9 @@ def main() -> None:
         return
 
     if args.command == "dashboard":
+        if args.serve:
+            serve_dashboard(host=args.host, port=args.port)
+            return
         build_dashboard()
         return
 
