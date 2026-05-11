@@ -1,0 +1,20 @@
+{
+  "run_id": "20260510_205054",
+  "run_datetime": "2026-05-10T20:50:54-04:00",
+  "manifest_run_id": "20260510_192455",
+  "template_id": "cox_regression",
+  "parameters": {
+    "start_date": "presentation_date",
+    "event_date": "recurrence_date",
+    "censor_date": "",
+    "predictors": [
+      "recurrence_local"
+    ]
+  },
+  "scripts": [
+    "cox_regression"
+  ],
+  "artifacts": {
+    "cox_regression": "artifacts/cox_regression_20260510_205054.json"
+  }
+}

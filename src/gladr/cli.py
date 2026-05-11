@@ -7,7 +7,8 @@ import argparse
 from gladr.analysis.runner import run_analysis
 from gladr.dashboard.build import build_dashboard
 from gladr.dashboard.server import DEFAULT_HOST, DEFAULT_PORT, serve_dashboard
-from gladr.ingest.runner import run_ingestion
+from gladr.ingestion.histology import run_histology_ingestion
+from gladr.ingestion.runner import run_ingestion
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -17,6 +18,18 @@ def build_parser() -> argparse.ArgumentParser:
     ingest_parser = subparsers.add_parser("ingest", help="Run ingestion adapters")
     ingest_parser.add_argument("--adapter", help="Specific adapter id to run")
     ingest_parser.add_argument("--file", help="Optional source file path override")
+
+    histology_parser = subparsers.add_parser("ingest-histology", help="Run histology text report ingestion")
+    histology_parser.add_argument("--txt-dir", help="Directory containing raw histology .txt files")
+    histology_parser.add_argument("--csv-dir", help="Directory for per-report histology CSV files")
+    histology_parser.add_argument("--output", help="Optional combined histology report CSV path")
+    histology_parser.add_argument("--model", default="gpt-5-nano", help="OpenAI model for per-report extraction")
+    histology_parser.add_argument("--override", action="store_true", help="Regenerate per-report CSVs that already exist")
+    histology_parser.add_argument(
+        "--no-generate",
+        action="store_true",
+        help="Compile existing per-report CSVs without generating missing CSVs",
+    )
 
     analyze_parser = subparsers.add_parser("analyze", help="Run analysis scripts")
     analyze_parser.add_argument("--scripts", nargs="+", help="Specific analysis script ids")
@@ -40,6 +53,17 @@ def main() -> None:
 
     if args.command == "ingest":
         run_ingestion(adapter_id=args.adapter, source_file=args.file)
+        return
+
+    if args.command == "ingest-histology":
+        run_histology_ingestion(
+            txt_dir=args.txt_dir,
+            csv_dir=args.csv_dir,
+            output_file=args.output,
+            csv_override=args.override,
+            generate_reports=not args.no_generate,
+            model=args.model,
+        )
         return
 
     if args.command == "analyze":

@@ -1,0 +1,26 @@
+module_id: ingestion
+stage: ingestion
+purpose: Convert raw source data into source-scoped GLADR ingestion artifacts.
+owner_files:
+  - adapters/
+  - normalizers.py
+  - validators.py
+  - quality_flags.py
+contracts:
+  outputs:
+    - contracts/canonical_schema.json
+    - contracts/ingestion_artifact_schema.json
+examples:
+  - examples/gbm_registry_raw_sample.csv
+  - examples/clean_dataset_sample.json
+  - examples/ingestion_report_sample.json
+commands:
+  run_all: python main.py ingest
+  run_adapter: python main.py ingest --adapter gbm_registry
+  run_histology: python main.py ingest-histology
+  test: python -B -m unittest discover -s tests
+llm_rules:
+  - Read this module README before editing ingestion behavior.
+  - Do not edit generated outputs directly.
+  - Keep output fields compatible with contracts/canonical_schema.json.
+  - Add or update examples when behavior changes in a user-visible way.

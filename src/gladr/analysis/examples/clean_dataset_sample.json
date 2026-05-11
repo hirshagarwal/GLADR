@@ -25,7 +25,7 @@
       "five_ala": true,
       "residual_enhancement": "None",
       "radiotherapy": true,
-      "tmz": "Concurrent",
+      "tmz": true,
       "recurrence_date": null,
       "recurrence_type": "Residual",
       "recurrence_side": "Left",
@@ -75,4 +75,3 @@
     }
   ]
 }
-

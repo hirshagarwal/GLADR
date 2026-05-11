@@ -24,8 +24,8 @@ Avoid by default:
 The dashboard reads runtime artifacts from:
 
 ```text
-outputs/clean/
-outputs/stats/
+outputs/ingestion/registry/
+outputs/analysis/
 ```
 
 The dashboard API payload is described by `contracts/dashboard_payload_schema.json`.
@@ -35,7 +35,7 @@ The dashboard API payload is described by `contracts/dashboard_payload_schema.js
 `python main.py dashboard` copies the dashboard shell to:
 
 ```text
-outputs/dashboard/index.html
+outputs/dashboard/builds/index.html
 ```
 
 `python main.py dashboard --serve` starts the local dynamic dashboard and exposes:
@@ -48,4 +48,3 @@ outputs/dashboard/index.html
 ## Design principle
 
 Pipeline code writes artifacts. The dashboard discovers, summarizes, and renders artifacts.
-

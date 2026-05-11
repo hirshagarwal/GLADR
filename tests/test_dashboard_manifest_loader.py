@@ -22,30 +22,43 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             paths.ensure_runtime_dirs()
 
             _write_json(
-                paths.clean_outputs_dir / "run_manifest_20260419_100000.json",
+                paths.registry_manifests_outputs_dir / "manifest_20260419_100000.json",
                 {
                     "run_id": "20260419_100000",
                     "pipeline_version": "0.1.0",
                     "run_datetime": "2026-04-19T10:00:00-04:00",
                     "sources": [{"adapter": "demo", "file": "demo.csv", "rows_ingested": 4}],
+                    "summary": {"source_files": 1, "raw_rows": 4, "ingested_rows": 4},
+                    "steps": [
+                        {
+                            "step_id": "demo_step",
+                            "label": "Demo manifest step",
+                            "summary": "This step came from the manifest.",
+                            "status": "completed",
+                            "execution_mode": "static_code",
+                            "inputs": ["demo.csv"],
+                            "outputs": ["clean_dataset"],
+                            "metrics": {"rows": 4},
+                        }
+                    ],
                     "total_rows": 4,
                     "canonical_schema_version": "1.0.0",
                 },
             )
             _write_json(
-                paths.clean_outputs_dir / "latest.json",
-                {"run_manifest": "run_manifest_20260419_100000.json"},
+                paths.registry_ingestion_outputs_dir / "latest.json",
+                {"manifest": "manifests/manifest_20260419_100000.json"},
             )
             _write_json(
-                paths.stats_outputs_dir / "latest.json",
-                {"cohort_summary": "cohort_summary_20260419_100500.json"},
+                paths.analysis_outputs_dir / "latest.json",
+                {"cohort_summary": "artifacts/cohort_summary_20260419_100500.json"},
             )
             _write_json(
-                paths.stats_outputs_dir / "cohort_summary_20260419_100500.json",
+                paths.analysis_artifacts_outputs_dir / "cohort_summary_20260419_100500.json",
                 _analysis_payload("cohort_summary", "Cohort", "20260419_100500", "20260419_100000"),
             )
             _write_json(
-                paths.stats_outputs_dir / "age_distribution_20260419_100600.json",
+                paths.analysis_artifacts_outputs_dir / "age_distribution_20260419_100600.json",
                 _analysis_payload("age_distribution", "Age", "20260419_100600", "20260419_100000"),
             )
 
@@ -60,21 +73,16 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             self.assertEqual(len(payload["pipeline"][0]["visualizations"]), 2)
             self.assertEqual([stage["id"] for stage in payload["stage_summaries"]], ["ingestion", "stats", "visualization"])
             self.assertEqual(payload["stage_summaries"][0]["status"], "completed")
+            ingestion_flow = payload["stage_summaries"][0]["current"]["flow"]
+            self.assertEqual(ingestion_flow["steps"][0]["label"], "Demo manifest step")
+            self.assertEqual(ingestion_flow["steps"][0]["detail"], "This step came from the manifest.")
+            self.assertEqual(ingestion_flow["steps"][0]["execution_mode"], "static_code")
             self.assertEqual(payload["stage_summaries"][1]["current"]["metrics"][0]["value"], 1)
             self.assertEqual(payload["stage_summaries"][2]["current"]["metrics"][0]["value"], 1)
 
 
 def _project_paths(root: Path) -> ProjectPaths:
-    return ProjectPaths(
-        root=root,
-        data_dir=root / "data",
-        raw_data_dir=root / "data" / "raw",
-        notebooks_dir=root / "notebooks",
-        outputs_dir=root / "outputs",
-        clean_outputs_dir=root / "outputs" / "clean",
-        stats_outputs_dir=root / "outputs" / "stats",
-        dashboard_outputs_dir=root / "outputs" / "dashboard",
-    )
+    return ProjectPaths.from_root(root)
 
 
 def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: str) -> dict[str, object]:

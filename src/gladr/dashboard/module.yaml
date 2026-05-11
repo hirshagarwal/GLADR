@@ -17,8 +17,7 @@ commands:
   serve: python main.py dashboard --serve
   test: python -B -m unittest discover -s tests
 llm_rules:
-  - Treat outputs/clean and outputs/stats as read-only inputs.
+  - Treat outputs/ingestion and outputs/analysis as read-only inputs.
   - Keep dashboard changes compatible with contracts/dashboard_payload_schema.json.
   - Prefer adding payload fields in manifest_loader.py over hard-coding artifact assumptions in the UI.
   - Do not make dashboard code responsible for pipeline execution.
-

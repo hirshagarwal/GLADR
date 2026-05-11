@@ -30,7 +30,7 @@ Open:
 http://127.0.0.1:8765
 ```
 
-If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans `outputs/clean/` and `outputs/stats/` on each request.
+If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans `outputs/ingestion/registry/` and `outputs/analysis/` on each request.
 
 ## Current Commands
 
@@ -38,7 +38,7 @@ If you generate new ingestion or analysis artifacts while the server is running,
 # Ingestion
 python main.py ingest
 python main.py ingest --adapter gbm_registry
-python main.py ingest --adapter gbm_registry --file data/raw/main_sheet/main_sheet_19.04.26.csv
+python main.py ingest --adapter gbm_registry --file data/raw/registry/main_sheet/main_sheet_19.04.26.csv
 
 # Analysis
 python main.py analyze
@@ -55,17 +55,29 @@ python main.py run-all
 ## Runtime Flow
 
 ```text
-data/raw/main_sheet/*.csv
-  -> outputs/clean/clean_dataset_<run_id>.json
-  -> outputs/clean/run_manifest_<run_id>.json
-  -> outputs/clean/ingestion_report_<run_id>.json
-  -> outputs/clean/latest.json
-  -> outputs/stats/<script_id>_<run_id>.json
-  -> outputs/stats/latest.json
+data/raw/registry/main_sheet/*.csv
+  -> outputs/ingestion/registry/datasets/clean_dataset_<run_id>.json
+  -> outputs/ingestion/registry/manifests/manifest_<run_id>.json
+  -> outputs/ingestion/registry/reports/quality_report_<run_id>.json
+  -> outputs/ingestion/registry/latest.json
+  -> outputs/analysis/artifacts/<script_id>_<run_id>.json
+  -> outputs/analysis/manifests/analysis_manifest_<run_id>.json
+  -> outputs/analysis/latest.json
   -> dashboard API discovers artifacts and renders the browser UI
 ```
 
-The dashboard shell can be rebuilt into `outputs/dashboard/index.html` with:
+Histology text reports follow their own ingestion source lane:
+
+```text
+data/raw/histology/text_reports/*.txt
+  -> data/interim/histology/extracted_marker_csv/*.csv
+  -> outputs/ingestion/histology/datasets/histology_dataset_<run_id>.json
+  -> outputs/ingestion/histology/manifests/manifest_<run_id>.json
+  -> outputs/ingestion/histology/reports/extraction_report_<run_id>.json
+  -> outputs/ingestion/histology/latest.json
+```
+
+The dashboard shell can be rebuilt into `outputs/dashboard/builds/index.html` with:
 
 ```bash
 python main.py dashboard
@@ -78,11 +90,17 @@ For normal use, prefer `python main.py dashboard --serve`; the dynamic server ex
 ```text
 GLADR/
 ├── data/
-│   └── raw/
+│   ├── raw/
+│   │   ├── registry/
+│   │   └── histology/
+│   ├── interim/
+│   └── reference/
+├── deliverables/
 ├── notebooks/
+│   └── exploratory/
 ├── outputs/
-│   ├── clean/
-│   ├── stats/
+│   ├── ingestion/
+│   ├── analysis/
 │   └── dashboard/
 ├── src/
 │   └── gladr/
@@ -90,7 +108,7 @@ GLADR/
 │       ├── contracts/
 │       ├── core/
 │       ├── dashboard/
-│       └── ingest/
+│       └── ingestion/
 ├── tests/
 ├── main.py
 ├── pyproject.toml
@@ -117,26 +135,28 @@ The intended rule is:
 
 Location:
 
-- [src/gladr/ingest](/Users/hirsh/Documents/GLADR/src/gladr/ingest)
+- [src/gladr/ingestion](/Users/hirsh/Documents/GLADR/src/gladr/ingestion)
 
 Primary files:
 
-- [src/gladr/ingest/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingest/README.md)
-- [src/gladr/ingest/module.yaml](/Users/hirsh/Documents/GLADR/src/gladr/ingest/module.yaml)
-- [src/gladr/ingest/adapters/base_adapter.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/base_adapter.py)
-- [src/gladr/ingest/adapters/gbm_registry.py](/Users/hirsh/Documents/GLADR/src/gladr/ingest/adapters/gbm_registry.py)
-- [src/gladr/ingest/contracts/canonical_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/ingest/contracts/canonical_schema.json)
+- [src/gladr/ingestion/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/README.md)
+- [src/gladr/ingestion/module.yaml](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/module.yaml)
+- [src/gladr/ingestion/adapters/base_adapter.py](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/adapters/base_adapter.py)
+- [src/gladr/ingestion/adapters/gbm_registry.py](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/adapters/gbm_registry.py)
+- [src/gladr/ingestion/contracts/canonical_schema.json](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/contracts/canonical_schema.json)
 
 Use this module when changing how raw source data is read, normalized, validated, flagged, or converted into canonical records.
 
-Ingestion writes:
+Registry ingestion writes:
 
 ```text
-outputs/clean/clean_dataset_<run_id>.json
-outputs/clean/run_manifest_<run_id>.json
-outputs/clean/ingestion_report_<run_id>.json
-outputs/clean/latest.json
+outputs/ingestion/registry/datasets/clean_dataset_<run_id>.json
+outputs/ingestion/registry/manifests/manifest_<run_id>.json
+outputs/ingestion/registry/reports/quality_report_<run_id>.json
+outputs/ingestion/registry/latest.json
 ```
+
+Histology ingestion writes under `outputs/ingestion/histology/` and keeps generated per-report marker CSVs in `data/interim/histology/extracted_marker_csv/`.
 
 Do not edit these generated files manually. Change ingestion code and rerun ingestion.
 
@@ -166,8 +186,9 @@ Current scripts:
 Analysis writes:
 
 ```text
-outputs/stats/<script_id>_<run_id>.json
-outputs/stats/latest.json
+outputs/analysis/artifacts/<script_id>_<run_id>.json
+outputs/analysis/manifests/analysis_manifest_<run_id>.json
+outputs/analysis/latest.json
 ```
 
 Each stats artifact is self-describing. It includes metadata, data, and optionally a `visualization` block that tells the dashboard how to render it.
@@ -219,7 +240,7 @@ Tests verify that mirrored contracts remain synchronized.
 
 The current policy is append-only:
 
-- A new ingestion run creates a new clean dataset, manifest, and ingestion report.
+- A new ingestion run creates source-scoped datasets, manifests, and reports.
 - A new analysis run creates new stats artifacts.
 - `latest.json` files move forward to point at the current artifacts.
 - The dashboard discovers both latest and historical artifacts.
@@ -237,12 +258,12 @@ That command does not exist yet; for now, artifact cleanup is manual and should 
 
 ## Adding A New Data Source
 
-1. Read [src/gladr/ingest/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingest/README.md).
-2. Review the canonical schema in `src/gladr/ingest/contracts/`.
-3. Add a new adapter under `src/gladr/ingest/adapters/`.
-4. Return an `AdapterRunResult` with a canonical dataframe, ingestion report, and source summary.
+1. Read [src/gladr/ingestion/README.md](/Users/hirsh/Documents/GLADR/src/gladr/ingestion/README.md).
+2. Review the canonical schema in `src/gladr/ingestion/contracts/`.
+3. Add a new adapter under `src/gladr/ingestion/adapters/`.
+4. Return an `AdapterRunResult` with a canonical dataframe, quality report, and source summary.
 5. Run ingestion.
-6. Verify the clean artifacts and dashboard overview.
+6. Verify the source-scoped ingestion artifacts and dashboard overview.
 
 The adapter discovery system picks up `BaseAdapter` subclasses automatically.
 
@@ -305,4 +326,3 @@ The most important design constraint is that pipeline behavior should live in sm
 - dashboard owns artifact discovery and rendering
 
 Generated artifacts should be produced by running the pipeline, not by editing output files directly. This keeps the system reproducible, easier to automate with small LLMs, and easier to open source later.
-

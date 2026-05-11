@@ -1,0 +1,668 @@
+{
+  "run_id": "20260510_192455",
+  "pipeline_version": "0.1.0",
+  "run_datetime": "2026-05-10T19:24:55-04:00",
+  "sources": [
+    {
+      "adapter": "gbm_registry",
+      "file": "main_sheet_11.12.csv",
+      "rows_raw": 18,
+      "rows_stub": 0,
+      "rows_ingested": 18
+    },
+    {
+      "adapter": "gbm_registry",
+      "file": "main_sheet_15.08.csv",
+      "rows_raw": 21,
+      "rows_stub": 16,
+      "rows_ingested": 5
+    },
+    {
+      "adapter": "gbm_registry",
+      "file": "main_sheet_19.04.26.csv",
+      "rows_raw": 258,
+      "rows_stub": 49,
+      "rows_ingested": 209
+    }
+  ],
+  "summary": {
+    "source_files": 3,
+    "raw_rows": 297,
+    "stub_rows": 65,
+    "ingested_rows": 232,
+    "flagged_records": 20,
+    "quality_flags": 20,
+    "adapters": [
+      "gbm_registry"
+    ]
+  },
+  "steps": [
+    {
+      "step_id": "read_sources",
+      "label": "Read source files",
+      "summary": "3 file(s), 297 raw row(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "main_sheet_11.12.csv",
+        "main_sheet_15.08.csv",
+        "main_sheet_19.04.26.csv"
+      ],
+      "outputs": [
+        "raw dataframes"
+      ],
+      "metrics": {
+        "source_files": 3,
+        "raw_rows": 297
+      }
+    },
+    {
+      "step_id": "normalize",
+      "label": "Normalize to canonical schema",
+      "summary": "Adapter: gbm_registry | schema 1.0.0",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "raw dataframes"
+      ],
+      "outputs": [
+        "canonical records"
+      ],
+      "metrics": {
+        "canonical_schema_version": "1.0.0"
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:map_columns",
+      "label": "Map source columns",
+      "summary": "Mapped 27 known GBM registry columns to canonical field names.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "main_sheet_11.12.csv"
+      ],
+      "outputs": [
+        "renamed dataframe"
+      ],
+      "metrics": {
+        "mapped_columns": 27
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:remove_stub_rows",
+      "label": "Remove stub rows",
+      "summary": "Removed 0 stub row(s) from 18 raw row(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "renamed dataframe"
+      ],
+      "outputs": [
+        "working dataframe"
+      ],
+      "metrics": {
+        "raw_rows": 18,
+        "stub_rows": 0,
+        "remaining_rows": 18
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:parse_dates",
+      "label": "Parse date fields",
+      "summary": "Parsed DOB, presentation, MRI, resection, post-op MRI, recurrence, and death dates to ISO strings.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "date-like source columns"
+      ],
+      "outputs": [
+        "canonical date fields"
+      ],
+      "metrics": {
+        "date_fields": 7
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:normalize_categories_booleans",
+      "label": "Normalize categories and booleans",
+      "summary": "Normalized sex, contributor, tumour side/lobe, recurrence side/lobe, multifocal, periventricular, 5-ALA, radiotherapy, and local recurrence fields.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "categorical and boolean source columns"
+      ],
+      "outputs": [
+        "canonical categorical and boolean fields"
+      ],
+      "metrics": {
+        "category_fields": 6,
+        "boolean_fields": 6
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:map_lobes",
+      "label": "Apply lobe mapping",
+      "summary": "Mapped tumour and recurrence lobe values through data/reference/lobe_mapping.json.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "tumour_lobe",
+        "recurrence_lobe",
+        "data/reference/lobe_mapping.json"
+      ],
+      "outputs": [
+        "canonical lobe labels"
+      ],
+      "metrics": {
+        "mapped_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:derive_age",
+      "label": "Resolve age at presentation",
+      "summary": "Used source age when present; otherwise computed age from DOB and presentation date.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "age_at_presentation",
+        "dob",
+        "presentation_date"
+      ],
+      "outputs": [
+        "age_at_presentation"
+      ],
+      "metrics": {
+        "flagged_missing_age_records": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:derive_nlr",
+      "label": "Compute NLR",
+      "summary": "Computed neutrophil-to-lymphocyte ratio from presentation neutrophils and lymphocytes.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "outputs": [
+        "nlr"
+      ],
+      "metrics": {
+        "derived_fields": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:derive_resection_recurrence",
+      "label": "Derive resection and recurrence types",
+      "summary": "Derived resection type from resection date and recurrence type from recurrence evidence values.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "resection_date",
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "resection_type",
+        "recurrence_type"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:split_qmc_local",
+      "label": "Split QMC local field",
+      "summary": "Split the source QMC Local field into qmc_local and referring_centre.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "qmc_local_raw"
+      ],
+      "outputs": [
+        "qmc_local",
+        "referring_centre"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_11.12:quality_flags",
+      "label": "Attach row quality flags",
+      "summary": "Attached row-level quality flags for 0 record(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_11.12.csv",
+      "inputs": [
+        "canonical records"
+      ],
+      "outputs": [
+        "data_quality_flags",
+        "quality report rows"
+      ],
+      "metrics": {
+        "flagged_records": 0,
+        "ingested_rows": 18
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:map_columns",
+      "label": "Map source columns",
+      "summary": "Mapped 27 known GBM registry columns to canonical field names.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "main_sheet_15.08.csv"
+      ],
+      "outputs": [
+        "renamed dataframe"
+      ],
+      "metrics": {
+        "mapped_columns": 27
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:remove_stub_rows",
+      "label": "Remove stub rows",
+      "summary": "Removed 16 stub row(s) from 21 raw row(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "renamed dataframe"
+      ],
+      "outputs": [
+        "working dataframe"
+      ],
+      "metrics": {
+        "raw_rows": 21,
+        "stub_rows": 16,
+        "remaining_rows": 5
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:parse_dates",
+      "label": "Parse date fields",
+      "summary": "Parsed DOB, presentation, MRI, resection, post-op MRI, recurrence, and death dates to ISO strings.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "date-like source columns"
+      ],
+      "outputs": [
+        "canonical date fields"
+      ],
+      "metrics": {
+        "date_fields": 7
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:normalize_categories_booleans",
+      "label": "Normalize categories and booleans",
+      "summary": "Normalized sex, contributor, tumour side/lobe, recurrence side/lobe, multifocal, periventricular, 5-ALA, radiotherapy, and local recurrence fields.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "categorical and boolean source columns"
+      ],
+      "outputs": [
+        "canonical categorical and boolean fields"
+      ],
+      "metrics": {
+        "category_fields": 6,
+        "boolean_fields": 6
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:map_lobes",
+      "label": "Apply lobe mapping",
+      "summary": "Mapped tumour and recurrence lobe values through data/reference/lobe_mapping.json.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "tumour_lobe",
+        "recurrence_lobe",
+        "data/reference/lobe_mapping.json"
+      ],
+      "outputs": [
+        "canonical lobe labels"
+      ],
+      "metrics": {
+        "mapped_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:derive_age",
+      "label": "Resolve age at presentation",
+      "summary": "Used source age when present; otherwise computed age from DOB and presentation date.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "age_at_presentation",
+        "dob",
+        "presentation_date"
+      ],
+      "outputs": [
+        "age_at_presentation"
+      ],
+      "metrics": {
+        "flagged_missing_age_records": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:derive_nlr",
+      "label": "Compute NLR",
+      "summary": "Computed neutrophil-to-lymphocyte ratio from presentation neutrophils and lymphocytes.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "outputs": [
+        "nlr"
+      ],
+      "metrics": {
+        "derived_fields": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:derive_resection_recurrence",
+      "label": "Derive resection and recurrence types",
+      "summary": "Derived resection type from resection date and recurrence type from recurrence evidence values.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "resection_date",
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "resection_type",
+        "recurrence_type"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:split_qmc_local",
+      "label": "Split QMC local field",
+      "summary": "Split the source QMC Local field into qmc_local and referring_centre.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "qmc_local_raw"
+      ],
+      "outputs": [
+        "qmc_local",
+        "referring_centre"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_15.08:quality_flags",
+      "label": "Attach row quality flags",
+      "summary": "Attached row-level quality flags for 0 record(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_15.08.csv",
+      "inputs": [
+        "canonical records"
+      ],
+      "outputs": [
+        "data_quality_flags",
+        "quality report rows"
+      ],
+      "metrics": {
+        "flagged_records": 0,
+        "ingested_rows": 5
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:map_columns",
+      "label": "Map source columns",
+      "summary": "Mapped 27 known GBM registry columns to canonical field names.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "main_sheet_19.04.26.csv"
+      ],
+      "outputs": [
+        "renamed dataframe"
+      ],
+      "metrics": {
+        "mapped_columns": 27
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:remove_stub_rows",
+      "label": "Remove stub rows",
+      "summary": "Removed 49 stub row(s) from 258 raw row(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "renamed dataframe"
+      ],
+      "outputs": [
+        "working dataframe"
+      ],
+      "metrics": {
+        "raw_rows": 258,
+        "stub_rows": 49,
+        "remaining_rows": 209
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:parse_dates",
+      "label": "Parse date fields",
+      "summary": "Parsed DOB, presentation, MRI, resection, post-op MRI, recurrence, and death dates to ISO strings.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "date-like source columns"
+      ],
+      "outputs": [
+        "canonical date fields"
+      ],
+      "metrics": {
+        "date_fields": 7
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:normalize_categories_booleans",
+      "label": "Normalize categories and booleans",
+      "summary": "Normalized sex, contributor, tumour side/lobe, recurrence side/lobe, multifocal, periventricular, 5-ALA, radiotherapy, and local recurrence fields.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "categorical and boolean source columns"
+      ],
+      "outputs": [
+        "canonical categorical and boolean fields"
+      ],
+      "metrics": {
+        "category_fields": 6,
+        "boolean_fields": 6
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:map_lobes",
+      "label": "Apply lobe mapping",
+      "summary": "Mapped tumour and recurrence lobe values through data/reference/lobe_mapping.json.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "tumour_lobe",
+        "recurrence_lobe",
+        "data/reference/lobe_mapping.json"
+      ],
+      "outputs": [
+        "canonical lobe labels"
+      ],
+      "metrics": {
+        "mapped_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:derive_age",
+      "label": "Resolve age at presentation",
+      "summary": "Used source age when present; otherwise computed age from DOB and presentation date.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "age_at_presentation",
+        "dob",
+        "presentation_date"
+      ],
+      "outputs": [
+        "age_at_presentation"
+      ],
+      "metrics": {
+        "flagged_missing_age_records": 20
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:derive_nlr",
+      "label": "Compute NLR",
+      "summary": "Computed neutrophil-to-lymphocyte ratio from presentation neutrophils and lymphocytes.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "outputs": [
+        "nlr"
+      ],
+      "metrics": {
+        "derived_fields": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:derive_resection_recurrence",
+      "label": "Derive resection and recurrence types",
+      "summary": "Derived resection type from resection date and recurrence type from recurrence evidence values.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "resection_date",
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "resection_type",
+        "recurrence_type"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:split_qmc_local",
+      "label": "Split QMC local field",
+      "summary": "Split the source QMC Local field into qmc_local and referring_centre.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "qmc_local_raw"
+      ],
+      "outputs": [
+        "qmc_local",
+        "referring_centre"
+      ],
+      "metrics": {
+        "derived_fields": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_19.04.26:quality_flags",
+      "label": "Attach row quality flags",
+      "summary": "Attached row-level quality flags for 20 record(s).",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_19.04.26.csv",
+      "inputs": [
+        "canonical records"
+      ],
+      "outputs": [
+        "data_quality_flags",
+        "quality report rows"
+      ],
+      "metrics": {
+        "flagged_records": 20,
+        "ingested_rows": 209
+      }
+    },
+    {
+      "step_id": "validate_quality",
+      "label": "Validate and flag rows",
+      "summary": "65 stub row(s) skipped | 20 flagged record(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "canonical records"
+      ],
+      "outputs": [
+        "quality_report_20260510_192455.json"
+      ],
+      "metrics": {
+        "stub_rows": 65,
+        "flagged_records": 20,
+        "quality_flags": 20
+      }
+    },
+    {
+      "step_id": "write_outputs",
+      "label": "Write result files",
+      "summary": "232 canonical row(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "canonical records",
+        "quality_report_20260510_192455.json"
+      ],
+      "outputs": [
+        "clean_dataset_20260510_192455.json",
+        "quality_report_20260510_192455.json"
+      ],
+      "metrics": {
+        "ingested_rows": 232
+      }
+    }
+  ],
+  "total_rows": 232,
+  "canonical_schema_version": "1.0.0",
+  "notes": ""
+}

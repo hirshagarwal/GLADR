@@ -22,7 +22,7 @@
     {"name": "five_ala", "type": "boolean", "nullable": true, "description": "5-ALA usage"},
     {"name": "residual_enhancement", "type": "string", "nullable": true, "description": "Residual contrast enhancement"},
     {"name": "radiotherapy", "type": "boolean", "nullable": true, "description": "Radiotherapy status"},
-    {"name": "tmz", "type": "string", "nullable": true, "description": "TMZ treatment status"},
+    {"name": "tmz", "type": "boolean", "nullable": true, "description": "TMZ treatment status"},
     {"name": "recurrence_date", "type": "date", "nullable": true, "description": "Date of first recurrence evidence"},
     {"name": "recurrence_type", "type": "string", "nullable": true, "description": "Derived recurrence type"},
     {"name": "recurrence_side", "type": "string", "nullable": true, "description": "Recurrence laterality"},

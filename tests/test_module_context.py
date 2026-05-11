@@ -12,7 +12,7 @@ SRC_DIR = PROJECT_ROOT / "src" / "gladr"
 class ModuleContextTests(unittest.TestCase):
     def test_stage_modules_have_llm_context_packets(self) -> None:
         expected_files = {
-            "ingest": [
+            "ingestion": [
                 "README.md",
                 "module.yaml",
                 "contracts/canonical_schema.json",
@@ -53,7 +53,7 @@ class ModuleContextTests(unittest.TestCase):
                 self.assertIn("llm_rules:", module_yaml)
 
     def test_module_json_context_files_are_valid(self) -> None:
-        for module_root in (SRC_DIR / "ingest", SRC_DIR / "analysis", SRC_DIR / "dashboard"):
+        for module_root in (SRC_DIR / "ingestion", SRC_DIR / "analysis", SRC_DIR / "dashboard"):
             for json_path in [*module_root.glob("contracts/*.json"), *module_root.glob("examples/*.json")]:
                 with self.subTest(path=json_path):
                     with json_path.open("r", encoding="utf-8") as handle:
@@ -63,7 +63,7 @@ class ModuleContextTests(unittest.TestCase):
         runtime_contracts = SRC_DIR / "contracts"
 
         mirrored_pairs = [
-            (runtime_contracts / "canonical_schema.json", SRC_DIR / "ingest" / "contracts" / "canonical_schema.json"),
+            (runtime_contracts / "canonical_schema.json", SRC_DIR / "ingestion" / "contracts" / "canonical_schema.json"),
             (runtime_contracts / "canonical_schema.json", SRC_DIR / "analysis" / "contracts" / "clean_dataset_schema.json"),
             (runtime_contracts / "visualization_schema.json", SRC_DIR / "analysis" / "contracts" / "visualization_schema.json"),
             (runtime_contracts / "visualization_schema.json", SRC_DIR / "dashboard" / "contracts" / "visualization_schema.json"),

@@ -7,6 +7,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from gladr.analysis.profiling import build_dataset_profile
+from gladr.analysis.templates import list_analysis_templates
 from gladr.core.latest_pointer import read_latest_pointer
 from gladr.core.paths import ProjectPaths
 from gladr.core.run_context import DEFAULT_TIMEZONE
@@ -32,8 +34,8 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
     project_paths = paths or ProjectPaths.discover()
     project_paths.ensure_runtime_dirs()
 
-    latest_clean = read_latest_pointer(project_paths.clean_outputs_dir / "latest.json")
-    latest_stats = read_latest_pointer(project_paths.stats_outputs_dir / "latest.json")
+    latest_clean = read_latest_pointer(project_paths.registry_ingestion_outputs_dir / "latest.json")
+    latest_stats = read_latest_pointer(project_paths.analysis_outputs_dir / "latest.json")
     ingestion_runs = discover_ingestion_runs(project_paths, latest_clean)
     analyses = discover_analysis_artifacts(project_paths, latest_stats)
 
@@ -48,6 +50,8 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
             "analysis_artifacts": len(analyses),
             "visualizations": sum(1 for analysis in analyses if analysis.get("visualization")),
         },
+        "dataset_profile": build_dataset_profile(project_paths),
+        "analysis_templates": list_analysis_templates(),
         "ingestion_runs": ingestion_runs,
         "analyses": analyses,
         "pipeline": build_pipeline_summary(ingestion_runs, analyses),
@@ -60,19 +64,20 @@ def discover_ingestion_runs(
     latest_clean: dict[str, object] | None = None,
 ) -> list[dict[str, Any]]:
     latest = latest_clean or {}
-    latest_manifest = latest.get("run_manifest")
+    latest_manifest = latest.get("manifest") or latest.get("run_manifest")
     runs: list[dict[str, Any]] = []
 
-    for manifest_path in sorted(paths.clean_outputs_dir.glob("run_manifest_*.json")):
+    for manifest_path in sorted(paths.registry_manifests_outputs_dir.glob("manifest_*.json")):
         manifest = _load_json_object(manifest_path)
         if not manifest:
             continue
 
-        run_id = str(manifest.get("run_id") or _run_id_from_filename(manifest_path, "run_manifest_"))
-        report_filename = f"ingestion_report_{run_id}.json"
-        report_path = paths.clean_outputs_dir / report_filename
+        run_id = str(manifest.get("run_id") or _run_id_from_filename(manifest_path, "manifest_"))
+        report_filename = f"quality_report_{run_id}.json"
+        report_path = paths.registry_reports_outputs_dir / report_filename
         clean_filename = f"clean_dataset_{run_id}.json"
         report_summary = _summarize_ingestion_report(report_path)
+        manifest_pointer = manifest_path.relative_to(paths.registry_ingestion_outputs_dir).as_posix()
 
         runs.append(
             {
@@ -82,13 +87,17 @@ def discover_ingestion_runs(
                 "canonical_schema_version": manifest.get("canonical_schema_version"),
                 "total_rows": manifest.get("total_rows"),
                 "sources": manifest.get("sources", []),
+                "summary": manifest.get("summary", {}),
+                "steps": manifest.get("steps", []),
                 "notes": manifest.get("notes", ""),
-                "manifest_filename": manifest_path.name,
-                "clean_dataset_filename": clean_filename if (paths.clean_outputs_dir / clean_filename).exists() else None,
-                "ingestion_report_filename": report_filename if report_path.exists() else None,
+                "manifest_filename": manifest_pointer,
+                "clean_dataset_filename": f"datasets/{clean_filename}"
+                if (paths.registry_datasets_outputs_dir / clean_filename).exists()
+                else None,
+                "ingestion_report_filename": f"reports/{report_filename}" if report_path.exists() else None,
                 "flagged_records": report_summary["flagged_records"],
                 "quality_flags": report_summary["quality_flags"],
-                "is_latest": manifest_path.name == latest_manifest,
+                "is_latest": manifest_pointer == latest_manifest,
             }
         )
 
@@ -99,13 +108,10 @@ def discover_analysis_artifacts(
     paths: ProjectPaths,
     latest_stats: dict[str, object] | None = None,
 ) -> list[dict[str, Any]]:
-    latest_by_filename = {str(filename): script_id for script_id, filename in (latest_stats or {}).items()}
+    latest_by_filename = {Path(str(filename)).name: script_id for script_id, filename in (latest_stats or {}).items()}
     artifacts: list[dict[str, Any]] = []
 
-    for artifact_path in sorted(paths.stats_outputs_dir.glob("*.json")):
-        if artifact_path.name == "latest.json":
-            continue
-
+    for artifact_path in sorted(paths.analysis_artifacts_outputs_dir.glob("*.json")):
         artifact = _load_json_object(artifact_path)
         if not artifact:
             continue
@@ -243,6 +249,15 @@ def _ingestion_stage_item(run: dict[str, Any] | None) -> dict[str, Any] | None:
         return None
 
     sources = run.get("sources") if isinstance(run.get("sources"), list) else []
+    files = [
+        filename
+        for filename in (
+            run.get("manifest_filename"),
+            run.get("clean_dataset_filename"),
+            run.get("ingestion_report_filename"),
+        )
+        if filename
+    ]
     return {
         "title": f"Ingestion run {run.get('run_id')}",
         "run_id": run.get("run_id"),
@@ -260,17 +275,141 @@ def _ingestion_stage_item(run: dict[str, Any] | None) -> dict[str, Any] | None:
             }
             for source in sources
         ],
-        "files": [
-            filename
-            for filename in (
-                run.get("manifest_filename"),
-                run.get("clean_dataset_filename"),
-                run.get("ingestion_report_filename"),
-            )
-            if filename
-        ],
+        "files": files,
+        "flow": _ingestion_flow(run, sources, files),
         "is_latest": run.get("is_latest", False),
     }
+
+
+def _ingestion_flow(
+    run: dict[str, Any],
+    sources: list[object],
+    files: list[object],
+) -> dict[str, list[dict[str, object]]]:
+    total_raw = sum(int(source.get("rows_raw") or 0) for source in sources if isinstance(source, dict))
+    total_stub = sum(int(source.get("rows_stub") or 0) for source in sources if isinstance(source, dict))
+    adapters = sorted({str(source.get("adapter")) for source in sources if isinstance(source, dict) and source.get("adapter")})
+    manifest_steps = run.get("steps") if isinstance(run.get("steps"), list) else []
+    step_items = [_flow_step_from_manifest(step) for step in manifest_steps if isinstance(step, dict)]
+    step_items = _summarize_repeated_file_steps(step_items)
+    if not step_items:
+        step_items = [
+            {
+                "label": "Read source files",
+                "detail": f"{len(sources)} file{'s' if len(sources) != 1 else ''}, {total_raw} raw row{'s' if total_raw != 1 else ''}",
+            },
+            {
+                "label": "Normalize to canonical schema",
+                "detail": f"Adapter: {', '.join(adapters) if adapters else 'unknown'} | schema {run.get('canonical_schema_version', 'NA')}",
+            },
+            {
+                "label": "Validate and flag rows",
+                "detail": f"{total_stub} stub row{'s' if total_stub != 1 else ''} skipped | {run.get('flagged_records', 'NA')} flagged record{'s' if run.get('flagged_records') != 1 else ''}",
+            },
+            {
+                "label": "Combine clean records",
+                "detail": f"{run.get('total_rows', 'NA')} canonical row{'s' if run.get('total_rows') != 1 else ''}",
+            },
+        ]
+
+    return {
+        "inputs": [
+            {
+                "label": source.get("file", "Source file") if isinstance(source, dict) else "Source file",
+                "detail": _source_detail(source),
+            }
+            for source in sources
+        ],
+        "steps": step_items,
+        "results": [
+            {
+                "label": _artifact_label(str(filename)),
+                "detail": str(filename),
+            }
+            for filename in files
+        ],
+    }
+
+
+def _flow_step_from_manifest(step: dict[str, object]) -> dict[str, object]:
+    return {
+        "step_id": step.get("step_id"),
+        "label": step.get("label") or step.get("step_id") or "Pipeline step",
+        "detail": step.get("summary") or step.get("detail") or "",
+        "status": step.get("status", "completed"),
+        "execution_mode": step.get("execution_mode", "unknown"),
+        "source_file": step.get("source_file"),
+        "metrics": step.get("metrics") if isinstance(step.get("metrics"), dict) else {},
+    }
+
+
+def _summarize_repeated_file_steps(steps: list[dict[str, object]]) -> list[dict[str, object]]:
+    grouped: dict[tuple[str, str, str], list[dict[str, object]]] = {}
+    ordered_items: list[dict[str, object] | tuple[str, str, str]] = []
+
+    for step in steps:
+        source_file = step.get("source_file")
+        if not source_file:
+            ordered_items.append(step)
+            continue
+
+        key = (
+            _operation_key(str(step.get("step_id") or "")),
+            str(step.get("label") or ""),
+            str(step.get("execution_mode") or ""),
+        )
+        if key not in grouped:
+            grouped[key] = []
+            ordered_items.append(key)
+        grouped[key].append(step)
+
+    return [
+        _summarize_step_group(grouped[item]) if isinstance(item, tuple) else item
+        for item in ordered_items
+    ]
+
+
+def _operation_key(step_id: str) -> str:
+    return step_id.split(":", 1)[1] if ":" in step_id else step_id
+
+
+def _summarize_step_group(items: list[dict[str, object]]) -> dict[str, object]:
+    first = items[0]
+    source_files = [str(item.get("source_file")) for item in items if item.get("source_file")]
+    details = [str(item.get("detail") or "") for item in items if item.get("detail")]
+    unique_details = list(dict.fromkeys(details))
+
+    if len(items) == 1:
+        detail = f"{source_files[0]}: {details[0]}" if source_files and details else first.get("detail", "")
+    elif len(unique_details) == 1:
+        detail = f"Ran {len(items)}x, once per input file: {', '.join(source_files)}. {unique_details[0]}"
+    else:
+        per_file = "; ".join(
+            f"{str(item.get('source_file'))}: {str(item.get('detail'))}"
+            for item in items
+            if item.get("source_file") and item.get("detail")
+        )
+        detail = f"Ran {len(items)}x, once per input file. {per_file}"
+
+    return {
+        "step_id": _operation_key(str(first.get("step_id") or "")),
+        "label": first.get("label"),
+        "detail": detail,
+        "status": first.get("status", "completed"),
+        "execution_mode": first.get("execution_mode", "unknown"),
+        "source_files": source_files,
+        "run_count": len(items),
+    }
+
+
+def _artifact_label(filename: str) -> str:
+    if "/datasets/" in f"/{filename}" or filename.startswith("datasets/"):
+        return "Clean dataset"
+    if "/manifests/" in f"/{filename}" or filename.startswith("manifests/"):
+        return "Run manifest"
+    if "/reports/" in f"/{filename}" or filename.startswith("reports/"):
+        return "Quality report"
+    return "Runtime artifact"
 
 
 def _analysis_stage_item(label: str, artifacts: list[dict[str, Any]]) -> dict[str, Any] | None:

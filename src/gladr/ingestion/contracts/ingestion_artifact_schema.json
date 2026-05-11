@@ -1,0 +1,36 @@
+{
+  "version": "1.0.0",
+  "artifacts": {
+    "clean_dataset": {
+      "required_fields": ["run_id", "run_datetime", "canonical_schema_version", "records"],
+      "record_contract": "canonical_schema.json"
+    },
+    "run_manifest": {
+      "required_fields": [
+        "run_id",
+        "pipeline_version",
+        "run_datetime",
+        "sources",
+        "summary",
+        "steps",
+        "total_rows",
+        "canonical_schema_version",
+        "notes"
+      ],
+      "source_summary_fields": ["adapter", "file", "rows_raw", "rows_stub", "rows_ingested"],
+      "summary_fields": ["source_files", "raw_rows", "stub_rows", "ingested_rows", "flagged_records", "quality_flags", "adapters"],
+      "step_fields": ["step_id", "label", "summary", "status", "execution_mode", "source_file", "inputs", "outputs", "metrics"],
+      "execution_modes": ["static_code", "llm_powered", "manual", "external_tool"]
+    },
+    "ingestion_report": {
+      "item_fields": ["patient_id", "source_file", "flags"],
+      "flags": {
+        "type": "array",
+        "description": "Non-blocking row-level quality flags."
+      }
+    },
+    "latest_pointer": {
+      "fields": ["clean_dataset", "run_manifest", "ingestion_report"]
+    }
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "clean_dataset": "datasets/clean_dataset_20260510_210002.json",
+  "manifest": "manifests/manifest_20260510_210002.json",
+  "quality_report": "reports/quality_report_20260510_210002.json"
+}

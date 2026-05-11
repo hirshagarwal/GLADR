@@ -1,5 +1,5 @@
 module_id: analysis
-stage: stats
+stage: analysis
 purpose: Generate versioned analysis artifacts from the latest clean dataset.
 owner_files:
   - base_script.py
@@ -23,5 +23,4 @@ llm_rules:
   - Read this module README before adding or changing an analysis.
   - Add new stats as focused scripts under scripts/.
   - Keep artifacts compatible with contracts/analysis_artifact_schema.json.
-  - Do not edit outputs/stats manually.
-
+  - Do not edit outputs/analysis manually.

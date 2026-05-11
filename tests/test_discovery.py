@@ -11,12 +11,12 @@ if str(SRC_DIR) not in sys.path:
 
 from gladr.analysis.base_script import BaseAnalysisScript
 from gladr.core.discovery import discover_subclasses
-from gladr.ingest.adapters.base_adapter import BaseAdapter
+from gladr.ingestion.adapters.base_adapter import BaseAdapter
 
 
 class DiscoveryTests(unittest.TestCase):
     def test_discovers_ingestion_adapters(self) -> None:
-        adapters = discover_subclasses("gladr.ingest.adapters", BaseAdapter)
+        adapters = discover_subclasses("gladr.ingestion.adapters", BaseAdapter)
         adapter_ids = {adapter.adapter_id for adapter in adapters}
         self.assertIn("gbm_registry", adapter_ids)
 

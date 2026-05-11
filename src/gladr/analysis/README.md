@@ -22,15 +22,15 @@ Safe edit points:
 Avoid by default:
 - Do not edit ingestion internals for a stats-only task.
 - Do not edit dashboard code unless a new visualization type or artifact shape is required.
-- Do not edit generated files in `outputs/stats/` manually.
+- Do not edit generated files in `outputs/analysis/` manually.
 
 ## Inputs
 
-The runner reads the latest clean dataset from `outputs/clean/latest.json`. Analysis code should treat the clean dataset as a stable input contract described by `contracts/clean_dataset_schema.json`.
+The runner reads the latest registry clean dataset from `outputs/ingestion/registry/latest.json`. Analysis code should treat the clean dataset as a stable input contract described by `contracts/clean_dataset_schema.json`.
 
 ## Outputs
 
-Each script emits one JSON artifact into `outputs/stats/`:
+Each script emits one JSON artifact into `outputs/analysis/artifacts/`:
 
 ```text
 <script_id>_<run_id>.json
@@ -39,7 +39,7 @@ Each script emits one JSON artifact into `outputs/stats/`:
 The runner updates:
 
 ```text
-outputs/stats/latest.json
+outputs/analysis/latest.json
 ```
 
 Each artifact should follow `contracts/analysis_artifact_schema.json` and may include a visualization contract described by `contracts/visualization_schema.json`.
@@ -60,4 +60,3 @@ Create a `BaseAnalysisScript` subclass in `scripts/`:
 - return a JSON-serializable dict with metadata, data, and optional visualization
 
 Prefer adding one focused script per analysis question so experiments can be versioned and compared independently.
-

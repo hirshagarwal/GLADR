@@ -9,6 +9,7 @@ from importlib import resources
 from typing import Any
 from urllib.parse import urlparse
 
+from gladr.analysis.runner import run_parameterized_analysis
 from gladr.core.paths import ProjectPaths
 from gladr.dashboard.manifest_loader import load_dashboard_payload
 
@@ -49,6 +50,28 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
 
             self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
+        def do_POST(self) -> None:  # noqa: N802 - stdlib handler API.
+            route = urlparse(self.path).path
+            if route != "/api/analysis-runs":
+                self.send_error(HTTPStatus.NOT_FOUND, "Not found")
+                return
+
+            try:
+                payload = self._read_json_body()
+                template_id = str(payload.get("template_id") or "")
+                parameters = payload.get("parameters")
+                if not isinstance(parameters, dict):
+                    raise ValueError("Request must include parameter object.")
+                output_path = run_parameterized_analysis(template_id, parameters)
+            except (OSError, ValueError, KeyError) as error:
+                self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            self._send_json({
+                "artifact": output_path.name,
+                "dashboard": load_dashboard_payload(paths),
+            }, status=HTTPStatus.CREATED)
+
         def log_message(self, format: str, *args: Any) -> None:
             print(f"{self.address_string()} - {format % args}")
 
@@ -61,14 +84,24 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
             self.end_headers()
             self.wfile.write(encoded)
 
-        def _send_json(self, payload: dict[str, Any]) -> None:
+        def _send_json(self, payload: dict[str, Any], status: HTTPStatus = HTTPStatus.OK) -> None:
             encoded = json.dumps(payload, indent=2).encode("utf-8")
-            self.send_response(HTTPStatus.OK)
+            self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(encoded)))
             self.send_header("Cache-Control", "no-store")
             self.end_headers()
             self.wfile.write(encoded)
+
+        def _read_json_body(self) -> dict[str, Any]:
+            content_length = int(self.headers.get("Content-Length") or "0")
+            if content_length <= 0:
+                return {}
+            body = self.rfile.read(content_length)
+            payload = json.loads(body.decode("utf-8"))
+            if not isinstance(payload, dict):
+                raise ValueError("Request body must be a JSON object.")
+            return payload
 
     return DashboardRequestHandler
 

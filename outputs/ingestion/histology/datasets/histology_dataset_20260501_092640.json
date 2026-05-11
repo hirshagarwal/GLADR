@@ -1,0 +1,3789 @@
+{
+  "run_id": "20260501_092640",
+  "run_datetime": "2026-05-01T09:26:40-04:00",
+  "source_csvs": 126,
+  "missing_csvs": 0,
+  "total_rows": 630,
+  "records": [
+    {
+      "k_number": "K0009437",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0009437",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0009437",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0009437",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0009437",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0023208",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0023208",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0023208",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0023208",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0023208",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0098705",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": "Evidence of IDH1 or IDH2 mutation: Pending"
+    },
+    {
+      "k_number": "K0098705",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0098705",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0098705",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0098705",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0101618",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0101618",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0101618",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0101618",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0101618",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0127982",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0127982",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0127982",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0127982",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0127982",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0200727",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0200727",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0200727",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0200727",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0200727",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0208674",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0208674",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0208674",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0208674",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0208674",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0214198",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0214198",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0214198",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0214198",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": "ATRX is suboptimal."
+    },
+    {
+      "k_number": "K0214198",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0284435",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": "No IDH-1 (R132H) mutation, by immunohistochemistry"
+    },
+    {
+      "k_number": "K0284435",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0284435",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0284435",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0284435",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0345801",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0345801",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0345801",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K0345801",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0345801",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0354805",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0354805",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0354805",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0354805",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0354805",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0437041",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0437041",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0437041",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0437041",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0437041",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0441424",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0441424",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0441424",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0441424",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0441424",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0445699",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0445699",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0445699",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0445699",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0445699",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K0446793",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0446793",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0446793",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0446793",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0446793",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0501346",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0501346",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0501346",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K0501346",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0501346",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K0544496",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0544496",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0544496",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0544496",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0544496",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0611148",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0611148",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0611148",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0611148",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0611148",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0651738",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K0651738",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0651738",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0651738",
+      "marker": "ATRX mutation",
+      "value": "Yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K0651738",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0668940",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0668940",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K0668940",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0668940",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K0668940",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K0840477",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K0840477",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0840477",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0840477",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K0840477",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1038156",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K1038156",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1038156",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1038156",
+      "marker": "ATRX mutation",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K1038156",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1121722",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1121722",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1121722",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1121722",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1121722",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K1179703",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1179703",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1179703",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1179703",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1179703",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": "RTK1 subtype"
+    },
+    {
+      "k_number": "K1233871",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1233871",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1233871",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1233871",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1233871",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1279654",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1279654",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1279654",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K1279654",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1279654",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": "Glioblastoma, IDH-wildtype, RTK2 subtype"
+    },
+    {
+      "k_number": "K1314167",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1314167",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1314167",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1314167",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1314167",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1362078",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1362078",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1362078",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1362078",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1362078",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": "No IDH-1 (R132H) mutation, by immunohistochemistry"
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1463292",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1586048",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1586048",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1586048",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": "gain of chromosome 7 with or without EGFR amplification (>80%)"
+    },
+    {
+      "k_number": "K1586048",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1586048",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K1618041",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": "No IDH-1 (R132H) mutation, by IHC"
+    },
+    {
+      "k_number": "K1618041",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1618041",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1618041",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1618041",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1670788",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K1670788",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1670788",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1670788",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1670788",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1685317",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1685317",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1685317",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": "suggested EGFR amplification"
+    },
+    {
+      "k_number": "K1685317",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1685317",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K1801204",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1801204",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": "Evidence of methylation of MGMT gene CpG island: Pending; MGMT promoter (Illumina array): Unmethylated"
+    },
+    {
+      "k_number": "K1801204",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1801204",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1801204",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K1804631",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1804631",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1804631",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1804631",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1804631",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1839658",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1839658",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1839658",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1839658",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K1839658",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1900709",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": "No IDH-1 (R132H) mutation, by immunohistochemistry"
+    },
+    {
+      "k_number": "K1900709",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1900709",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1900709",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1900709",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1914882",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1914882",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K1914882",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K1914882",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K1914882",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2043503",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K2043503",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2043503",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2043503",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2043503",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2074992",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2074992",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2074992",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2074992",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2074992",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2086372",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2086372",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2086372",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2086372",
+      "marker": "ATRX mutation",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K2086372",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K2135215",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K2135215",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2135215",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2135215",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K2135215",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K2216269",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K2216269",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2216269",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2216269",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K2216269",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K2328122",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K2328122",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K2328122",
+      "marker": "EGFR amplification",
+      "value": "Yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K2328122",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K2328122",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3031185",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3031185",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3031185",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3031185",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3031185",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3131262",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3131262",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3131262",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3131262",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3131262",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3159243",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3159243",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3159243",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3159243",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3159243",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3209317",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3209317",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3209317",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3209317",
+      "marker": "ATRX mutation",
+      "value": "Yes",
+      "notes": "There is evidence of both an IDH-1 (R132H) and an ATRX mutation."
+    },
+    {
+      "k_number": "K3209317",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3248080",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3250978",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": "IDH1"
+    },
+    {
+      "k_number": "K3250978",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3250978",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3250978",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3250978",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3262336",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3262336",
+      "marker": "MGMT promoter methylation status",
+      "value": "Unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3262336",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3262336",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3262336",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3280711",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3280711",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3280711",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3280711",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3280711",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3481280",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3481280",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3481280",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3481280",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3481280",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3584160",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": "Evidence of IDH1 or IDH2 mutation: Pending"
+    },
+    {
+      "k_number": "K3584160",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3584160",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3584160",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3584160",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3586608",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3586608",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3586608",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3586608",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3586608",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3587427",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3587427",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3587427",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3587427",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3587427",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3588370",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3588370",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3588370",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3588370",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3588370",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": "RTK1 subtype"
+    },
+    {
+      "k_number": "K3590079",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590079",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590079",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590079",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590079",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590375",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590375",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590375",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590375",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590375",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590381",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": "ISH-1 & ATRX wildtype"
+    },
+    {
+      "k_number": "K3590381",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590381",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590381",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3590381",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3591005",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3591005",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3591005",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3591005",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3591005",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3592133",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3592133",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3592133",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3592133",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3592133",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3593121",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3593121",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3593121",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3593121",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3593121",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594440",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594440",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594440",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594440",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594440",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594450",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594450",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594450",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594450",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3594450",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3595476",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3595476",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": "Pending"
+    },
+    {
+      "k_number": "K3595476",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3595476",
+      "marker": "ATRX mutation",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3595476",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596056",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596056",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596056",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596056",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596056",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596427",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596427",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596427",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596427",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596427",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596921",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596921",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596921",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596921",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596921",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596936",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596936",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596936",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596936",
+      "marker": "ATRX mutation",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3596936",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3598078",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3598078",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3598078",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3598078",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3598078",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3599960",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3603112",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3603112",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3603112",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3603112",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3603112",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604348",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604348",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604348",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604348",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604348",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604927",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604927",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604927",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604927",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3604927",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605524",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605524",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605524",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605524",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605524",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605819",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605819",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605819",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605819",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605819",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605867",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605867",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605867",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605867",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3605867",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3606173",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3606173",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3606173",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3606173",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3606173",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3607285",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3607285",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3607285",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3607285",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3607285",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3609620",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3609620",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": "Evidence of methylation of MGMT gene CpG island: Pending"
+    },
+    {
+      "k_number": "K3609620",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3609620",
+      "marker": "ATRX mutation",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3609620",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3610680",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3610680",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3610680",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3610680",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3610680",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3612493",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3612493",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3612493",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3612493",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3612493",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": "glioblastoma, NOS"
+    },
+    {
+      "k_number": "K3613138",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613138",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613138",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613138",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613138",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613364",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613364",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613364",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613364",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3613364",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614444",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614444",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": "Pending"
+    },
+    {
+      "k_number": "K3614444",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614444",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": "no evidence of ATRX mutations (main report); Supplementary Report 2 detects ATRX mutation"
+    },
+    {
+      "k_number": "K3614444",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614446",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614446",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614446",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614446",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3614446",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615114",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615114",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615114",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615114",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615114",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615639",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615639",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615639",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615639",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615639",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615733",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615733",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615733",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615733",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3615733",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3616611",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3616611",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3616611",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3616611",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3616611",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3617036",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3617036",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3617036",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3617036",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3617036",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3618840",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3618840",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3618840",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3618840",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3618840",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619009",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619009",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619009",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619009",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619009",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619736",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619736",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619736",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619736",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619736",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619792",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619792",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619792",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619792",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3619792",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621755",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621755",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": "Evidence of methylation of MGMT gene CpG island: Pending"
+    },
+    {
+      "k_number": "K3621755",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621755",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621755",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621758",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621758",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621758",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621758",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621758",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621862",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621862",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621862",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621862",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3621862",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622554",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622554",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622554",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622554",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622554",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622801",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622801",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622801",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622801",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3622801",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624032",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624032",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624032",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624032",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624032",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624074",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624074",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624074",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624074",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624074",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624240",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624240",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624240",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624240",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3624240",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3626474",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3626474",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3626474",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3626474",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3626474",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628391",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628391",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628391",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628391",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628391",
+      "marker": "Subtype",
+      "value": "classical",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628637",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628637",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628637",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628637",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3628637",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3629269",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3629269",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3629269",
+      "marker": "EGFR amplification",
+      "value": "yes",
+      "notes": ""
+    },
+    {
+      "k_number": "K3629269",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3629269",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632261",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632261",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632261",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632261",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632261",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632271",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632271",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632271",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632271",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632271",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632315",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632315",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632315",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632315",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3632315",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3634474",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3634474",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": "Evidence of methylation of MGMT gene CpG island: Pending"
+    },
+    {
+      "k_number": "K3634474",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3634474",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3634474",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3635669",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3635669",
+      "marker": "MGMT promoter methylation status",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3635669",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3635669",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3635669",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": ""
+    },
+    {
+      "k_number": "K3636040",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3636040",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3636040",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3636040",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3636040",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3638245",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3638245",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3638245",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3638245",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3638245",
+      "marker": "Subtype",
+      "value": "mesenchymal",
+      "notes": ""
+    },
+    {
+      "k_number": "K3639567",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3639567",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3639567",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3639567",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3639567",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642523",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642523",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642523",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642523",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642523",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642539",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642539",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642539",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642539",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642539",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642586",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642586",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642586",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642586",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3642586",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3643292",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3643292",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3643292",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3643292",
+      "marker": "ATRX mutation",
+      "value": "No",
+      "notes": ""
+    },
+    {
+      "k_number": "K3643292",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3645773",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "Not Reported",
+      "notes": "Evidence of IDH1 or IDH2 mutation: Pending; Immunohistochemistry shows that there is no evidence of IDH-1 (R132H) or ATRX mutations.; Evidence of IDH1 or IDH2 mutation: No IDH-1 (R132H) mutation, by immunohistochemistry; Molecular diagnosis: IDH-1 (R132H) and ATRX wild type by immunohistochemistry; MGMT status pending [COSD]"
+    },
+    {
+      "k_number": "K3645773",
+      "marker": "MGMT promoter methylation status",
+      "value": "methylated",
+      "notes": "MGMT Promoter: Methylated (>10-25%) (UCL Ref. NH23-3827); Evidence of methylation of MGMT gene CpG island: Pending"
+    },
+    {
+      "k_number": "K3645773",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3645773",
+      "marker": "ATRX mutation",
+      "value": "Not Reported",
+      "notes": "Evidence of ATRX mutation: Pending; Evidence of ATRX mutation: No, by immunohistochemistry; Histological diagnosis: Molecular diagnosis: IDH-1 (R132H) and ATRX wild type by immunohistochemistry; MGMT status pending"
+    },
+    {
+      "k_number": "K3645773",
+      "marker": "Subtype",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3646667",
+      "marker": "IDH1 or IDH2 mutated",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3646667",
+      "marker": "MGMT promoter methylation status",
+      "value": "unmethylated",
+      "notes": ""
+    },
+    {
+      "k_number": "K3646667",
+      "marker": "EGFR amplification",
+      "value": "Not Reported",
+      "notes": ""
+    },
+    {
+      "k_number": "K3646667",
+      "marker": "ATRX mutation",
+      "value": "no",
+      "notes": ""
+    },
+    {
+      "k_number": "K3646667",
+      "marker": "Subtype",
+      "value": "other",
+      "notes": "Adult-type diffuse high grade glioma, IDH-wildtype, subtype B (novel methylation cluster)"
+    }
+  ]
+}

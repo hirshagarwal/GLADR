@@ -25,11 +25,11 @@ include-package-data = true
 [tool.setuptools.package-data]
 gladr = [
     "contracts/*.json",
-    "ingest/*.md",
-    "ingest/*.yaml",
-    "ingest/contracts/*.json",
-    "ingest/examples/*.csv",
-    "ingest/examples/*.json",
+    "ingestion/*.md",
+    "ingestion/*.yaml",
+    "ingestion/contracts/*.json",
+    "ingestion/examples/*.csv",
+    "ingestion/examples/*.json",
     "analysis/*.md",
     "analysis/*.yaml",
     "analysis/contracts/*.json",

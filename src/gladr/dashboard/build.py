@@ -13,6 +13,6 @@ def build_dashboard() -> Path:
     paths.ensure_runtime_dirs()
 
     source = resources.files("gladr.dashboard.static_app").joinpath("index.html")
-    destination = paths.dashboard_outputs_dir / "index.html"
+    destination = paths.dashboard_builds_outputs_dir / "index.html"
     destination.write_text(source.read_text(encoding="utf-8"), encoding="utf-8")
     return destination

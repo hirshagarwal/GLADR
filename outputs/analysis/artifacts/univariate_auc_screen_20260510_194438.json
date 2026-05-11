@@ -1,0 +1,440 @@
+{
+  "script_id": "univariate_auc_screen",
+  "run_id": "20260510_194438",
+  "manifest_run_id": "20260510_192455",
+  "run_datetime": "2026-05-10T19:44:38-04:00",
+  "title": "AUC screen for recurrence_local",
+  "description": "Univariate logistic models ranked by apparent AUC for a binary outcome.",
+  "category": "Model Screening",
+  "priority": 10,
+  "metadata": {
+    "n": 87,
+    "template_id": "univariate_auc_screen",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "predictor_count": 3,
+    "fit_count": 3,
+    "top_auc": 0.61,
+    "exclusions": "Each model uses complete cases for its outcome and predictor.",
+    "notes": "AUC is apparent AUC on the same dataset used for fitting; cross-validation is not yet applied."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "auc_leaderboard",
+        "config": {
+          "predictor_field": "predictor",
+          "auc_field": "auc"
+        }
+      },
+      {
+        "type": "roc_overlay",
+        "config": {
+          "predictor_field": "predictor"
+        }
+      },
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "rank",
+              "label": "Rank",
+              "format": "int"
+            },
+            {
+              "field": "predictor",
+              "label": "Predictor",
+              "format": "string"
+            },
+            {
+              "field": "auc",
+              "label": "AUC",
+              "format": "float3"
+            },
+            {
+              "field": "n",
+              "label": "N",
+              "format": "int"
+            },
+            {
+              "field": "events",
+              "label": "Events",
+              "format": "int"
+            },
+            {
+              "field": "missing",
+              "label": "Missing",
+              "format": "int"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "rows": [
+      {
+        "predictor": "nlr",
+        "auc": 0.61,
+        "n": 47,
+        "events": 33,
+        "non_events": 14,
+        "missing": 185,
+        "term_count": 1,
+        "terms": [
+          {
+            "name": "predictor",
+            "kind": "numeric"
+          }
+        ],
+        "reference_level": null,
+        "warnings": [],
+        "rank": 1
+      },
+      {
+        "predictor": "periventricular",
+        "auc": 0.526,
+        "n": 87,
+        "events": 61,
+        "non_events": 26,
+        "missing": 145,
+        "term_count": 1,
+        "terms": [
+          {
+            "name": "True",
+            "kind": "indicator",
+            "reference": "False"
+          }
+        ],
+        "reference_level": "False",
+        "warnings": [],
+        "rank": 2
+      },
+      {
+        "predictor": "age_at_presentation",
+        "auc": 0.491,
+        "n": 87,
+        "events": 61,
+        "non_events": 26,
+        "missing": 145,
+        "term_count": 1,
+        "terms": [
+          {
+            "name": "predictor",
+            "kind": "numeric"
+          }
+        ],
+        "reference_level": null,
+        "warnings": [],
+        "rank": 3
+      }
+    ],
+    "roc_curves": [
+      {
+        "predictor": "age_at_presentation",
+        "points": [
+          {
+            "fpr": 0.0,
+            "tpr": 0.0
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.0164
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.0328
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.082
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.0984
+          },
+          {
+            "fpr": 0.0385,
+            "tpr": 0.1311
+          },
+          {
+            "fpr": 0.1154,
+            "tpr": 0.1311
+          },
+          {
+            "fpr": 0.1538,
+            "tpr": 0.1311
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.1311
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.1803
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.1967
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.2295
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.2459
+          },
+          {
+            "fpr": 0.2692,
+            "tpr": 0.2623
+          },
+          {
+            "fpr": 0.3077,
+            "tpr": 0.2623
+          },
+          {
+            "fpr": 0.3077,
+            "tpr": 0.3443
+          },
+          {
+            "fpr": 0.4231,
+            "tpr": 0.377
+          },
+          {
+            "fpr": 0.4615,
+            "tpr": 0.377
+          },
+          {
+            "fpr": 0.5,
+            "tpr": 0.377
+          },
+          {
+            "fpr": 0.5,
+            "tpr": 0.3934
+          },
+          {
+            "fpr": 0.5,
+            "tpr": 0.4262
+          },
+          {
+            "fpr": 0.5385,
+            "tpr": 0.459
+          },
+          {
+            "fpr": 0.5385,
+            "tpr": 0.4918
+          },
+          {
+            "fpr": 0.5769,
+            "tpr": 0.5246
+          },
+          {
+            "fpr": 0.5769,
+            "tpr": 0.541
+          },
+          {
+            "fpr": 0.5769,
+            "tpr": 0.5902
+          },
+          {
+            "fpr": 0.5769,
+            "tpr": 0.6066
+          },
+          {
+            "fpr": 0.5769,
+            "tpr": 0.623
+          },
+          {
+            "fpr": 0.6154,
+            "tpr": 0.7049
+          },
+          {
+            "fpr": 0.6923,
+            "tpr": 0.7049
+          },
+          {
+            "fpr": 0.7308,
+            "tpr": 0.7049
+          },
+          {
+            "fpr": 0.7692,
+            "tpr": 0.7049
+          },
+          {
+            "fpr": 0.7692,
+            "tpr": 0.7705
+          },
+          {
+            "fpr": 0.8462,
+            "tpr": 0.8197
+          },
+          {
+            "fpr": 0.8846,
+            "tpr": 0.8361
+          },
+          {
+            "fpr": 0.8846,
+            "tpr": 0.8852
+          },
+          {
+            "fpr": 0.8846,
+            "tpr": 0.9016
+          },
+          {
+            "fpr": 0.8846,
+            "tpr": 0.9344
+          },
+          {
+            "fpr": 0.9615,
+            "tpr": 0.9672
+          },
+          {
+            "fpr": 0.9615,
+            "tpr": 1.0
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 1.0
+          }
+        ]
+      },
+      {
+        "predictor": "nlr",
+        "points": [
+          {
+            "fpr": 0.0,
+            "tpr": 0.0
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.0909
+          },
+          {
+            "fpr": 0.0,
+            "tpr": 0.1515
+          },
+          {
+            "fpr": 0.1429,
+            "tpr": 0.1515
+          },
+          {
+            "fpr": 0.1429,
+            "tpr": 0.2424
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.2424
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.3333
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.3939
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.4242
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.4848
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.5152
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.5758
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.6364
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.6667
+          },
+          {
+            "fpr": 0.3571,
+            "tpr": 0.7576
+          },
+          {
+            "fpr": 0.5,
+            "tpr": 0.7576
+          },
+          {
+            "fpr": 0.5,
+            "tpr": 0.7879
+          },
+          {
+            "fpr": 0.6429,
+            "tpr": 0.7879
+          },
+          {
+            "fpr": 0.7143,
+            "tpr": 0.7879
+          },
+          {
+            "fpr": 0.7143,
+            "tpr": 0.8485
+          },
+          {
+            "fpr": 0.7143,
+            "tpr": 0.9091
+          },
+          {
+            "fpr": 0.7857,
+            "tpr": 0.9091
+          },
+          {
+            "fpr": 0.9286,
+            "tpr": 0.9091
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 0.9091
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 0.9697
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 1.0
+          }
+        ]
+      },
+      {
+        "predictor": "periventricular",
+        "points": [
+          {
+            "fpr": 0.0,
+            "tpr": 0.0
+          },
+          {
+            "fpr": 0.3077,
+            "tpr": 0.3607
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 1.0
+          }
+        ]
+      }
+    ],
+    "skipped": []
+  }
+}
