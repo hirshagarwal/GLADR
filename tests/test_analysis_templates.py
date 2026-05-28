@@ -18,8 +18,10 @@ from gladr.analysis.profiling import build_dataset_profile
 from gladr.analysis.templates import (
     build_bootstrapped_multivariable_logistic_regression,
     build_cox_regression,
+    build_decision_curve_analysis,
     build_hosmer_lemeshow_calibration,
     build_lasso_logistic_regression,
+    build_loess_calibration_plot,
     build_multivariable_logistic_regression,
     build_univariate_auc_screen,
     list_analysis_templates,
@@ -85,6 +87,12 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertIn("hosmer_lemeshow_calibration", templates)
         self.assertEqual(templates["hosmer_lemeshow_calibration"]["category"], "Model Validation")
         self.assertEqual(templates["hosmer_lemeshow_calibration"]["cohort_display"], "shared_model_frame")
+        self.assertIn("loess_calibration_plot", templates)
+        self.assertEqual(templates["loess_calibration_plot"]["category"], "Model Validation")
+        self.assertEqual(templates["loess_calibration_plot"]["cohort_display"], "shared_model_frame")
+        self.assertIn("decision_curve_analysis", templates)
+        self.assertEqual(templates["decision_curve_analysis"]["category"], "Model Validation")
+        self.assertEqual(templates["decision_curve_analysis"]["cohort_display"], "shared_model_frame")
         self.assertEqual(templates["univariate_auc_screen"]["cohort_display"], "none")
         self.assertIn("cox_regression", templates)
         self.assertEqual(templates["cox_regression"]["category"], "Survival Modeling")
@@ -258,6 +266,90 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertLessEqual(artifact["metadata"]["p_value"], 1)
         self.assertEqual(len(artifact["data"]["rows"]), 10)
         self.assertTrue(all("expected_events" in row for row in artifact["data"]["rows"]))
+
+    def test_loess_calibration_plot_builds_curve_and_grouped_points(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": True, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 2.7, "age": 55, "sex": "F"},
+                {"recurrence": False, "nlr": 3.0, "age": 56, "sex": "M"},
+                {"recurrence": True, "nlr": 3.3, "age": 58, "sex": "F"},
+                {"recurrence": False, "nlr": 3.7, "age": 59, "sex": "M"},
+                {"recurrence": True, "nlr": 4.1, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 4.4, "age": 61, "sex": "M"},
+                {"recurrence": False, "nlr": 4.8, "age": 62, "sex": "F"},
+                {"recurrence": True, "nlr": 5.2, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 5.6, "age": 65, "sex": "F"},
+                {"recurrence": False, "nlr": 5.9, "age": 66, "sex": "M"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "F"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "M"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "F"},
+                {"recurrence": True, "nlr": 7.5, "age": 74, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_loess_calibration_plot(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "loess_calibration_plot")
+        self.assertEqual(artifact["metadata"]["risk_groups"], 10)
+        self.assertEqual(artifact["metadata"]["loess_span"], 0.75)
+        self.assertEqual(artifact["metadata"]["loess_points"], 101)
+        self.assertEqual(len(artifact["data"]["calibration_points"]), 10)
+        self.assertEqual(len(artifact["data"]["loess_curve"]), 101)
+        self.assertTrue(all(0 <= point["observed_rate"] <= 1 for point in artifact["data"]["loess_curve"]))
+        self.assertTrue(all("predicted_risk" in row for row in artifact["data"]["calibration_points"]))
+
+    def test_decision_curve_analysis_builds_model_all_and_none_curves(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": False, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 5.2, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 5.6, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 6.0, "age": 65, "sex": "F"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "M"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "F"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_decision_curve_analysis(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "decision_curve_analysis")
+        self.assertEqual(artifact["metadata"]["model_input"], "selected_logistic_model")
+        self.assertEqual(artifact["metadata"]["threshold_count"], 100)
+        self.assertEqual(artifact["data"]["model_spec"]["predictors"], ["nlr", "age", "sex"])
+        self.assertEqual(len(artifact["data"]["rows"]), 100)
+        self.assertTrue(all(row["treat_none_net_benefit"] == 0 for row in artifact["data"]["rows"]))
+        threshold_0 = next(row for row in artifact["data"]["rows"] if row["threshold"] == 0)
+        self.assertEqual(threshold_0["model_net_benefit"], artifact["data"]["prevalence"])
+        self.assertEqual(threshold_0["treat_all_net_benefit"], artifact["data"]["prevalence"])
+        threshold_50 = next(row for row in artifact["data"]["rows"] if row["threshold"] == 0.5)
+        self.assertGreater(threshold_50["model_net_benefit"], threshold_50["treat_all_net_benefit"])
+        self.assertGreater(threshold_50["model_net_benefit"], threshold_50["treat_none_net_benefit"])
+        self.assertEqual(threshold_50["true_positives"], 6)
+        self.assertEqual(threshold_50["false_positives"], 0)
 
     def test_lasso_logistic_regression_selects_terms(self) -> None:
         dataframe = pd.DataFrame(

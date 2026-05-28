@@ -1424,14 +1424,63 @@
       .roc-chart {
         display: grid;
         gap: 10px;
-        width: min(100%, 440px);
+        width: min(100%, 500px);
+      }
+
+      .export-frame {
+        display: grid;
+        gap: 8px;
+        width: fit-content;
+        max-width: 100%;
+      }
+
+      .export-frame[data-export-block="chart"] {
+        width: 100%;
+      }
+
+      .export-frame[data-export-block="table"] {
+        width: fit-content;
+      }
+
+      .export-toolbar {
+        display: flex;
+        justify-content: flex-end;
+        min-height: 28px;
+      }
+
+      .export-content {
+        max-width: 100%;
+        overflow: auto;
+      }
+
+      .export-button {
+        display: grid;
+        width: 28px;
+        height: 28px;
+        place-items: center;
+        padding: 0;
+        color: var(--muted);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .export-button:hover {
+        color: var(--accent);
+        border-color: rgba(15, 118, 110, 0.45);
+        background: var(--surface-soft);
+      }
+
+      .export-button svg {
+        width: 16px;
+        height: 16px;
       }
 
       .roc-svg {
         display: block;
         width: 100%;
         height: auto;
-        aspect-ratio: 1;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background:
@@ -3344,7 +3393,7 @@
           label: "Validation",
           icon: "V",
           description: "Estimate model optimism and internal validation metrics.",
-          templateIds: ["bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration"],
+          templateIds: ["bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration", "loess_calibration_plot", "decision_curve_analysis"],
         },
         {
           id: "time",
@@ -3551,7 +3600,7 @@
       function shouldShowCompleteCaseCoverage(parameter) {
         const templateId = currentTemplate()?.template_id;
         return parameter.kind === "multi_variable"
-          && ["multivariable_logistic_regression", "bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration", "lasso_logistic_regression", "cox_regression"].includes(templateId);
+          && ["multivariable_logistic_regression", "bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration", "loess_calibration_plot", "decision_curve_analysis", "lasso_logistic_regression", "cox_regression"].includes(templateId);
       }
 
       function completeCaseCoverage(parameter, variables) {
@@ -3676,6 +3725,38 @@
               </div>
               <div class="meta">
                 Fits one user-selected logistic regression model and compares observed versus expected events across predicted-risk groups.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "loess_calibration_plot") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} LOESS calibration plot</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} predictors</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and plots predicted risk against grouped observed rates with a LOESS calibration curve.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "decision_curve_analysis") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} decision curve</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} predictors</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and compares net benefit with treat-all and treat-none strategies across risk thresholds.
               </div>
             </div>
           `;
@@ -3865,6 +3946,12 @@
         if (analysis.script_id === "hosmer_lemeshow_calibration") {
           return renderHosmerLemeshowCalibration(analysis.data ?? {});
         }
+        if (analysis.script_id === "loess_calibration_plot") {
+          return renderLoessCalibrationPlot(analysis.data ?? {});
+        }
+        if (analysis.script_id === "decision_curve_analysis") {
+          return renderDecisionCurveAnalysis(analysis.data ?? {});
+        }
         if (analysis.script_id === "univariate_auc_screen" || analysis.data?.roc_curves) {
           return renderAucComparison(analysis.data ?? {});
         }
@@ -3888,7 +3975,31 @@
         if (panel.type === "auc_leaderboard") return renderAucLeaderboard(data.rows ?? []);
         if (panel.type === "roc_overlay") return renderRocOverlay(data.roc_curves ?? [], data.rows ?? []);
         if (panel.type === "cox_forest") return renderCoxForest(data.rows ?? []);
+        if (panel.type === "decision_curve") return renderDecisionCurveSvg(data.rows ?? []);
         return `<pre>${escapeHtml(JSON.stringify({ visualization: panel, data }, null, 2))}</pre>`;
+      }
+
+      function exportIcon(kind) {
+        const label = kind === "table" ? "Download LaTeX table" : "Download SVG chart";
+        const attribute = kind === "table" ? "data-export-table" : "data-export-chart";
+        return `
+          <button class="export-button" type="button" ${attribute} title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M12 3v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+              <path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              <path d="M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </button>
+        `;
+      }
+
+      function renderExportFrame(kind, content) {
+        return `
+          <div class="export-frame" data-export-block="${escapeHtml(kind)}">
+            <div class="export-toolbar">${exportIcon(kind)}</div>
+            <div class="export-content">${content}</div>
+          </div>
+        `;
       }
 
       function renderScalarCards(cards, data) {
@@ -3908,7 +4019,7 @@
 
       function renderTable(columns, rows) {
         if (!rows.length) return '<div class="empty">No table rows available.</div>';
-        return `
+        return renderExportFrame("table", `
           <table>
             <thead>
               <tr>${columns.map((column) => `<th>${escapeHtml(column.label || column.field)}</th>`).join("")}</tr>
@@ -3923,7 +4034,7 @@
                 .join("")}
             </tbody>
           </table>
-        `;
+        `);
       }
 
       function renderBarChart(config, rows) {
@@ -3931,7 +4042,7 @@
         const xField = config.x_field ?? "label";
         const yField = config.y_field ?? "value";
         const maxValue = Math.max(...rows.map((row) => Number(row[yField]) || 0), 1);
-        return `
+        return renderExportFrame("chart", `
           <div class="chart" aria-label="${escapeHtml(config.y_label || "Bar chart")}">
             ${rows
               .map((row) => {
@@ -3947,7 +4058,7 @@
               })
               .join("")}
           </div>
-        `;
+        `);
       }
 
       function renderHistogram(config, values) {
@@ -3966,7 +4077,7 @@
           bins[index].count += 1;
         }
         const maxCount = Math.max(...bins.map((bin) => bin.count), 1);
-        return `
+        return renderExportFrame("chart", `
           <div>
             <div class="histogram" aria-label="${escapeHtml(config.x_label || "Histogram")}">
               ${bins
@@ -3979,13 +4090,13 @@
             </div>
             <div class="meta">${escapeHtml(config.x_label || "")}</div>
           </div>
-        `;
+        `);
       }
 
       function renderAucLeaderboard(rows) {
         if (!rows.length) return '<div class="empty">No model fits available.</div>';
         const maxValue = Math.max(...rows.map((row) => Number(row.auc) || 0), 1);
-        return `
+        return renderExportFrame("chart", `
           <div class="chart" aria-label="AUC leaderboard">
             ${rows.slice(0, 12).map((row) => {
               const auc = Number(row.auc) || 0;
@@ -3999,7 +4110,7 @@
               `;
             }).join("")}
           </div>
-        `;
+        `);
       }
 
       function aucPalette() {
@@ -4034,7 +4145,7 @@
       function renderAucRankList(rows) {
         const palette = aucPalette();
         const maxValue = Math.max(...rows.map((row) => Number(row.auc) || 0), 1);
-        return `
+        return renderExportFrame("chart", `
           <div class="auc-ranking">
             ${rows.map((row, index) => {
               const auc = Number(row.auc) || 0;
@@ -4056,7 +4167,7 @@
               `;
             }).join("")}
           </div>
-        `;
+        `);
       }
 
       function renderSkippedModels(skipped) {
@@ -4078,7 +4189,7 @@
         const paths = visibleCurves.map((curve, index) => {
           const points = curve.points ?? [];
           const d = points.map((point, pointIndex) => {
-            const x = 24 + Number(point.fpr) * 252;
+            const x = 42 + Number(point.fpr) * 252;
             const y = 276 - Number(point.tpr) * 252;
             return `${pointIndex === 0 ? "M" : "L"} ${x.toFixed(1)} ${y.toFixed(1)}`;
           }).join(" ");
@@ -4090,17 +4201,25 @@
             ${escapeHtml(curve.predictor)}
           </span>
         `).join("");
-        return `
+        return renderExportFrame("chart", `
           <div class="roc-chart">
-            <svg class="roc-svg" viewBox="0 0 300 300" role="img" aria-label="ROC overlay">
-              <line x1="24" y1="276" x2="276" y2="24" stroke="#94a3b8" stroke-dasharray="5 5"></line>
-              <line x1="24" y1="276" x2="276" y2="276" stroke="#64748b"></line>
-              <line x1="24" y1="276" x2="24" y2="24" stroke="#64748b"></line>
+            <svg class="roc-svg" viewBox="0 0 330 330" role="img" aria-label="ROC overlay">
+              <line x1="42" y1="276" x2="294" y2="24" stroke="#94a3b8" stroke-dasharray="5 5"></line>
+              <line x1="42" y1="276" x2="294" y2="276" stroke="#64748b"></line>
+              <line x1="42" y1="276" x2="42" y2="24" stroke="#64748b"></line>
               ${paths}
+              <text x="168" y="320" text-anchor="middle" font-size="12" fill="#475569">False positive rate</text>
+              <text x="12" y="150" text-anchor="middle" font-size="12" fill="#475569" transform="rotate(-90 12 150)">True positive rate</text>
+              <text x="42" y="294" text-anchor="middle" font-size="10" fill="#64748b">0</text>
+              <text x="168" y="294" text-anchor="middle" font-size="10" fill="#64748b">0.5</text>
+              <text x="294" y="294" text-anchor="middle" font-size="10" fill="#64748b">1</text>
+              <text x="28" y="280" text-anchor="middle" font-size="10" fill="#64748b">0</text>
+              <text x="28" y="154" text-anchor="middle" font-size="10" fill="#64748b">0.5</text>
+              <text x="28" y="28" text-anchor="middle" font-size="10" fill="#64748b">1</text>
             </svg>
             ${showLegend ? `<div class="legend">${legend}</div>` : ""}
           </div>
-        `;
+        `);
       }
 
       function renderMultivariableLogisticRegression(data) {
@@ -4222,6 +4341,251 @@
         return renderTable(columns, rows);
       }
 
+      function renderLoessCalibrationPlot(data) {
+        const points = data.calibration_points ?? data.rows ?? [];
+        const curve = data.loess_curve ?? [];
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Calibration groups</div>
+              <div class="card-value">${escapeHtml(data.risk_groups ?? points.length ?? "NA")}</div>
+              <div class="meta">Observed versus predicted</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">LOESS span</div>
+              <div class="card-value">${escapeHtml(formatValue(data.loess_span, "float3"))}</div>
+              <div class="meta">${escapeHtml(curve.length)} curve points</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderCalibrationSvg(points, curve)}
+          ${renderCalibrationPointTable(points)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderCalibrationSvg(points, curve) {
+        if (!points.length && !curve.length) return '<div class="empty">No calibration plot data available.</div>';
+        const x = (value) => 48 + Math.max(0, Math.min(1, Number(value) || 0)) * 240;
+        const y = (value) => 264 - Math.max(0, Math.min(1, Number(value) || 0)) * 240;
+        const curvePath = curve.map((point, index) => {
+          const command = index === 0 ? "M" : "L";
+          return `${command} ${x(point.predicted_risk).toFixed(1)} ${y(point.observed_rate).toFixed(1)}`;
+        }).join(" ");
+        const pointMarks = points.map((point) => {
+          const radius = Math.max(3, Math.min(8, Math.sqrt(Number(point.n) || 1)));
+          return `<circle cx="${x(point.predicted_risk).toFixed(1)}" cy="${y(point.observed_rate).toFixed(1)}" r="${radius.toFixed(1)}" fill="#2563eb" fill-opacity="0.8"><title>Group ${escapeHtml(point.group)}: predicted ${escapeHtml(formatValue(point.predicted_risk, "float3"))}, observed ${escapeHtml(formatValue(point.observed_rate, "float3"))}</title></circle>`;
+        }).join("");
+        return renderExportFrame("chart", `
+          <div class="roc-chart">
+            <svg class="roc-svg" viewBox="0 0 336 330" role="img" aria-label="Calibration plot">
+              <rect x="48" y="24" width="240" height="240" fill="#f8fafc" stroke="#cbd5e1"></rect>
+              <line x1="48" y1="264" x2="288" y2="24" stroke="#64748b" stroke-dasharray="5 5"></line>
+              <line x1="48" y1="264" x2="288" y2="264" stroke="#475569"></line>
+              <line x1="48" y1="264" x2="48" y2="24" stroke="#475569"></line>
+              ${curvePath ? `<path d="${escapeHtml(curvePath)}" fill="none" stroke="#b42318" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>` : ""}
+              ${pointMarks}
+              <text x="168" y="318" text-anchor="middle" font-size="12" fill="#475569">Predicted risk</text>
+              <text x="12" y="144" text-anchor="middle" font-size="12" fill="#475569" transform="rotate(-90 12 144)">Observed rate</text>
+              <text x="48" y="284" text-anchor="middle" font-size="10" fill="#64748b">0</text>
+              <text x="288" y="284" text-anchor="middle" font-size="10" fill="#64748b">1</text>
+              <text x="32" y="268" text-anchor="middle" font-size="10" fill="#64748b">0</text>
+              <text x="32" y="28" text-anchor="middle" font-size="10" fill="#64748b">1</text>
+            </svg>
+            <div class="legend">
+              <span class="legend-item"><span class="legend-swatch" style="--legend-color:#b42318"></span>LOESS curve</span>
+              <span class="legend-item"><span class="legend-swatch" style="--legend-color:#64748b"></span>Ideal calibration</span>
+              <span class="legend-item"><span class="legend-swatch" style="--legend-color:#2563eb"></span>Grouped observed rate</span>
+            </div>
+          </div>
+        `);
+      }
+
+      function renderCalibrationPointTable(rows) {
+        if (!rows.length) return '<div class="empty">No grouped calibration points available.</div>';
+        const columns = [
+          { field: "group", label: "Group", format: "int" },
+          { field: "n", label: "N", format: "int" },
+          { field: "predicted_risk", label: "Predicted risk", format: "float3" },
+          { field: "observed_rate", label: "Observed rate", format: "float3" },
+          { field: "risk_min", label: "Risk min", format: "float3" },
+          { field: "risk_max", label: "Risk max", format: "float3" },
+        ];
+        return renderTable(columns, rows);
+      }
+
+      function renderDecisionCurveAnalysis(data) {
+        const rows = data.rows ?? [];
+        const range = data.model_superior_threshold_range ?? {};
+        const rangeText = range.min === null || range.min === undefined
+          ? "No threshold range"
+          : `${formatValue(range.min, "float3")}-${formatValue(range.max, "float3")}`;
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Prevalence</div>
+              <div class="card-value">${escapeHtml(formatValue(data.prevalence, "float3"))}</div>
+              <div class="meta">${escapeHtml(data.outcome ?? "Outcome")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Useful thresholds</div>
+              <div class="card-value">${escapeHtml(rangeText)}</div>
+              <div class="meta">Model net benefit exceeds both defaults</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderDecisionCurveSvg(rows, range)}
+          ${renderDecisionCurveTable(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderDecisionCurveSvg(rows, range = null) {
+        if (!rows.length) return '<div class="empty">No decision curve data available.</div>';
+        const left = 62;
+        const right = 18;
+        const top = 24;
+        const bottom = 276;
+        const plotWidth = 278;
+        const plotHeight = bottom - top;
+        const modelValues = rows.map((row) => Number(row.model_net_benefit)).filter(Number.isFinite);
+        const earlyTreatAllValues = rows
+          .filter((row) => Number(row.threshold) <= 0.6)
+          .map((row) => Number(row.treat_all_net_benefit))
+          .filter(Number.isFinite);
+        const yMin = -0.05;
+        const yMax = Math.max(0.1, niceCeil(Math.max(...modelValues, ...earlyTreatAllValues, 0), 0.05));
+        const x = (value) => left + Math.max(0, Math.min(1, Number(value) || 0)) * plotWidth;
+        const rawY = (value) => bottom - ((Number(value) - yMin) / (yMax - yMin)) * plotHeight;
+        const y = (value) => Math.max(top - 18, Math.min(bottom + 18, rawY(value)));
+        const pathFor = (field) => rows.map((row, index) => {
+          const command = index === 0 ? "M" : "L";
+          return `${command} ${x(row.threshold).toFixed(1)} ${y(row[field]).toFixed(1)}`;
+        }).join(" ");
+        const zeroY = y(0);
+        const yTicks = niceTickValues(yMin, yMax, 0.05);
+        const xTicks = [0, 0.2, 0.4, 0.6, 0.8, 1];
+        const usefulRange = range ?? decisionCurveUsefulRange(rows);
+        const shadeStart = Number(usefulRange?.min);
+        const shadeEnd = Number(usefulRange?.max);
+        const hasShade = Number.isFinite(shadeStart) && Number.isFinite(shadeEnd) && shadeEnd > shadeStart;
+        const clipId = `dca-clip-${Math.random().toString(36).slice(2)}`;
+        return renderExportFrame("chart", `
+          <div class="roc-chart">
+            <svg class="roc-svg" viewBox="0 0 372 336" role="img" aria-label="Decision curve analysis">
+              <defs>
+                <clipPath id="${clipId}">
+                  <rect x="${left}" y="${top}" width="${plotWidth}" height="${plotHeight}"></rect>
+                </clipPath>
+              </defs>
+              <rect x="${left}" y="${top}" width="${plotWidth}" height="${plotHeight}" fill="#ffffff"></rect>
+              ${hasShade ? `
+                <rect x="${x(shadeStart).toFixed(1)}" y="${top}" width="${Math.max(x(shadeEnd) - x(shadeStart), 1).toFixed(1)}" height="${plotHeight}" fill="#e8f4fb" fill-opacity="0.85"></rect>
+                <line x1="${x(shadeStart).toFixed(1)}" y1="${top}" x2="${x(shadeStart).toFixed(1)}" y2="${bottom}" stroke="#8ecae6" stroke-dasharray="4 3"></line>
+                <line x1="${x(shadeEnd).toFixed(1)}" y1="${top}" x2="${x(shadeEnd).toFixed(1)}" y2="${bottom}" stroke="#8ecae6" stroke-dasharray="4 3"></line>
+              ` : ""}
+              ${yTicks.map((tick) => `<line x1="${left}" y1="${y(tick).toFixed(1)}" x2="${left + plotWidth}" y2="${y(tick).toFixed(1)}" stroke="#edf2f7"></line>`).join("")}
+              <g clip-path="url(#${clipId})">
+                <path d="${escapeHtml(pathFor("model_net_benefit"))}" fill="none" stroke="#0072b2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="${escapeHtml(pathFor("treat_all_net_benefit"))}" fill="none" stroke="#d55e00" stroke-width="3.5" stroke-dasharray="9 5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="${escapeHtml(pathFor("treat_none_net_benefit"))}" fill="none" stroke="#969696" stroke-width="3.2" stroke-dasharray="2 6" stroke-linecap="round" stroke-linejoin="round"></path>
+              </g>
+              <line x1="${left}" y1="${zeroY.toFixed(1)}" x2="${left + plotWidth}" y2="${zeroY.toFixed(1)}" stroke="#9ca3af" stroke-dasharray="2 6"></line>
+              <line x1="${left}" y1="${bottom}" x2="${left + plotWidth}" y2="${bottom}" stroke="#111827" stroke-width="1.5"></line>
+              <line x1="${left}" y1="${top}" x2="${left}" y2="${bottom}" stroke="#111827" stroke-width="1.5"></line>
+              ${xTicks.map((tick) => `
+                <line x1="${x(tick).toFixed(1)}" y1="${bottom}" x2="${x(tick).toFixed(1)}" y2="${bottom + 6}" stroke="#111827" stroke-width="1.3"></line>
+                <text x="${x(tick).toFixed(1)}" y="${bottom + 22}" text-anchor="middle" font-size="11" fill="#111827">${escapeHtml(tick.toFixed(1))}</text>
+              `).join("")}
+              ${yTicks.map((tick) => `
+                <line x1="${left - 6}" y1="${y(tick).toFixed(1)}" x2="${left}" y2="${y(tick).toFixed(1)}" stroke="#111827" stroke-width="1.3"></line>
+                <text x="${left - 10}" y="${(y(tick) + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="#111827">${escapeHtml(tick.toFixed(2))}</text>
+              `).join("")}
+              <text x="${left + plotWidth / 2}" y="326" text-anchor="middle" font-size="15" fill="#111827">Threshold probability</text>
+              <text x="18" y="${top + plotHeight / 2}" text-anchor="middle" font-size="15" fill="#111827" transform="rotate(-90 18 ${top + plotHeight / 2})">Net benefit</text>
+              <g transform="translate(${left + plotWidth - 132}, ${top + 12})">
+                <rect x="0" y="0" width="126" height="70" rx="3" fill="#ffffff" stroke="#d1d5db"></rect>
+                <line x1="10" y1="18" x2="42" y2="18" stroke="#0072b2" stroke-width="4"></line>
+                <text x="52" y="22" font-size="12" fill="#111827">Model</text>
+                <line x1="10" y1="38" x2="42" y2="38" stroke="#d55e00" stroke-width="3.5" stroke-dasharray="9 5"></line>
+                <text x="52" y="42" font-size="12" fill="#111827">Treat all</text>
+                <line x1="10" y1="58" x2="42" y2="58" stroke="#969696" stroke-width="3.2" stroke-dasharray="2 6"></line>
+                <text x="52" y="62" font-size="12" fill="#111827">Treat none</text>
+              </g>
+            </svg>
+          </div>
+        `);
+      }
+
+      function decisionCurveUsefulRange(rows) {
+        const superior = rows.filter((row) =>
+          Number(row.model_net_benefit) > Number(row.treat_all_net_benefit)
+          && Number(row.model_net_benefit) > Number(row.treat_none_net_benefit)
+        );
+        if (!superior.length) return null;
+        return { min: superior[0].threshold, max: superior[superior.length - 1].threshold };
+      }
+
+      function niceFloor(value, step) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return 0;
+        return Math.floor(numeric / step) * step;
+      }
+
+      function niceCeil(value, step) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return step;
+        return Math.ceil(numeric / step) * step;
+      }
+
+      function niceTickValues(min, max, step) {
+        const start = niceCeil(min, step);
+        const end = niceFloor(max, step);
+        const ticks = [];
+        for (let value = start; value <= end + step / 2; value += step) {
+          ticks.push(Number(value.toFixed(10)));
+        }
+        return ticks.length ? ticks : [min, max];
+      }
+
+      function renderDecisionCurveTable(rows) {
+        if (!rows.length) return '<div class="empty">No threshold rows available.</div>';
+        const sampled = rows.filter((row) => {
+          const threshold = Number(row.threshold);
+          return Number.isFinite(threshold) && Math.round(threshold * 100) % 5 === 0;
+        });
+        const columns = [
+          { field: "threshold", label: "Threshold", format: "float3" },
+          { field: "model_net_benefit", label: "Model NB", format: "float3" },
+          { field: "treat_all_net_benefit", label: "Treat all NB", format: "float3" },
+          { field: "treat_none_net_benefit", label: "Treat none NB", format: "float3" },
+          { field: "true_positives", label: "TP", format: "int" },
+          { field: "false_positives", label: "FP", format: "int" },
+          { field: "interventions_avoided_per_100", label: "Avoided/100", format: "float1" },
+        ];
+        return renderTable(columns, sampled);
+      }
+
       function renderLogisticTerms(rows) {
         if (!rows.length) return '<div class="empty">No logistic model terms available.</div>';
         const columns = [
@@ -4282,7 +4646,7 @@
         const selected = rows.filter((row) => row.selected);
         if (!selected.length) return '<div class="empty">No terms were selected at the chosen LASSO penalty.</div>';
         const maxValue = Math.max(...selected.map((row) => Number(row.abs_standardized_coefficient) || 0), 1);
-        return `
+        return renderExportFrame("chart", `
           <div class="auc-ranking">
             <div class="lasso-coefficient-note">Bars and right-side values use standardized coefficients, so terms are comparable across scales. OR and raw log-odds coefficients use the original predictor coding.</div>
             ${selected.slice(0, 16).map((row, index) => {
@@ -4307,7 +4671,7 @@
               `;
             }).join("")}
           </div>
-        `;
+        `);
       }
 
       function renderCoxRegression(data) {
@@ -4347,7 +4711,7 @@
           return `${Math.min(Math.max(((logValue - minLog) / (maxLog - minLog)) * 100, 0), 100)}%`;
         };
         const one = position(1);
-        return `
+        return renderExportFrame("chart", `
           <div class="forest-plot" aria-label="Hazard ratio forest plot">
             ${rows.map((row) => {
               const left = position(row.ci_low ?? row.hazard_ratio);
@@ -4368,7 +4732,7 @@
               `;
             }).join("")}
           </div>
-        `;
+        `);
       }
 
       function renderNotes(analysis) {
@@ -4855,6 +5219,349 @@
         }
       }
 
+      function selectedAnalysisForExport() {
+        return state.filtered.find((item) => item.filename === state.selectedFilename) ?? null;
+      }
+
+      function exportBaseName(kind) {
+        const analysis = selectedAnalysisForExport();
+        const source = analysis?.title || analysis?.script_id || state.selectedFilename || kind;
+        return String(source)
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "")
+          .slice(0, 80) || kind;
+      }
+
+      function downloadTextFile(filename, content, type) {
+        const blob = new Blob([content], { type });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+      }
+
+      function downloadChartSvg(button) {
+        const block = button.closest('[data-export-block="chart"]');
+        if (!block) return;
+        const existingSvg = block.querySelector(".export-content svg");
+        const svg = existingSvg ? serializeExportSvg(existingSvg) : buildSvgFromRenderedChart(block);
+        if (!svg) {
+          window.alert("This chart cannot be exported as SVG yet.");
+          return;
+        }
+        downloadTextFile(`${exportBaseName("chart")}_chart.svg`, svg, "image/svg+xml;charset=utf-8");
+      }
+
+      function serializeExportSvg(svg) {
+        const clone = svg.cloneNode(true);
+        clone.querySelectorAll("title").forEach((item) => item.remove());
+        clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        if (!clone.getAttribute("width") || !clone.getAttribute("height")) {
+          const viewBox = clone.getAttribute("viewBox")?.split(/\s+/).map(Number) ?? [];
+          if (viewBox.length === 4) {
+            clone.setAttribute("width", String(viewBox[2]));
+            clone.setAttribute("height", String(viewBox[3]));
+          }
+        }
+        normalizeExportSvg(clone);
+        return new XMLSerializer().serializeToString(clone);
+      }
+
+      function normalizeExportSvg(svg) {
+        const palette = exportChartPalette();
+        const plotPaths = Array.from(svg.querySelectorAll("path[stroke]"));
+        for (const [index, path] of plotPaths.entries()) {
+          const stroke = path.getAttribute("stroke");
+          if (stroke && stroke !== "none") path.setAttribute("stroke", palette[index % palette.length]);
+          path.setAttribute("stroke-width", stroke && stroke !== "none" ? "2.6" : path.getAttribute("stroke-width") || "2.4");
+          path.setAttribute("fill", path.getAttribute("fill") === "none" ? "none" : path.getAttribute("fill") || "none");
+        }
+
+        svg.querySelectorAll("rect").forEach((rect, index) => {
+          const fill = rect.getAttribute("fill");
+          if (!fill || fill === "none" || fill === "#ffffff") return;
+          rect.setAttribute("fill", index === 0 ? "#ffffff" : "#eeeeee");
+          if (rect.hasAttribute("fill-opacity")) rect.setAttribute("fill-opacity", "0.75");
+        });
+
+        svg.querySelectorAll("circle").forEach((circle, index) => {
+          circle.setAttribute("fill", palette[(index + 2) % palette.length]);
+          if (circle.hasAttribute("fill-opacity")) circle.setAttribute("fill-opacity", "0.85");
+          circle.setAttribute("stroke", "#ffffff");
+          circle.setAttribute("stroke-width", "0.75");
+        });
+
+        svg.querySelectorAll("line").forEach((line) => {
+          const dash = line.getAttribute("stroke-dasharray");
+          const width = Number(line.getAttribute("stroke-width") || 0);
+          if (dash) {
+            line.setAttribute("stroke", "#8a8a8a");
+            line.setAttribute("stroke-width", width > 2 ? "2.2" : "1.2");
+            return;
+          }
+          line.setAttribute("stroke", width >= 1.3 ? "#222222" : "#d9d9d9");
+          if (!line.hasAttribute("stroke-width")) line.setAttribute("stroke-width", "1");
+        });
+
+        svg.querySelectorAll("text").forEach((text) => {
+          text.setAttribute("fill", "#111111");
+          if (!text.hasAttribute("font-family")) text.setAttribute("font-family", "Arial, Helvetica, sans-serif");
+        });
+      }
+
+      function buildSvgFromRenderedChart(block) {
+        if (block.querySelector(".forest-plot")) return buildForestSvg(block);
+        if (block.querySelector(".histogram")) return buildHistogramSvg(block);
+        if (block.querySelector(".auc-ranking")) return buildHorizontalBarSvg(chartRowsFromRanking(block), "Value");
+        if (block.querySelector(".bar-row")) return buildHorizontalBarSvg(chartRowsFromBarRows(block), "Value");
+        return null;
+      }
+
+      function exportChartPalette() {
+        return ["#111111", "#4a4a4a", "#777777", "#9a9a9a", "#c0c0c0", "#2f2f2f"];
+      }
+
+      function chartRowsFromBarRows(block) {
+        return Array.from(block.querySelectorAll(".bar-row"))
+          .map((row) => {
+            const label = row.children[0]?.textContent?.trim() ?? "";
+            const value = firstFiniteNumber(row.querySelector("strong")?.textContent ?? "");
+            return { label, value };
+          })
+          .filter((row) => row.label && Number.isFinite(row.value));
+      }
+
+      function chartRowsFromRanking(block) {
+        return Array.from(block.querySelectorAll(".auc-rank-row"))
+          .map((row) => {
+            const label = row.querySelector(".rank-title")?.textContent?.trim() ?? "";
+            const value = lastFiniteNumber(row.querySelector(".rank-auc")?.textContent ?? "");
+            return { label, value };
+          })
+          .filter((row) => row.label && Number.isFinite(row.value));
+      }
+
+      function buildHorizontalBarSvg(rows, xLabel) {
+        if (!rows.length) return null;
+        const palette = exportChartPalette();
+        const width = 760;
+        const rowHeight = 28;
+        const height = Math.max(180, 70 + rows.length * rowHeight);
+        const left = 230;
+        const right = 36;
+        const top = 18;
+        const plotWidth = width - left - right;
+        const axisY = height - 34;
+        const maxValue = Math.max(...rows.map((row) => Math.abs(Number(row.value)) || 0), 1);
+        const ticks = [0, maxValue / 2, maxValue];
+        const bars = rows.map((row, index) => {
+          const y = top + index * rowHeight + 7;
+          const value = Math.abs(Number(row.value)) || 0;
+          const barWidth = Math.max((value / maxValue) * plotWidth, 1);
+          const color = palette[index % palette.length];
+          return `
+            <text x="${left - 10}" y="${y + 11}" text-anchor="end" font-size="11" fill="#111111" font-family="Arial, Helvetica, sans-serif">${escapeHtml(truncateText(row.label, 34))}</text>
+            <rect x="${left}" y="${y}" width="${barWidth.toFixed(1)}" height="14" fill="${color}"></rect>
+            <text x="${Math.min(left + barWidth + 6, width - 58).toFixed(1)}" y="${y + 11}" font-size="10" fill="#333333" font-family="Arial, Helvetica, sans-serif">${escapeHtml(formatNumberForSvg(row.value))}</text>
+          `;
+        }).join("");
+        const tickMarks = ticks.map((tick) => {
+          const x = left + (tick / maxValue) * plotWidth;
+          return `
+            <line x1="${x.toFixed(1)}" y1="${top}" x2="${x.toFixed(1)}" y2="${axisY}" stroke="#d9d9d9" stroke-width="1"></line>
+            <text x="${x.toFixed(1)}" y="${axisY + 15}" text-anchor="middle" font-size="10" fill="#333333" font-family="Arial, Helvetica, sans-serif">${escapeHtml(formatNumberForSvg(tick))}</text>
+          `;
+        }).join("");
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+            <rect width="${width}" height="${height}" fill="#ffffff"></rect>
+            ${tickMarks}
+            ${bars}
+            <line x1="${left}" y1="${axisY}" x2="${width - right}" y2="${axisY}" stroke="#111111" stroke-width="1.2"></line>
+            <text x="${left + plotWidth / 2}" y="${height - 8}" text-anchor="middle" font-size="12" fill="#111111" font-family="Arial, Helvetica, sans-serif">${escapeHtml(xLabel)}</text>
+          </svg>
+        `.trim();
+      }
+
+      function buildHistogramSvg(block) {
+        const palette = exportChartPalette();
+        const bins = Array.from(block.querySelectorAll(".hist-bin"))
+          .map((bin) => {
+            const label = bin.dataset.label ?? "";
+            const value = firstFiniteNumber(label.split(":").pop() ?? "");
+            return { label: label.split(":")[0]?.trim() || "", value };
+          })
+          .filter((bin) => Number.isFinite(bin.value));
+        if (!bins.length) return null;
+        const width = 760;
+        const height = 380;
+        const left = 54;
+        const right = 24;
+        const top = 24;
+        const bottom = 62;
+        const plotWidth = width - left - right;
+        const plotHeight = height - top - bottom;
+        const maxValue = Math.max(...bins.map((bin) => Number(bin.value) || 0), 1);
+        const barWidth = plotWidth / bins.length;
+        const bars = bins.map((bin, index) => {
+          const barHeight = ((Number(bin.value) || 0) / maxValue) * plotHeight;
+          const x = left + index * barWidth + 1;
+          const y = top + plotHeight - barHeight;
+          const label = index % Math.ceil(bins.length / 8) === 0 ? bin.label : "";
+          const color = palette[index % palette.length];
+          return `
+            <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(barWidth - 2, 1).toFixed(1)}" height="${barHeight.toFixed(1)}" fill="${color}"></rect>
+            ${label ? `<text x="${(x + barWidth / 2).toFixed(1)}" y="${height - 42}" text-anchor="end" font-size="9" fill="#333333" font-family="Arial, Helvetica, sans-serif" transform="rotate(-35 ${(x + barWidth / 2).toFixed(1)} ${height - 42})">${escapeHtml(label)}</text>` : ""}
+          `;
+        }).join("");
+        const ticks = [0, maxValue / 2, maxValue].map((tick) => {
+          const y = top + plotHeight - (tick / maxValue) * plotHeight;
+          return `
+            <line x1="${left}" y1="${y.toFixed(1)}" x2="${width - right}" y2="${y.toFixed(1)}" stroke="#d9d9d9" stroke-width="1"></line>
+            <text x="${left - 8}" y="${(y + 4).toFixed(1)}" text-anchor="end" font-size="10" fill="#333333" font-family="Arial, Helvetica, sans-serif">${escapeHtml(formatNumberForSvg(tick))}</text>
+          `;
+        }).join("");
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+            <rect width="${width}" height="${height}" fill="#ffffff"></rect>
+            ${ticks}
+            ${bars}
+            <line x1="${left}" y1="${top + plotHeight}" x2="${width - right}" y2="${top + plotHeight}" stroke="#111111" stroke-width="1.2"></line>
+            <line x1="${left}" y1="${top}" x2="${left}" y2="${top + plotHeight}" stroke="#111111" stroke-width="1.2"></line>
+            <text x="${width / 2}" y="${height - 8}" text-anchor="middle" font-size="12" fill="#111111" font-family="Arial, Helvetica, sans-serif">Value</text>
+            <text x="14" y="${top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="#111111" font-family="Arial, Helvetica, sans-serif" transform="rotate(-90 14 ${top + plotHeight / 2})">Count</text>
+          </svg>
+        `.trim();
+      }
+
+      function buildForestSvg(block) {
+        const rows = Array.from(block.querySelectorAll(".forest-row"))
+          .map((row) => {
+            const term = row.querySelector(".forest-term")?.textContent?.trim() ?? "";
+            const hrBox = row.querySelector(".forest-hr");
+            const hazardRatio = firstFiniteNumber(hrBox?.childNodes?.[0]?.textContent ?? "");
+            const ci = (hrBox?.querySelector(".meta")?.textContent ?? "").split("-").map((value) => Number(value.trim()));
+            return { term, hazardRatio, ciLow: ci[0], ciHigh: ci[1] };
+          })
+          .filter((row) => row.term && Number.isFinite(row.hazardRatio));
+        if (!rows.length) return null;
+        const finiteValues = rows
+          .flatMap((row) => [row.ciLow, row.ciHigh, row.hazardRatio])
+          .filter((value) => Number.isFinite(value) && value > 0);
+        const minLog = Math.min(Math.log(Math.min(...finiteValues, 0.25)), Math.log(0.25));
+        const maxLog = Math.max(Math.log(Math.max(...finiteValues, 4)), Math.log(4));
+        const width = 760;
+        const rowHeight = 32;
+        const height = 72 + rows.length * rowHeight;
+        const left = 230;
+        const right = 76;
+        const top = 24;
+        const plotWidth = width - left - right;
+        const x = (value) => left + ((Math.log(Math.max(Number(value) || 1, 0.001)) - minLog) / (maxLog - minLog)) * plotWidth;
+        const ticks = [Math.exp(minLog), 1, Math.exp(maxLog)];
+        const rowMarks = rows.map((row, index) => {
+          const y = top + index * rowHeight + 14;
+          const ciLow = Number.isFinite(row.ciLow) ? row.ciLow : row.hazardRatio;
+          const ciHigh = Number.isFinite(row.ciHigh) ? row.ciHigh : row.hazardRatio;
+          return `
+            <text x="${left - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="#111111" font-family="Arial, Helvetica, sans-serif">${escapeHtml(truncateText(row.term, 34))}</text>
+            <line x1="${x(ciLow).toFixed(1)}" y1="${y}" x2="${x(ciHigh).toFixed(1)}" y2="${y}" stroke="#4a4a4a" stroke-width="2.2"></line>
+            <circle cx="${x(row.hazardRatio).toFixed(1)}" cy="${y}" r="4" fill="#111111"></circle>
+            <text x="${width - right + 10}" y="${y + 4}" font-size="10" fill="#333333" font-family="Arial, Helvetica, sans-serif">${escapeHtml(formatNumberForSvg(row.hazardRatio))}</text>
+          `;
+        }).join("");
+        const tickMarks = ticks.map((tick) => {
+          const tickX = x(tick);
+          return `
+            <line x1="${tickX.toFixed(1)}" y1="${top}" x2="${tickX.toFixed(1)}" y2="${height - 38}" stroke="${Math.abs(tick - 1) < 1e-8 ? "#777777" : "#d9d9d9"}" stroke-width="${Math.abs(tick - 1) < 1e-8 ? "1.2" : "1"}"></line>
+            <text x="${tickX.toFixed(1)}" y="${height - 20}" text-anchor="middle" font-size="10" fill="#333333" font-family="Arial, Helvetica, sans-serif">${escapeHtml(formatNumberForSvg(tick))}</text>
+          `;
+        }).join("");
+        return `
+          <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+            <rect width="${width}" height="${height}" fill="#ffffff"></rect>
+            ${tickMarks}
+            ${rowMarks}
+            <line x1="${left}" y1="${height - 38}" x2="${width - right}" y2="${height - 38}" stroke="#111111" stroke-width="1.2"></line>
+            <text x="${left + plotWidth / 2}" y="${height - 6}" text-anchor="middle" font-size="12" fill="#111111" font-family="Arial, Helvetica, sans-serif">Hazard ratio</text>
+          </svg>
+        `.trim();
+      }
+
+      function downloadLatexTable(button) {
+        const block = button.closest('[data-export-block="table"]');
+        const table = block?.querySelector("table");
+        if (!table) return;
+        downloadTextFile(`${exportBaseName("table")}_table.tex`, tableToLatex(table), "text/plain;charset=utf-8");
+      }
+
+      function tableToLatex(table) {
+        const headers = Array.from(table.querySelectorAll("thead th")).map((cell) => latexEscape(cell.textContent.trim()));
+        const rows = Array.from(table.querySelectorAll("tbody tr")).map((row) =>
+          Array.from(row.querySelectorAll("td")).map((cell) => latexEscape(cell.textContent.trim()))
+        );
+        const columnCount = Math.max(headers.length, ...rows.map((row) => row.length), 1);
+        const alignment = "l".repeat(columnCount);
+        const headerLine = headers.length ? `${headers.join(" & ")} \\\\` : "";
+        const bodyLines = rows.map((row) => `${padRow(row, columnCount).join(" & ")} \\\\`);
+        return [
+          `\\begin{tabular}{${alignment}}`,
+          "\\hline",
+          headerLine,
+          headerLine ? "\\hline" : "",
+          ...bodyLines,
+          "\\hline",
+          "\\end{tabular}",
+          "",
+        ].filter((line) => line !== "").join("\n");
+      }
+
+      function padRow(row, length) {
+        return [...row, ...Array(Math.max(length - row.length, 0)).fill("")].slice(0, length);
+      }
+
+      function latexEscape(value) {
+        return String(value)
+          .replace(/\\/g, "\\textbackslash{}")
+          .replace(/&/g, "\\&")
+          .replace(/%/g, "\\%")
+          .replace(/\$/g, "\\$")
+          .replace(/#/g, "\\#")
+          .replace(/_/g, "\\_")
+          .replace(/{/g, "\\{")
+          .replace(/}/g, "\\}")
+          .replace(/~/g, "\\textasciitilde{}")
+          .replace(/\^/g, "\\textasciicircum{}");
+      }
+
+      function firstFiniteNumber(text) {
+        const match = String(text).match(/-?\d+(?:\.\d+)?/);
+        return match ? Number(match[0]) : NaN;
+      }
+
+      function lastFiniteNumber(text) {
+        const matches = String(text).match(/-?\d+(?:\.\d+)?/g) ?? [];
+        return matches.length ? Number(matches[matches.length - 1]) : NaN;
+      }
+
+      function formatNumberForSvg(value) {
+        const numeric = Number(value);
+        if (!Number.isFinite(numeric)) return "NA";
+        if (Math.abs(numeric) >= 100) return numeric.toFixed(0);
+        if (Math.abs(numeric) >= 10) return numeric.toFixed(1);
+        return numeric.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+      }
+
+      function truncateText(value, length) {
+        const text = String(value ?? "");
+        return text.length > length ? `${text.slice(0, Math.max(length - 1, 1))}...` : text;
+      }
+
       function updateHeaderDensity() {
         els.header.classList.toggle("compact", window.scrollY > 18);
       }
@@ -4898,6 +5605,17 @@
         state.selectedFilename = els.analysisSelect.value;
         renderArtifactList();
         renderSelectedAnalysis();
+      });
+      els.visualOutput.addEventListener("click", (event) => {
+        const chartButton = event.target.closest("[data-export-chart]");
+        if (chartButton) {
+          downloadChartSvg(chartButton);
+          return;
+        }
+        const tableButton = event.target.closest("[data-export-table]");
+        if (tableButton) {
+          downloadLatexTable(tableButton);
+        }
       });
       els.artifactList.addEventListener("click", (event) => {
         const button = event.target.closest("[data-filename]");

@@ -150,6 +150,60 @@ HOSMER_LEMESHOW_TEMPLATE = AnalysisTemplate(
     ],
 )
 
+LOESS_CALIBRATION_PLOT_TEMPLATE = AnalysisTemplate(
+    template_id="loess_calibration_plot",
+    title="Calibration Plot with LOESS Curve",
+    description="Fits one user-selected logistic model and plots observed event rates against predicted risk with a LOESS calibration curve.",
+    output="Calibration plot data, grouped observed-versus-expected points, LOESS curve, apparent AUC, and model warnings.",
+    category="Model Validation",
+    icon="CAL",
+    run_label="Run calibration plot",
+    cohort_display="shared_model_frame",
+    parameters=[
+        {
+            "name": "outcome",
+            "label": "Binary outcome",
+            "kind": "single_variable",
+            "accepted_types": ["binary"],
+            "required": True,
+        },
+        {
+            "name": "predictors",
+            "label": "Model predictors",
+            "kind": "multi_variable",
+            "accepted_types": ["binary", "categorical", "numeric"],
+            "required": True,
+        },
+    ],
+)
+
+DECISION_CURVE_ANALYSIS_TEMPLATE = AnalysisTemplate(
+    template_id="decision_curve_analysis",
+    title="Decision Curve Analysis",
+    description="Fits one user-selected logistic model and compares model net benefit with treat-all and treat-none strategies.",
+    output="Decision curve net-benefit plot data, threshold table, apparent AUC, and model warnings.",
+    category="Model Validation",
+    icon="DCA",
+    run_label="Run decision curve",
+    cohort_display="shared_model_frame",
+    parameters=[
+        {
+            "name": "outcome",
+            "label": "Binary outcome",
+            "kind": "single_variable",
+            "accepted_types": ["binary"],
+            "required": True,
+        },
+        {
+            "name": "predictors",
+            "label": "Model predictors",
+            "kind": "multi_variable",
+            "accepted_types": ["binary", "categorical", "numeric"],
+            "required": True,
+        },
+    ],
+)
+
 COX_REGRESSION_TEMPLATE = AnalysisTemplate(
     template_id="cox_regression",
     title="COX Regression",
@@ -230,6 +284,8 @@ def list_analysis_templates() -> list[dict[str, Any]]:
         MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
         BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
         HOSMER_LEMESHOW_TEMPLATE.as_dict(),
+        LOESS_CALIBRATION_PLOT_TEMPLATE.as_dict(),
+        DECISION_CURVE_ANALYSIS_TEMPLATE.as_dict(),
         LASSO_LOGISTIC_TEMPLATE.as_dict(),
         COX_REGRESSION_TEMPLATE.as_dict(),
     ]
@@ -250,6 +306,10 @@ def run_analysis_template(
         return build_bootstrapped_multivariable_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == HOSMER_LEMESHOW_TEMPLATE.template_id:
         return build_hosmer_lemeshow_calibration(dataframe, run_context, manifest_run_id, parameters)
+    if template_id == LOESS_CALIBRATION_PLOT_TEMPLATE.template_id:
+        return build_loess_calibration_plot(dataframe, run_context, manifest_run_id, parameters)
+    if template_id == DECISION_CURVE_ANALYSIS_TEMPLATE.template_id:
+        return build_decision_curve_analysis(dataframe, run_context, manifest_run_id, parameters)
     if template_id == LASSO_LOGISTIC_TEMPLATE.template_id:
         return build_lasso_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == COX_REGRESSION_TEMPLATE.template_id:
@@ -816,6 +876,274 @@ def build_hosmer_lemeshow_calibration(
             "degrees_of_freedom": calibration.get("degrees_of_freedom", 0),
             "p_value": _round_optional(calibration.get("p_value"), 4),
             "rows": calibration.get("rows", []),
+            "warnings": warnings,
+            "skipped": skipped,
+        },
+    }
+
+
+def build_loess_calibration_plot(
+    dataframe: pd.DataFrame,
+    run_context: RunContext,
+    manifest_run_id: str,
+    parameters: dict[str, Any],
+) -> dict[str, object]:
+    outcome = str(parameters.get("outcome") or "")
+    predictors = [str(value) for value in parameters.get("predictors") or []]
+    if outcome not in dataframe.columns:
+        raise ValueError(f"Outcome variable is not in the clean dataset: {outcome}")
+    if not predictors:
+        raise ValueError("Select at least one predictor variable.")
+
+    outcome_encoded, outcome_levels = _encode_binary_outcome(dataframe[outcome])
+    design, terms, skipped = _build_lasso_design_matrix(dataframe, predictors, outcome)
+    if design.shape[1] == 0:
+        raise ValueError("No usable predictor terms are available after encoding.")
+
+    model_frame = design.copy()
+    model_frame["outcome"] = outcome_encoded
+    model_frame = model_frame.dropna()
+    if model_frame.empty:
+        raise ValueError("No complete cases remain after applying the selected predictors.")
+    if int(model_frame["outcome"].nunique()) != 2:
+        raise ValueError("Complete cases do not include both outcome classes.")
+
+    x_terms = model_frame.drop(columns=["outcome"]).to_numpy(dtype=float)
+    y = model_frame["outcome"].astype(float).to_numpy()
+    usable_mask = np.isfinite(x_terms.std(axis=0)) & (x_terms.std(axis=0) > 1e-12)
+    if not np.any(usable_mask):
+        raise ValueError("No predictor terms vary within the complete-case model frame.")
+    x_terms = x_terms[:, usable_mask]
+    terms = [term for term, usable in zip(terms, usable_mask, strict=True) if usable]
+    x = np.column_stack([np.ones(len(y)), x_terms])
+
+    beta, converged, fit_warning = _fit_logistic(x, y)
+    probabilities = _sigmoid(x @ beta)
+    auc = _auc_score(y, probabilities)
+    grouped = _hosmer_lemeshow_test(probabilities, y)
+    loess = _loess_calibration_curve(probabilities, y)
+
+    warnings = []
+    if fit_warning:
+        warnings.append(fit_warning)
+    if not converged:
+        warnings.append("Model did not fully converge.")
+    if grouped["status"] == "fallback":
+        warnings.append(f"Grouped calibration points were not estimated: {grouped['reason']}.")
+    if loess["status"] == "fallback":
+        warnings.append(f"LOESS calibration curve was not estimated: {loess['reason']}.")
+    if len(y) < 30:
+        warnings.append("Calibration curves are visually unstable with small complete-case counts.")
+
+    event_count = int(y.sum())
+    non_event_count = int(len(y) - event_count)
+    if min(event_count, non_event_count) < 5:
+        warnings.append("Low event or non-event count.")
+    if event_count <= max(len(terms) * 5, 5):
+        warnings.append("Low event count relative to model terms; calibration estimates may be unstable.")
+
+    calibration_points = [
+        {
+            "group": row["group"],
+            "n": row["n"],
+            "predicted_risk": row["expected_event_rate"],
+            "observed_rate": row["observed_event_rate"],
+            "risk_min": row["risk_min"],
+            "risk_max": row["risk_max"],
+            "observed_events": row["observed_events"],
+            "expected_events": row["expected_events"],
+        }
+        for row in grouped.get("rows", [])
+    ]
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
+
+    return {
+        "script_id": LOESS_CALIBRATION_PLOT_TEMPLATE.template_id,
+        "run_id": run_context.run_id,
+        "manifest_run_id": manifest_run_id,
+        "run_datetime": run_context.run_datetime,
+        "title": f"LOESS calibration plot for {outcome}",
+        "description": "Observed event rates versus predicted risk with a LOESS calibration curve for a user-selected logistic model.",
+        "category": "Model Validation",
+        "priority": 8,
+        "metadata": {
+            "n": int(len(y)),
+            "template_id": LOESS_CALIBRATION_PLOT_TEMPLATE.template_id,
+            "outcome": outcome,
+            "event_level": outcome_levels["event"],
+            "reference_level": outcome_levels["reference"],
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "risk_groups": grouped.get("group_count", len(calibration_points)),
+            "loess_span": loess.get("span"),
+            "loess_points": len(loess.get("curve", [])),
+            "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+            "notes": "Grouped points use predicted-risk deciles when possible. The LOESS curve uses local linear smoothing with tri-cube weights over fitted probabilities.",
+        },
+        "cohort_display": LOESS_CALIBRATION_PLOT_TEMPLATE.cohort_display,
+        "cohort": cohort,
+        "visualization": {
+            "type": "calibration_plot",
+            "library": "generic",
+            "config": {
+                "x_field": "predicted_risk",
+                "y_field": "observed_rate",
+                "curve_field": "loess_curve",
+            },
+        },
+        "data": {
+            "outcome": outcome,
+            "outcome_levels": outcome_levels,
+            "n": int(len(y)),
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "risk_groups": grouped.get("group_count", len(calibration_points)),
+            "loess_span": loess.get("span"),
+            "calibration_points": calibration_points,
+            "loess_curve": loess.get("curve", []),
+            "rows": calibration_points,
+            "warnings": warnings,
+            "skipped": skipped,
+        },
+    }
+
+
+def build_decision_curve_analysis(
+    dataframe: pd.DataFrame,
+    run_context: RunContext,
+    manifest_run_id: str,
+    parameters: dict[str, Any],
+) -> dict[str, object]:
+    outcome = str(parameters.get("outcome") or "")
+    predictors = [str(value) for value in parameters.get("predictors") or []]
+    if outcome not in dataframe.columns:
+        raise ValueError(f"Outcome variable is not in the clean dataset: {outcome}")
+    if not predictors:
+        raise ValueError("Select at least one predictor variable.")
+
+    outcome_encoded, outcome_levels = _encode_binary_outcome(dataframe[outcome])
+    design, terms, skipped = _build_lasso_design_matrix(dataframe, predictors, outcome)
+    if design.shape[1] == 0:
+        raise ValueError("No usable predictor terms are available after encoding.")
+
+    model_frame = design.copy()
+    model_frame["outcome"] = outcome_encoded
+    model_frame = model_frame.dropna()
+    if model_frame.empty:
+        raise ValueError("No complete cases remain after applying the selected predictors.")
+    if int(model_frame["outcome"].nunique()) != 2:
+        raise ValueError("Complete cases do not include both outcome classes.")
+
+    x_terms = model_frame.drop(columns=["outcome"]).to_numpy(dtype=float)
+    y = model_frame["outcome"].astype(float).to_numpy()
+    usable_mask = np.isfinite(x_terms.std(axis=0)) & (x_terms.std(axis=0) > 1e-12)
+    if not np.any(usable_mask):
+        raise ValueError("No predictor terms vary within the complete-case model frame.")
+    x_terms = x_terms[:, usable_mask]
+    terms = [term for term, usable in zip(terms, usable_mask, strict=True) if usable]
+    x = np.column_stack([np.ones(len(y)), x_terms])
+
+    beta, converged, fit_warning = _fit_logistic(x, y)
+    probabilities = _sigmoid(x @ beta)
+    auc = _auc_score(y, probabilities)
+    curve = _decision_curve_rows(probabilities, y)
+
+    warnings = []
+    if fit_warning:
+        warnings.append(fit_warning)
+    if not converged:
+        warnings.append("Model did not fully converge.")
+    event_count = int(y.sum())
+    non_event_count = int(len(y) - event_count)
+    if min(event_count, non_event_count) < 5:
+        warnings.append("Low event or non-event count.")
+    if event_count <= max(len(terms) * 5, 5):
+        warnings.append("Low event count relative to model terms; decision curves may be unstable.")
+
+    model_superior = [
+        row for row in curve
+        if row["model_net_benefit"] > row["treat_all_net_benefit"] and row["model_net_benefit"] > row["treat_none_net_benefit"]
+    ]
+    threshold_range = {
+        "min": model_superior[0]["threshold"] if model_superior else None,
+        "max": model_superior[-1]["threshold"] if model_superior else None,
+    }
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
+
+    return {
+        "script_id": DECISION_CURVE_ANALYSIS_TEMPLATE.template_id,
+        "run_id": run_context.run_id,
+        "manifest_run_id": manifest_run_id,
+        "run_datetime": run_context.run_datetime,
+        "title": f"Decision curve analysis for {outcome}",
+        "description": "Net benefit of a user-selected logistic model versus treat-all and treat-none strategies.",
+        "category": "Model Validation",
+        "priority": 8,
+        "metadata": {
+            "n": int(len(y)),
+            "template_id": DECISION_CURVE_ANALYSIS_TEMPLATE.template_id,
+            "outcome": outcome,
+            "event_level": outcome_levels["event"],
+            "reference_level": outcome_levels["reference"],
+            "events": event_count,
+            "non_events": non_event_count,
+            "prevalence": round(float(event_count / len(y)), 4),
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "threshold_count": len(curve),
+            "model_superior_threshold_min": threshold_range["min"],
+            "model_superior_threshold_max": threshold_range["max"],
+            "model_input": "selected_logistic_model",
+            "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+            "notes": "Net benefit is TP/N - FP/N * threshold/(1-threshold). Treat-none net benefit is zero at every threshold.",
+        },
+        "cohort_display": DECISION_CURVE_ANALYSIS_TEMPLATE.cohort_display,
+        "cohort": cohort,
+        "visualization": {
+            "type": "decision_curve",
+            "library": "generic",
+            "config": {
+                "x_field": "threshold",
+                "model_field": "model_net_benefit",
+                "treat_all_field": "treat_all_net_benefit",
+                "treat_none_field": "treat_none_net_benefit",
+            },
+        },
+        "data": {
+            "outcome": outcome,
+            "outcome_levels": outcome_levels,
+            "n": int(len(y)),
+            "events": event_count,
+            "non_events": non_event_count,
+            "prevalence": round(float(event_count / len(y)), 4),
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "threshold_count": len(curve),
+            "model_superior_threshold_range": threshold_range,
+            "model_spec": {
+                "type": "selected_logistic_model",
+                "outcome": outcome,
+                "predictors": predictors,
+            },
+            "rows": curve,
             "warnings": warnings,
             "skipped": skipped,
         },
@@ -1614,6 +1942,101 @@ def _hosmer_lemeshow_test(probabilities: np.ndarray, y: np.ndarray, group_count:
         "low_expected_count": low_expected_count,
         "rows": rows,
     }
+
+
+def _loess_calibration_curve(
+    probabilities: np.ndarray,
+    y: np.ndarray,
+    *,
+    span: float = 0.75,
+    point_count: int = 101,
+) -> dict[str, Any]:
+    if len(y) < 3:
+        return {"status": "fallback", "reason": "fewer than 3 complete cases", "span": span, "curve": []}
+    if float(np.max(probabilities) - np.min(probabilities)) <= 1e-12:
+        return {"status": "fallback", "reason": "predicted risks have no variation", "span": span, "curve": []}
+
+    x = probabilities.astype(float)
+    response = y.astype(float)
+    neighbour_count = max(3, min(len(x), int(math.ceil(float(span) * len(x)))))
+    grid = np.linspace(0, 1, point_count)
+    curve = []
+
+    for target in grid:
+        distances = np.abs(x - target)
+        bandwidth = float(np.partition(distances, neighbour_count - 1)[neighbour_count - 1])
+        if bandwidth <= 1e-12:
+            nearest = response[distances <= 1e-12]
+            smoothed = float(nearest.mean()) if len(nearest) else float(response.mean())
+        else:
+            scaled = distances / bandwidth
+            weights = np.where(scaled <= 1, (1 - scaled ** 3) ** 3, 0.0)
+            smoothed = _weighted_local_linear_prediction(x, response, weights, target)
+        curve.append({
+            "predicted_risk": round(float(target), 4),
+            "observed_rate": round(float(np.clip(smoothed, 0, 1)), 4),
+        })
+
+    return {
+        "status": "fit",
+        "span": span,
+        "curve": curve,
+    }
+
+
+def _decision_curve_rows(
+    probabilities: np.ndarray,
+    y: np.ndarray,
+    *,
+    threshold_min: float = 0.0,
+    threshold_max: float = 0.99,
+    threshold_step: float = 0.01,
+) -> list[dict[str, object]]:
+    n = len(y)
+    event_count = float(y.sum())
+    non_event_count = float(n - event_count)
+    prevalence = event_count / n
+    thresholds = np.arange(threshold_min, threshold_max + threshold_step / 2, threshold_step)
+    rows = []
+
+    for threshold in thresholds:
+        threshold = float(round(threshold, 4))
+        odds = threshold / (1 - threshold)
+        treated = probabilities >= threshold
+        true_positives = int(np.sum(treated & (y == 1)))
+        false_positives = int(np.sum(treated & (y == 0)))
+        model_net_benefit = (true_positives / n) - (false_positives / n) * odds
+        treat_all_net_benefit = prevalence - (non_event_count / n) * odds
+        interventions_avoided = (model_net_benefit - treat_all_net_benefit) / odds * 100 if odds > 0 else None
+        rows.append({
+            "threshold": threshold,
+            "model_net_benefit": round(float(model_net_benefit), 4),
+            "treat_all_net_benefit": round(float(treat_all_net_benefit), 4),
+            "treat_none_net_benefit": 0.0,
+            "true_positives": true_positives,
+            "false_positives": false_positives,
+            "classified_positive": int(np.sum(treated)),
+            "classification_rate": round(float(np.mean(treated)), 4),
+            "interventions_avoided_per_100": _round_optional(interventions_avoided, 2),
+        })
+
+    return rows
+
+
+def _weighted_local_linear_prediction(x: np.ndarray, y: np.ndarray, weights: np.ndarray, target: float) -> float:
+    if float(weights.sum()) <= 1e-12:
+        return float(y.mean())
+
+    centered = x - target
+    design = np.column_stack([np.ones(len(x)), centered])
+    weighted_design = design * weights[:, None]
+    information = design.T @ weighted_design
+    score = design.T @ (weights * y)
+    try:
+        coefficients = np.linalg.solve(information, score)
+        return float(coefficients[0])
+    except np.linalg.LinAlgError:
+        return float(np.average(y, weights=weights))
 
 
 def _cross_validated_logistic_auc(x_terms: np.ndarray, y: np.ndarray) -> dict[str, Any]:
