@@ -22,6 +22,7 @@ class AnalysisTemplate:
     icon: str
     parameters: list[dict[str, Any]]
     run_label: str
+    cohort_display: str = "none"
 
     def as_dict(self) -> dict[str, Any]:
         return {
@@ -33,6 +34,7 @@ class AnalysisTemplate:
             "icon": self.icon,
             "parameters": self.parameters,
             "run_label": self.run_label,
+            "cohort_display": self.cohort_display,
         }
 
 
@@ -44,6 +46,7 @@ UNIVARIATE_AUC_TEMPLATE = AnalysisTemplate(
     category="Model Screening",
     icon="AUC",
     run_label="Run AUC screen",
+    cohort_display="none",
     parameters=[
         {
             "name": "outcome",
@@ -70,6 +73,7 @@ MULTIVARIABLE_LOGISTIC_TEMPLATE = AnalysisTemplate(
     category="Regression Modeling",
     icon="LR",
     run_label="Run logistic regression",
+    cohort_display="shared_model_frame",
     parameters=[
         {
             "name": "outcome",
@@ -96,6 +100,7 @@ COX_REGRESSION_TEMPLATE = AnalysisTemplate(
     category="Survival Modeling",
     icon="COX",
     run_label="Run COX regression",
+    cohort_display="shared_model_frame",
     parameters=[
         {
             "name": "start_date",
@@ -141,6 +146,7 @@ LASSO_LOGISTIC_TEMPLATE = AnalysisTemplate(
     category="Model Selection",
     icon="L1",
     run_label="Run LASSO regression",
+    cohort_display="shared_model_frame",
     parameters=[
         {
             "name": "outcome",
@@ -242,6 +248,7 @@ def build_univariate_auc_screen(
             "exclusions": "Each model uses complete cases for its outcome and predictor.",
             "notes": "AUC is apparent AUC on the same dataset used for fitting; cross-validation is not yet applied.",
         },
+        "cohort_display": UNIVARIATE_AUC_TEMPLATE.cohort_display,
         "visualization": {
             "type": "multi",
             "library": "generic",
@@ -366,6 +373,12 @@ def build_multivariable_logistic_regression(
     cv_result = _cross_validated_logistic_auc(x_terms, y)
     if cv_result["status"] == "fallback":
         warnings.append(f"Cross-validated AUC was not estimated: {cv_result['reason']}.")
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
 
     return {
         "script_id": MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id,
@@ -393,6 +406,8 @@ def build_multivariable_logistic_regression(
             "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
             "notes": "Predictors are user-selected. AUC is apparent AUC on the fitting data; stratified cross-validated AUC is reported when each class has enough complete cases.",
         },
+        "cohort_display": MULTIVARIABLE_LOGISTIC_TEMPLATE.cohort_display,
+        "cohort": cohort,
         "visualization": {
             "type": "multi",
             "library": "generic",
@@ -518,6 +533,12 @@ def build_lasso_logistic_regression(
         else f"Penalty strength selected by BIC because cross-validation was not feasible: {result['fallback_reason']}. "
         "AUC is apparent AUC on the fitting data."
     )
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
     return {
         "script_id": LASSO_LOGISTIC_TEMPLATE.template_id,
         "run_id": run_context.run_id,
@@ -551,6 +572,8 @@ def build_lasso_logistic_regression(
             "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
             "notes": selection_note,
         },
+        "cohort_display": LASSO_LOGISTIC_TEMPLATE.cohort_display,
+        "cohort": cohort,
         "visualization": {
             "type": "multi",
             "library": "generic",
@@ -561,7 +584,8 @@ def build_lasso_logistic_regression(
                         "columns": [
                             {"field": "selected_rank", "label": "Rank", "format": "int"},
                             {"field": "term", "label": "Term", "format": "string"},
-                            {"field": "standardized_coefficient", "label": "Std coef", "format": "float3"},
+                            {"field": "standardized_coefficient", "label": "Std coef (1 SD)", "format": "float3"},
+                            {"field": "coefficient", "label": "Raw log-odds coef", "format": "float3"},
                             {"field": "odds_ratio", "label": "OR", "format": "float3"},
                             {"field": "selected", "label": "Selected", "format": "string"},
                         ],
@@ -669,6 +693,12 @@ def build_cox_regression(
         warnings.append("Low event count relative to model terms; estimates may be unstable.")
 
     duration = model_frame["duration_days"]
+    cohort = _cox_cohort(
+        input_rows=len(dataframe),
+        survival_rows=len(survival_frame),
+        included_rows=len(model_frame),
+        required_fields=[field for field in [start_date, event_date, censor_date, *predictors] if field],
+    )
     return {
         "script_id": COX_REGRESSION_TEMPLATE.template_id,
         "run_id": run_context.run_id,
@@ -692,6 +722,8 @@ def build_cox_regression(
             "exclusions": "Rows require valid index dates, positive follow-up time, and complete selected predictors.",
             "notes": "Cox estimates use Breslow handling for tied event times. If no censor date is selected, censored rows use the latest valid date available on that row.",
         },
+        "cohort_display": COX_REGRESSION_TEMPLATE.cohort_display,
+        "cohort": cohort,
         "visualization": {
             "type": "multi",
             "library": "generic",
@@ -734,6 +766,62 @@ def build_cox_regression(
             "warnings": warnings,
             "skipped": skipped,
         },
+    }
+
+
+def _complete_case_cohort(
+    *,
+    input_rows: int,
+    included_rows: int,
+    required_fields: list[str],
+    rule_description: str,
+) -> dict[str, object]:
+    excluded_rows = max(input_rows - included_rows, 0)
+    return {
+        "display": "shared_model_frame",
+        "basis": "complete_case",
+        "input_rows": int(input_rows),
+        "included_rows": int(included_rows),
+        "excluded_rows": int(excluded_rows),
+        "required_fields": list(dict.fromkeys(required_fields)),
+        "rules": [
+            {
+                "rule": "missing_required_model_field",
+                "count": int(excluded_rows),
+                "description": rule_description,
+            }
+        ],
+    }
+
+
+def _cox_cohort(
+    *,
+    input_rows: int,
+    survival_rows: int,
+    included_rows: int,
+    required_fields: list[str],
+) -> dict[str, object]:
+    time_excluded = max(input_rows - survival_rows, 0)
+    predictor_excluded = max(survival_rows - included_rows, 0)
+    return {
+        "display": "shared_model_frame",
+        "basis": "valid_time_to_event_complete_case",
+        "input_rows": int(input_rows),
+        "included_rows": int(included_rows),
+        "excluded_rows": int(max(input_rows - included_rows, 0)),
+        "required_fields": list(dict.fromkeys(required_fields)),
+        "rules": [
+            {
+                "rule": "invalid_time_to_event",
+                "count": int(time_excluded),
+                "description": "Rows require valid index dates, event or censor dates, and positive follow-up time.",
+            },
+            {
+                "rule": "missing_required_model_field",
+                "count": int(predictor_excluded),
+                "description": "Rows require complete selected predictor values.",
+            },
+        ],
     }
 
 

@@ -23,41 +23,19 @@ from gladr.ingestion.normalizers import (
     safe_float,
 )
 from gladr.ingestion.quality_flags import unique_flags
-from gladr.ingestion.validators import is_stub_row, validate_required_columns
+from gladr.ingestion.validators import is_stub_row
 
 
 OPERATION_LIBRARY: list[dict[str, Any]] = [
     {
-        "operation": "map_columns",
-        "label": "Map Columns",
+        "operation": "rename_columns",
+        "label": "Rename Columns",
         "category": "Structure",
-        "description": "Rename source columns into canonical or intermediate variable names.",
+        "description": "Rename source columns into GLADR working field names. Columns not listed are kept unchanged.",
         "schema": {
             "expects": ["source columns"],
             "produces": ["renamed columns"],
             "config": [{"name": "columns", "kind": "mapping", "label": "Source to output columns"}],
-        },
-    },
-    {
-        "operation": "validate_required_columns",
-        "label": "Validate Required Columns",
-        "category": "Quality",
-        "description": "Stop the run when required variables are missing.",
-        "schema": {
-            "expects": ["columns to validate"],
-            "produces": ["run-stopping validation error when missing"],
-            "config": [{"name": "columns", "kind": "fields", "label": "Required columns"}],
-        },
-    },
-    {
-        "operation": "remove_stub_rows",
-        "label": "Remove Stub Rows",
-        "category": "Quality",
-        "description": "Drop source rows that contain an identifier but no real data.",
-        "schema": {
-            "expects": ["identifier column"],
-            "produces": ["filtered rows"],
-            "config": [{"name": "id_column", "kind": "field", "label": "Identifier column"}],
         },
     },
     {
@@ -78,58 +56,14 @@ OPERATION_LIBRARY: list[dict[str, Any]] = [
         },
     },
     {
-        "operation": "normalize_text",
-        "label": "Normalize Text",
+        "operation": "normalize_fields",
+        "label": "Normalize Fields",
         "category": "Normalize",
-        "description": "Trim text and convert configured null tokens to blank values.",
+        "description": "Convert one or more fields to text, category, boolean, date, or number outputs with explicit invalid-value handling.",
         "schema": {
-            "expects": ["text-like fields"],
-            "produces": ["normalized text fields"],
-            "config": [{"name": "fields", "kind": "fields", "label": "Fields"}],
-        },
-    },
-    {
-        "operation": "normalize_category",
-        "label": "Normalize Categories",
-        "category": "Normalize",
-        "description": "Normalize categorical labels with title casing and null handling.",
-        "schema": {
-            "expects": ["categorical fields"],
-            "produces": ["normalized categorical fields"],
-            "config": [{"name": "fields", "kind": "fields", "label": "Fields"}],
-        },
-    },
-    {
-        "operation": "normalize_boolean",
-        "label": "Normalize Booleans",
-        "category": "Normalize",
-        "description": "Convert yes/no style values into true, false, or blank.",
-        "schema": {
-            "expects": ["boolean-like fields"],
-            "produces": ["true, false, or blank values"],
-            "config": [{"name": "fields", "kind": "fields", "label": "Fields"}],
-        },
-    },
-    {
-        "operation": "parse_date",
-        "label": "Parse Dates",
-        "category": "Normalize",
-        "description": "Parse date-like variables into ISO date strings, with optional invalid-date flags.",
-        "schema": {
-            "expects": ["date-like source fields"],
-            "produces": ["ISO date output fields", "optional invalid-date flags"],
-            "config": [{"name": "mappings", "kind": "date_mappings", "label": "Date mappings"}],
-        },
-    },
-    {
-        "operation": "to_float",
-        "label": "Convert to Number",
-        "category": "Normalize",
-        "description": "Convert configured variables into numeric values.",
-        "schema": {
-            "expects": ["numeric-like fields"],
-            "produces": ["numeric fields"],
-            "config": [{"name": "fields", "kind": "fields", "label": "Fields"}],
+            "expects": ["source fields"],
+            "produces": ["normalized output fields", "optional invalid-value flags"],
+            "config": [{"name": "fields", "kind": "normalization_fields", "label": "Field normalizations"}],
         },
     },
     {
@@ -219,20 +153,6 @@ OPERATION_LIBRARY: list[dict[str, Any]] = [
         },
     },
     {
-        "operation": "set_value",
-        "label": "Set Value",
-        "category": "Structure",
-        "description": "Set a variable to a constant value for every retained row.",
-        "schema": {
-            "expects": ["field name", "constant value"],
-            "produces": ["field with constant value"],
-            "config": [
-                {"name": "field", "kind": "field", "label": "Field"},
-                {"name": "value", "kind": "text", "label": "Value"},
-            ],
-        },
-    },
-    {
         "operation": "static_code",
         "label": "Static Code",
         "category": "Code",
@@ -248,17 +168,6 @@ OPERATION_LIBRARY: list[dict[str, Any]] = [
         },
     },
     {
-        "operation": "attach_quality_flags",
-        "label": "Attach Quality Flags",
-        "category": "Quality",
-        "description": "Deduplicate collected row flags into the canonical data_quality_flags variable.",
-        "schema": {
-            "expects": ["collected row flags"],
-            "produces": ["data_quality_flags field"],
-            "config": [],
-        },
-    },
-    {
         "operation": "finalize_output",
         "label": "Finalize Output",
         "category": "Structure",
@@ -271,17 +180,6 @@ OPERATION_LIBRARY: list[dict[str, Any]] = [
                 {"name": "canonical_fields_first", "kind": "boolean", "label": "Canonical fields first"},
                 {"name": "add_missing_canonical_fields", "kind": "boolean", "label": "Add missing canonical fields"},
             ],
-        },
-    },
-    {
-        "operation": "select_canonical_fields",
-        "label": "Select Canonical Fields",
-        "category": "Structure",
-        "description": "Backward-compatible strict canonical output mode.",
-        "schema": {
-            "expects": ["working dataframe"],
-            "produces": ["canonical GLADR fields in schema order"],
-            "config": [{"name": "mode", "kind": "choice", "label": "Mode", "choices": ["canonical_only"]}],
         },
     },
 ]
@@ -314,6 +212,7 @@ def execute_ingestion_spec(
     working = dataframe.copy()
     raw_rows = len(working)
     flags_by_index: dict[Any, list[str]] = {index: [] for index in working.index}
+    flag_details_by_index: dict[Any, list[dict[str, Any]]] = {index: [] for index in working.index}
     stub_rows = 0
     steps: list[IngestionStep] = []
 
@@ -323,6 +222,8 @@ def execute_ingestion_spec(
         before_rows = len(working)
         operation = str(step.get("operation") or "")
         params = step.get("params") if isinstance(step.get("params"), dict) else {}
+        step_id = str(step.get("id") or f"{position}:{operation}")
+        label = str(step.get("label") or _operation_label(operation))
         working, metrics = _apply_operation(
             adapter=adapter,
             dataframe=working,
@@ -330,14 +231,19 @@ def execute_ingestion_spec(
             params=params,
             paths=project_paths,
             flags_by_index=flags_by_index,
+            flag_details_by_index=flag_details_by_index,
+            step_context={
+                "step_id": f"{source_path.stem}:{step_id}",
+                "step_label": label,
+                "step_position": position,
+                "operation": operation,
+            },
         )
         if operation == "remove_stub_rows":
             stub_rows += int(metrics.get("stub_rows") or 0)
         if operation == "filter_rows" and params.get("counts_as") == "stub_rows":
             stub_rows += int(metrics.get("filtered_rows") or 0)
 
-        step_id = str(step.get("id") or f"{position}:{operation}")
-        label = str(step.get("label") or _operation_label(operation))
         summary = str(step.get("description") or _summarize_operation(operation, params, metrics, before_rows, len(working)))
         manifest_step = IngestionStep(
             step_id=f"{source_path.stem}:{step_id}",
@@ -351,8 +257,8 @@ def execute_ingestion_spec(
         )
         steps.append(manifest_step)
 
-    if "data_quality_flags" not in working.columns:
-        working["data_quality_flags"] = [unique_flags(flags_by_index.get(index, [])) for index in working.index]
+    working["source"] = adapter.adapter_id
+    working["data_quality_flags"] = [unique_flags(flags_by_index.get(index, [])) for index in working.index]
 
     patient_ids = working["patient_id"].tolist() if "patient_id" in working.columns else [None] * len(working)
     report = [
@@ -360,6 +266,7 @@ def execute_ingestion_spec(
             "patient_id": patient_id,
             "source_file": source_path.name,
             "flags": unique_flags(flags_by_index.get(index, [])),
+            "flag_details": _unique_flag_details(flag_details_by_index.get(index, [])),
         }
         for index, patient_id in zip(working.index, patient_ids, strict=False)
     ]
@@ -388,10 +295,12 @@ def _apply_operation(
     params: dict[str, Any],
     paths: ProjectPaths,
     flags_by_index: dict[Any, list[str]],
+    flag_details_by_index: dict[Any, list[dict[str, Any]]],
+    step_context: dict[str, Any],
 ) -> tuple[pd.DataFrame, dict[str, Any]]:
     working = dataframe.copy()
 
-    if operation == "map_columns":
+    if operation in {"rename_columns", "map_columns"}:
         columns = params.get("columns") if isinstance(params.get("columns"), dict) else {}
         rename_map = {
             str(source): str(target)
@@ -402,8 +311,8 @@ def _apply_operation(
 
     if operation == "validate_required_columns":
         required = [str(value) for value in params.get("columns", [])]
-        validate_required_columns(working, required)
-        return working, {"required_columns": len(required)}
+        missing = [field for field in required if field not in working.columns]
+        return working, {"required_columns": len(required), "missing_columns": len(missing), "legacy_noop": True}
 
     if operation == "remove_stub_rows":
         id_column = str(params.get("id_column") or "patient_id")
@@ -411,6 +320,7 @@ def _apply_operation(
         removed_indexes = set(working.index[mask])
         for index in removed_indexes:
             flags_by_index.pop(index, None)
+            flag_details_by_index.pop(index, None)
         return working.loc[~mask].copy(), {"stub_rows": int(mask.sum()), "remaining_rows": int((~mask).sum())}
 
     if operation == "filter_rows":
@@ -420,10 +330,15 @@ def _apply_operation(
         removed_indexes = set(working.index[~keep_mask])
         for index in removed_indexes:
             flags_by_index.pop(index, None)
+            flag_details_by_index.pop(index, None)
         return working.loc[keep_mask].copy(), {
             "filtered_rows": int((~keep_mask).sum()),
             "remaining_rows": int(keep_mask.sum()),
             "action": action,
+            "filter_label": _filter_label(params),
+            "filter_description": _filter_description(params),
+            "filter_conditions": _filter_rule_summaries(params),
+            "minimum_populated_fields": params.get("minimum_populated_fields"),
         }
 
     if operation == "normalize_text":
@@ -447,6 +362,9 @@ def _apply_operation(
                 working[field] = working[field].apply(normalize_boolean)
         return working, {"fields": len(fields)}
 
+    if operation == "normalize_fields":
+        return _normalize_fields(working, params, flags_by_index, flag_details_by_index, step_context)
+
     if operation == "parse_date":
         mappings = params.get("mappings")
         if not isinstance(mappings, list):
@@ -467,7 +385,19 @@ def _apply_operation(
             if flag:
                 for index, raw_value in original.items():
                     if normalize_text(raw_value) is not None and parsed.loc[index] is None:
-                        flags_by_index.setdefault(index, []).append(str(flag))
+                        _append_flag_detail(
+                            flags_by_index,
+                            flag_details_by_index,
+                            index,
+                            flag=str(flag),
+                            step_context=step_context,
+                            field=target,
+                            source=source,
+                            output=target,
+                            raw_value=raw_value,
+                            message=f"{target} could not be converted to a date.",
+                            hint="Use a supported date value or update this step's date parsing rule.",
+                        )
                         invalid_values += 1
             parsed_fields += 1
         return working, {"date_fields": parsed_fields, "invalid_values": invalid_values}
@@ -509,7 +439,25 @@ def _apply_operation(
         if missing_flag:
             for index, value in working[output].items():
                 if pd.isna(value):
-                    flags_by_index.setdefault(index, []).append(str(missing_flag))
+                    row = working.loc[index]
+                    _append_flag_detail(
+                        flags_by_index,
+                        flag_details_by_index,
+                        index,
+                        flag=str(missing_flag),
+                        step_context=step_context,
+                        field=output,
+                        source=source,
+                        output=output,
+                        raw_value=row.get(source),
+                        message=f"{output} could not be resolved from {source}, {dob}, and {presentation_date}.",
+                        hint="Provide age directly or make sure date of birth and presentation date both parse correctly.",
+                        context={
+                            "source_value": _detail_value(row.get(source)),
+                            "dob_value": _detail_value(row.get(dob)),
+                            "presentation_date_value": _detail_value(row.get(presentation_date)),
+                        },
+                    )
                     missing_count += 1
         return working, {"missing_age_records": missing_count}
 
@@ -569,6 +517,9 @@ def _apply_operation(
         return working, {"flagged_records": flagged_records}
 
     if operation == "finalize_output":
+        if "source" not in working.columns:
+            working["source"] = adapter.adapter_id
+        working["data_quality_flags"] = [unique_flags(flags_by_index.get(index, [])) for index in working.index]
         return _finalize_output(working, params)
 
     if operation == "select_canonical_fields":
@@ -638,6 +589,177 @@ def _join_data_file(dataframe: pd.DataFrame, params: dict[str, Any], paths: Proj
         right = right.rename(columns={column: f"{prefix}{column}" for column in right.columns if column != right_key})
 
     return dataframe.merge(right, how=join_type, left_on=left_key, right_on=right_key)
+
+
+def _normalize_fields(
+    dataframe: pd.DataFrame,
+    params: dict[str, Any],
+    flags_by_index: dict[Any, list[str]],
+    flag_details_by_index: dict[Any, list[dict[str, Any]]],
+    step_context: dict[str, Any],
+) -> tuple[pd.DataFrame, dict[str, Any]]:
+    working = dataframe.copy()
+    normalized_fields = 0
+    invalid_values = 0
+    for config in _normalization_configs(params):
+        source = str(config.get("source") or config.get("field") or "")
+        output = str(config.get("output") or config.get("target") or source)
+        output_type = str(config.get("type") or "text")
+        on_invalid = str(config.get("on_invalid") or "blank")
+        invalid_flag = str(config.get("invalid_flag") or f"invalid_{output_type}_{output}")
+        if not source or not output or source not in working.columns:
+            continue
+
+        original = working[source]
+        normalized = original.apply(lambda value: _normalize_value(value, output_type))
+        invalid_mask = original.apply(lambda value: normalize_text(value) is not None) & normalized.isna()
+
+        if on_invalid == "keep_original":
+            normalized = normalized.where(~invalid_mask, original)
+        elif on_invalid == "flag":
+            for index in original.index[invalid_mask]:
+                raw_value = original.loc[index]
+                _append_flag_detail(
+                    flags_by_index,
+                    flag_details_by_index,
+                    index,
+                    flag=invalid_flag,
+                    step_context=step_context,
+                    field=output,
+                    source=source,
+                    output=output,
+                    raw_value=raw_value,
+                    message=f"{source} value could not be converted to {output_type}.",
+                    hint=_normalization_hint(output_type),
+                )
+            invalid_values += int(invalid_mask.sum())
+        elif on_invalid == "stop_run" and bool(invalid_mask.any()):
+            raise ValueError(f"Normalize fields could not convert {int(invalid_mask.sum())} value(s) in {source} to {output_type}.")
+
+        working[output] = normalized
+        normalized_fields += 1
+
+    return working, {"fields": normalized_fields, "invalid_values": invalid_values}
+
+
+def _append_flag_detail(
+    flags_by_index: dict[Any, list[str]],
+    flag_details_by_index: dict[Any, list[dict[str, Any]]],
+    index: Any,
+    *,
+    flag: str,
+    step_context: dict[str, Any],
+    field: str,
+    source: str,
+    output: str,
+    raw_value: object,
+    message: str,
+    hint: str,
+    context: dict[str, Any] | None = None,
+) -> None:
+    flags_by_index.setdefault(index, []).append(flag)
+    detail = {
+        "flag": flag,
+        "step_id": step_context.get("step_id"),
+        "step_label": step_context.get("step_label"),
+        "step_position": step_context.get("step_position"),
+        "operation": step_context.get("operation"),
+        "field": field,
+        "source": source,
+        "output": output,
+        "raw_value": _detail_value(raw_value),
+        "row_index": _detail_value(index),
+        "message": message,
+        "hint": hint,
+    }
+    if context:
+        detail["context"] = context
+    flag_details_by_index.setdefault(index, []).append(detail)
+
+
+def _unique_flag_details(details: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    seen: set[str] = set()
+    ordered: list[dict[str, Any]] = []
+    for detail in details:
+        key = json.dumps(detail, sort_keys=True, default=str)
+        if key in seen:
+            continue
+        seen.add(key)
+        ordered.append(detail)
+    return ordered
+
+
+def _detail_value(value: object) -> object | None:
+    if isinstance(value, dict):
+        return {str(key): _detail_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_detail_value(item) for item in value]
+    if value is None:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except (TypeError, ValueError):
+        pass
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+    if isinstance(value, (str, int, float, bool)):
+        return value
+    return str(value)
+
+
+def _normalization_hint(output_type: str) -> str:
+    if output_type == "date":
+        return "Use a supported date value or update this step's date parsing rule."
+    if output_type == "boolean":
+        return "Use a recognizable yes/no value or change this field's normalization type."
+    if output_type == "number":
+        return "Use a numeric value or change this field's normalization type."
+    return "Update the source value or change this field's normalization rule."
+
+
+def _normalization_configs(params: dict[str, Any]) -> list[dict[str, Any]]:
+    shared = {
+        "type": params.get("type") or "text",
+        "on_invalid": params.get("on_invalid") or "blank",
+        "invalid_flag": params.get("invalid_flag") or "",
+    }
+    configs: list[dict[str, Any]] = []
+
+    fields = params.get("fields")
+    if isinstance(fields, str):
+        fields = [field.strip() for field in fields.split(",") if field.strip()]
+    if isinstance(fields, list):
+        for field in fields:
+            if isinstance(field, str):
+                configs.append({**shared, "source": field, "output": field})
+            elif isinstance(field, dict):
+                source = str(field.get("source") or field.get("field") or "")
+                configs.append({**shared, **field, "output": field.get("output") or field.get("target") or source})
+
+    mappings = params.get("mappings")
+    if isinstance(mappings, list):
+        for mapping in mappings:
+            if not isinstance(mapping, dict):
+                continue
+            source = str(mapping.get("source") or "")
+            configs.append({**shared, **mapping, "output": mapping.get("output") or mapping.get("target") or source})
+
+    return configs
+
+
+def _normalize_value(value: object, output_type: str) -> object | None:
+    if output_type == "text":
+        return normalize_text(value)
+    if output_type == "category":
+        return normalize_category(value)
+    if output_type == "boolean":
+        return normalize_boolean(value)
+    if output_type == "date":
+        return parse_date(value)
+    if output_type == "number":
+        return safe_float(value)
+    raise ValueError(f"Unsupported normalization output type: {output_type}")
 
 
 def _load_data_file(paths: ProjectPaths, file_value: str) -> pd.DataFrame:
@@ -779,6 +901,76 @@ def _compare_numbers(actual: float | None, expected: float, operator: str) -> bo
     return actual <= expected
 
 
+def _filter_label(params: dict[str, Any]) -> str:
+    if params.get("minimum_populated_fields") not in (None, ""):
+        return "sparse rows"
+    conditions = params.get("conditions")
+    if isinstance(conditions, list):
+        fields = [
+            str(condition.get("field"))
+            for condition in conditions
+            if isinstance(condition, dict) and condition.get("field")
+        ]
+        if fields:
+            return ", ".join(dict.fromkeys(fields))
+    required_field = params.get("required_field")
+    if required_field:
+        return str(required_field)
+    return "row filter"
+
+
+def _filter_description(params: dict[str, Any]) -> str:
+    pieces = _filter_condition_summaries(params)
+    minimum = params.get("minimum_populated_fields")
+    if minimum not in (None, ""):
+        pieces.append(f"fewer than {minimum} populated field(s)")
+    action = str(params.get("action") or "keep")
+    match = str(params.get("match") or "all")
+    if not pieces:
+        return f"{action.title()} rows matching this filter."
+    return f"{action.title()} rows where {match} of: {'; '.join(pieces)}."
+
+
+def _filter_condition_summaries(params: dict[str, Any]) -> list[str]:
+    conditions = params.get("conditions")
+    if not isinstance(conditions, list):
+        return []
+    return [
+        _filter_condition_summary(condition)
+        for condition in conditions
+        if isinstance(condition, dict)
+    ]
+
+
+def _filter_rule_summaries(params: dict[str, Any]) -> list[str]:
+    summaries = _filter_condition_summaries(params)
+    minimum = params.get("minimum_populated_fields")
+    if minimum not in (None, ""):
+        summaries.append(f"fewer than {minimum} populated field(s)")
+    return summaries
+
+
+def _filter_condition_summary(condition: dict[str, Any]) -> str:
+    field = str(condition.get("field") or "field")
+    operator = str(condition.get("operator") or "equals")
+    value = condition.get("value")
+    labels = {
+        "is_missing": "is missing",
+        "is_not_missing": "is present",
+        "equals": f"equals {value}",
+        "not_equals": f"does not equal {value}",
+        "contains": f"contains {value}",
+        "not_contains": f"does not contain {value}",
+        "gt": f"> {value}",
+        "gte": f">= {value}",
+        "lt": f"< {value}",
+        "lte": f"<= {value}",
+        "in": f"in {value}",
+        "not_in": f"not in {value}",
+    }
+    return f"{field} {labels.get(operator, operator)}"
+
+
 def _math_result(row: pd.Series, params: dict[str, Any]) -> float | None:
     left = _math_operand(row, params, "left")
     right = _math_operand(row, params, "right")
@@ -835,6 +1027,9 @@ def _summarize_operation(
 ) -> str:
     if operation == "remove_stub_rows":
         return f"Removed {metrics.get('stub_rows', 0)} stub row(s) from {before_rows} row(s)."
+    if operation == "filter_rows":
+        detail = metrics.get("filter_description") or _filter_description(params)
+        return f"{detail} Retained {after_rows} of {before_rows} row(s)."
     if operation in {"custom_python", "static_code"}:
         return f"Ran allowlisted Python operation {params.get('function')}."
     if before_rows != after_rows:

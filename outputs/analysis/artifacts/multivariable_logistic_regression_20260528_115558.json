@@ -1,0 +1,166 @@
+{
+  "script_id": "multivariable_logistic_regression",
+  "run_id": "20260528_115558",
+  "manifest_run_id": "20260528_115519",
+  "run_datetime": "2026-05-28T11:55:58-04:00",
+  "title": "Multivariable logistic regression for recurrence_local",
+  "description": "User-selected multivariable logistic regression for a binary outcome.",
+  "category": "Regression Modeling",
+  "priority": 8,
+  "metadata": {
+    "n": 70,
+    "template_id": "multivariable_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "events": 51,
+    "non_events": 19,
+    "predictor_count": 2,
+    "term_count": 2,
+    "auc": 0.706,
+    "cv_auc": 0.684,
+    "cv_auc_se": 0.089,
+    "cv_folds": 5,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Predictors are user-selected. AUC is apparent AUC on the fitting data; stratified cross-validated AUC is reported when each class has enough complete cases."
+  },
+  "cohort_display": "shared_model_frame",
+  "cohort": {
+    "display": "shared_model_frame",
+    "basis": "complete_case",
+    "input_rows": 209,
+    "included_rows": 70,
+    "excluded_rows": 139,
+    "required_fields": [
+      "recurrence_local",
+      "residual_enhancement",
+      "tmz"
+    ],
+    "rules": [
+      {
+        "rule": "missing_required_model_field",
+        "count": 139,
+        "description": "Rows require complete outcome and selected predictor values."
+      }
+    ]
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "ci_low",
+              "label": "95% CI low",
+              "format": "float3"
+            },
+            {
+              "field": "ci_high",
+              "label": "95% CI high",
+              "format": "float3"
+            },
+            {
+              "field": "p_value",
+              "label": "P",
+              "format": "pvalue"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 70,
+    "events": 51,
+    "non_events": 19,
+    "predictor_count": 2,
+    "term_count": 2,
+    "auc": 0.706,
+    "cv_auc": 0.684,
+    "cv_auc_se": 0.089,
+    "cv_folds": 5,
+    "cv_fold_aucs": [
+      0.773,
+      0.725,
+      0.487,
+      0.95,
+      0.483
+    ],
+    "cv_fallback_reason": null,
+    "roc_curves": [
+      {
+        "predictor": "Multivariable model",
+        "points": [
+          {
+            "fpr": 0.0,
+            "tpr": 0.0
+          },
+          {
+            "fpr": 0.2105,
+            "tpr": 0.549
+          },
+          {
+            "fpr": 0.7368,
+            "tpr": 0.9412
+          },
+          {
+            "fpr": 0.8947,
+            "tpr": 0.9804
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 1.0
+          }
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "term": "residual_enhancement: True",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 1.1115,
+        "odds_ratio": 3.039,
+        "ci_low": 0.932,
+        "ci_high": 9.91,
+        "standard_error": 0.6031,
+        "z": 1.843,
+        "p_value": 0.0653
+      },
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 1.9905,
+        "odds_ratio": 7.319,
+        "ci_low": 1.409,
+        "ci_high": 38.005,
+        "standard_error": 0.8404,
+        "z": 2.368,
+        "p_value": 0.0179
+      }
+    ],
+    "warnings": [],
+    "skipped": []
+  }
+}

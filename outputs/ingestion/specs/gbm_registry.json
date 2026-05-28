@@ -6,10 +6,10 @@
   "description": "Default chain for converting the GBM main sheet CSV into the GLADR canonical dataset.",
   "steps": [
     {
-      "id": "map_columns",
-      "operation": "map_columns",
-      "label": "Map source columns",
-      "description": "Map known GBM registry columns to canonical and intermediate variables.",
+      "id": "rename_columns",
+      "operation": "rename_columns",
+      "label": "Rename source columns",
+      "description": "Rename known GBM registry columns to canonical and intermediate variables.",
       "outputs": [
         "renamed dataframe"
       ],
@@ -47,20 +47,6 @@
       }
     },
     {
-      "id": "validate_patient_id",
-      "operation": "validate_required_columns",
-      "label": "Validate patient identifier",
-      "description": "Require a patient identifier column before transforming rows.",
-      "inputs": [
-        "patient_id"
-      ],
-      "params": {
-        "columns": [
-          "patient_id"
-        ]
-      }
-    },
-    {
       "id": "remove_stub_rows",
       "operation": "filter_rows",
       "label": "Filter sparse rows",
@@ -86,78 +72,163 @@
       }
     },
     {
-      "id": "normalize_text",
-      "operation": "normalize_text",
+      "id": "rename_columns_1779984745347",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "IDH1/2 mutated",
+            "operator": "equals",
+            "value": "Not Reported"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "rename_columns_1779984745347_copy_1779984858012",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "IDH1/2 mutated",
+            "operator": "equals",
+            "value": "yes"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "rename_columns_1779984745347_copy_1779984858012_copy_1779984891157",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "resection_date",
+            "operator": "equals",
+            "value": "No Resection"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "rename_columns_1779984745347_copy_1779984858012_copy_1779984891157_copy_1779985131189",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "tmz",
+            "operator": "equals",
+            "value": "Not Documented"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "normalize_text_fields",
+      "operation": "normalize_fields",
       "label": "Normalize text fields",
-      "description": "Trim identifiers, notes, and recurrence evidence text.",
+      "description": "Trim text fields and convert known null tokens to blank values.",
       "params": {
         "fields": [
           "patient_id",
           "notes",
           "first_recurrence_evidence"
-        ]
+        ],
+        "type": "text",
+        "on_invalid": "blank"
       }
     },
     {
-      "id": "parse_dates",
-      "operation": "parse_date",
-      "label": "Parse date fields",
-      "description": "Parse source date fields to ISO strings and flag invalid DOB or presentation dates.",
+      "id": "normalize_core_dates",
+      "operation": "normalize_fields",
+      "label": "Normalize required dates",
+      "description": "Parse core date fields and flag invalid values.",
+      "params": {
+        "fields": [
+          "dob",
+          "presentation_date"
+        ],
+        "type": "date",
+        "on_invalid": "flag"
+      }
+    },
+    {
+      "id": "normalize_optional_dates",
+      "operation": "normalize_fields",
+      "label": "Normalize optional dates",
+      "description": "Parse optional date fields and leave invalid values blank.",
+      "params": {
+        "fields": [
+          "dod",
+          "first_mri_date",
+          "postop_mri_date"
+        ],
+        "type": "date",
+        "on_invalid": "blank"
+      }
+    },
+    {
+      "id": "extract_recurrence_date",
+      "operation": "normalize_fields",
+      "label": "Extract recurrence date",
+      "description": "Parse recurrence evidence into a recurrence date when the value is date-like.",
       "outputs": [
-        "canonical date fields"
+        "recurrence_date"
       ],
       "params": {
         "mappings": [
           {
-            "source": "dob",
-            "target": "dob",
-            "invalid_flag": "invalid_dob"
-          },
-          {
-            "source": "presentation_date",
-            "target": "presentation_date",
-            "invalid_flag": "invalid_presentation_date"
-          },
-          {
-            "source": "first_mri_date",
-            "target": "first_mri_date"
-          },
-          {
-            "source": "",
-            "target": ""
-          },
-          {
-            "source": "postop_mri_date",
-            "target": "postop_mri_date"
-          },
-          {
             "source": "first_recurrence_evidence",
-            "target": "recurrence_date"
-          },
-          {
-            "source": "dod",
-            "target": "dod"
+            "output": "recurrence_date"
           }
-        ]
+        ],
+        "type": "date",
+        "on_invalid": "blank"
       }
     },
     {
-      "id": "numbers",
-      "operation": "to_float",
-      "label": "Convert numeric fields",
-      "description": "Convert presentation neutrophils and lymphocytes to numbers.",
+      "id": "normalize_numbers",
+      "operation": "normalize_fields",
+      "label": "Normalize numeric fields",
+      "description": "Convert presentation lab fields to numbers.",
       "params": {
         "fields": [
           "neutrophils",
           "lymphocytes"
-        ]
+        ],
+        "type": "number",
+        "on_invalid": "blank"
       }
     },
     {
-      "id": "categories",
-      "operation": "normalize_category",
+      "id": "normalize_categories",
+      "operation": "normalize_fields",
       "label": "Normalize categorical fields",
-      "description": "Normalize contributor, sex, side, and lobe labels.",
+      "description": "Normalize source categorical labels.",
       "params": {
         "fields": [
           "contributor",
@@ -166,14 +237,16 @@
           "tumour_lobe",
           "recurrence_side",
           "recurrence_lobe"
-        ]
+        ],
+        "type": "category",
+        "on_invalid": "blank"
       }
     },
     {
-      "id": "booleans",
-      "operation": "normalize_boolean",
+      "id": "normalize_booleans",
+      "operation": "normalize_fields",
       "label": "Normalize boolean fields",
-      "description": "Convert yes/no treatment, imaging, and recurrence indicators to booleans.",
+      "description": "Convert yes/no style fields to booleans and flag values that cannot be interpreted.",
       "params": {
         "fields": [
           "periventricular",
@@ -183,7 +256,9 @@
           "radiotherapy",
           "tmz",
           "recurrence_local"
-        ]
+        ],
+        "type": "boolean",
+        "on_invalid": "flag"
       }
     },
     {
@@ -306,103 +381,6 @@
           "recurrence_type"
         ]
       }
-    },
-    {
-      "id": "derive_recurrence_type_copy_1779936920744",
-      "operation": "filter_rows",
-      "label": "Filter Rows",
-      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
-      "inputs": [
-        "first_recurrence_evidence"
-      ],
-      "outputs": [
-        "recurrence_type"
-      ],
-      "params": {
-        "action": "drop",
-        "match": "all",
-        "conditions": [
-          {
-            "field": "resection_date",
-            "operator": "equals",
-            "value": "No Resection"
-          }
-        ],
-        "minimum_populated_fields": "",
-        "ignored_fields": []
-      }
-    },
-    {
-      "id": "derive_recurrence_type_copy_1779936920744_copy_1779936953719",
-      "operation": "filter_rows",
-      "label": "Filter Rows",
-      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
-      "inputs": [
-        "first_recurrence_evidence"
-      ],
-      "outputs": [
-        "recurrence_type"
-      ],
-      "params": {
-        "action": "drop",
-        "match": "all",
-        "conditions": [
-          {
-            "field": "IDH1/2 mutated",
-            "operator": "equals",
-            "value": "yes"
-          }
-        ],
-        "minimum_populated_fields": "",
-        "ignored_fields": []
-      }
-    },
-    {
-      "id": "derive_recurrence_type_copy_1779936920744_copy_1779936953719_copy_1779936988236",
-      "operation": "filter_rows",
-      "label": "Filter Rows",
-      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
-      "inputs": [
-        "first_recurrence_evidence"
-      ],
-      "outputs": [
-        "recurrence_type"
-      ],
-      "params": {
-        "action": "drop",
-        "match": "all",
-        "conditions": [
-          {
-            "field": "IDH1/2 mutated",
-            "operator": "equals",
-            "value": "Not Reported"
-          }
-        ],
-        "minimum_populated_fields": "",
-        "ignored_fields": []
-      }
-    },
-    {
-      "id": "set_source",
-      "operation": "set_value",
-      "label": "Set source adapter",
-      "description": "Stamp each row with the source adapter identifier.",
-      "outputs": [
-        "source"
-      ],
-      "params": {
-        "field": "source",
-        "value": "gbm_registry"
-      }
-    },
-    {
-      "id": "quality_flags",
-      "operation": "attach_quality_flags",
-      "label": "Attach row quality flags",
-      "description": "Attach collected row-level quality flags to canonical records.",
-      "outputs": [
-        "data_quality_flags"
-      ]
     },
     {
       "id": "finalize_output",

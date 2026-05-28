@@ -277,9 +277,24 @@
       }
 
       .pipeline-map {
+        position: relative;
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 8px;
+        isolation: isolate;
+      }
+
+      .pipeline-map::before {
+        position: absolute;
+        inset: 16px 8px;
+        z-index: -1;
+        content: "";
+        pointer-events: none;
+        background:
+          linear-gradient(90deg, transparent 0%, rgba(37, 99, 235, 0.1) 48%, transparent 72%)
+          0 50% / 42% 100% no-repeat;
+        opacity: 0.42;
+        animation: pipeline-flow 4.5s ease-in-out infinite;
       }
 
       .stage-button {
@@ -296,19 +311,13 @@
           transform 160ms ease;
       }
 
-      .stage-button::after {
-        position: absolute;
-        top: 50%;
-        right: -22px;
-        z-index: 2;
-        width: 32px;
-        height: 1px;
-        content: "";
-        background: var(--line-strong);
-      }
-
-      .stage-button:last-child::after {
-        display: none;
+      @keyframes pipeline-flow {
+        0% {
+          background-position: -45% 50%;
+        }
+        100% {
+          background-position: 145% 50%;
+        }
       }
 
       .stage-button.active,
@@ -602,6 +611,7 @@
       .variable-list {
         display: grid;
         gap: 6px;
+        align-content: start;
         max-height: 720px;
         overflow: auto;
       }
@@ -1068,6 +1078,11 @@
         border-color: var(--ink);
       }
 
+      .step-title-detail {
+        color: var(--muted);
+        font-weight: 720;
+      }
+
       .step-enabled {
         display: inline-flex;
         gap: 6px;
@@ -1153,6 +1168,64 @@
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
+        align-items: start;
+      }
+
+      .flag-summary {
+        display: grid;
+        gap: 6px;
+      }
+
+      .flag-card {
+        cursor: default;
+      }
+
+      .flag-detail-list {
+        display: grid;
+        gap: 7px;
+        margin-top: 3px;
+      }
+
+      .flag-detail-row {
+        display: grid;
+        gap: 4px;
+        padding: 7px 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .flag-detail-top {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .flag-step {
+        color: var(--accent);
+        font-size: 0.72rem;
+        font-weight: 860;
+        text-transform: uppercase;
+      }
+
+      .flag-message {
+        font-size: 0.82rem;
+        font-weight: 720;
+      }
+
+      .flag-value,
+      .flag-hint {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.35;
+      }
+
+      .flag-value code {
+        padding: 1px 4px;
+        border-radius: 5px;
+        background: rgba(15, 23, 42, 0.06);
+        color: var(--ink);
       }
 
       .data-table {
@@ -1230,6 +1303,42 @@
         gap: 16px;
         align-items: flex-start;
         justify-content: space-between;
+      }
+
+      .cohort-trace {
+        display: grid;
+        gap: 8px;
+        padding: 10px 12px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .cohort-flow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .cohort-step {
+        font-weight: 780;
+      }
+
+      .cohort-arrow {
+        color: var(--muted);
+        font-weight: 820;
+      }
+
+      .cohort-rule-list {
+        display: grid;
+        gap: 4px;
+      }
+
+      .cohort-rule {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.35;
       }
 
       .cards {
@@ -1425,6 +1534,27 @@
         text-align: right;
         font-size: 1.15rem;
         font-weight: 850;
+      }
+
+      .rank-metric {
+        display: grid;
+        gap: 2px;
+        justify-items: end;
+      }
+
+      .rank-metric-label {
+        color: var(--muted);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .lasso-coefficient-note {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.4;
       }
 
       .rank-detail {
@@ -1651,8 +1781,16 @@
           justify-content: flex-start;
         }
 
-        .stage-button::after {
+        .pipeline-map::before {
           display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pipeline-map::before {
+          animation: none;
+          background-position: 50% 50%;
+          opacity: 0.24;
         }
       }
     </style>
@@ -1930,7 +2068,7 @@
           metricCard("Ingestion runs", summary.ingestion_runs ?? 0, "Versioned clean-stage manifests"),
           metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Analysis outputs discovered"),
           metricCard("Visualizations", summary.visualizations ?? 0, "Renderable chart contracts"),
-          metricCard("Latest cohort", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
+          metricCard("Latest clean dataset", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
         ].join("");
       }
 
@@ -2099,6 +2237,16 @@
             ${renderStageOutputs(selected)}
           </div>
         `;
+      }
+
+      function renderStageDetailPreservingStepChain() {
+        const chain = els.stageDetail.querySelector(".step-chain");
+        const scrollTop = chain?.scrollTop ?? 0;
+        renderStageDetail();
+        requestAnimationFrame(() => {
+          const updatedChain = els.stageDetail.querySelector(".step-chain");
+          if (updatedChain) updatedChain.scrollTop = scrollTop;
+        });
       }
 
       function renderStageFlow(flow, options = {}) {
@@ -2307,12 +2455,13 @@
 
       function renderIngestionStepCard(step, index) {
         const finalizer = isFinalizeStep(step);
+        const title = ingestionStepCardTitle(step);
         return `
           <div class="step-card ${finalizer ? "finalizer" : ""} ${index === state.selectedIngestionStepIndex ? "active" : ""} ${step.enabled === false ? "disabled" : ""}" draggable="${finalizer ? "false" : "true"}" data-ingestion-step="${escapeHtml(index)}">
             <span class="step-top">
               <span class="step-title-row">
                 <span class="drag-handle" aria-hidden="true">${finalizer ? "==" : "::"}</span>
-                <strong>${escapeHtml(step.label ?? step.id ?? step.operation)}</strong>
+                <strong>${escapeHtml(title.label)}${title.detail ? ` <span class="step-title-detail">(${escapeHtml(title.detail)})</span>` : ""}</strong>
               </span>
               <span class="badge">${escapeHtml(step.operation)}</span>
             </span>
@@ -2328,6 +2477,23 @@
             </span>`}
           </div>
         `;
+      }
+
+      function ingestionStepCardTitle(step) {
+        const label = step.label ?? step.id ?? step.operation;
+        if (step.operation !== "filter_rows") return { label, detail: "" };
+        return { label, detail: filterStepLabel(step.params ?? {}, label) };
+      }
+
+      function filterStepLabel(params, label = "") {
+        if (String(label).toLowerCase().includes("sparse") && params.minimum_populated_fields !== undefined && params.minimum_populated_fields !== null && params.minimum_populated_fields !== "") return "sparse rows";
+        const fields = (params.conditions ?? [])
+          .map((condition) => condition?.field)
+          .filter(Boolean);
+        if (fields.length) return uniqueValues(fields).join(", ");
+        if (params.minimum_populated_fields !== undefined && params.minimum_populated_fields !== null && params.minimum_populated_fields !== "") return "sparse rows";
+        if (params.required_field) return params.required_field;
+        return "";
       }
 
       function renderIngestionFieldDatalists() {
@@ -2417,12 +2583,23 @@
 
       function applyStepFieldEffect(fields, step) {
         const params = step.params ?? {};
-        if (step.operation === "map_columns") {
+        if (["rename_columns", "map_columns"].includes(step.operation)) {
           for (const [source, target] of Object.entries(params.columns ?? {})) {
             if (!source || !target) continue;
             fields.delete(source);
             fields.add(target);
           }
+          return;
+        }
+        if (step.operation === "normalize_fields") {
+          (params.fields ?? []).forEach((field) => {
+            const output = typeof field === "string" ? field : (field?.output ?? field?.target ?? field?.source);
+            if (output) fields.add(output);
+          });
+          (params.mappings ?? []).forEach((mapping) => {
+            const output = mapping?.output ?? mapping?.target ?? mapping?.source;
+            if (output) fields.add(output);
+          });
           return;
         }
         if (step.operation === "parse_date") {
@@ -2494,11 +2671,11 @@
 
       function renderOperationParams(step, adapter) {
         const params = step.params ?? {};
-        if (step.operation === "map_columns") {
+        if (["rename_columns", "map_columns"].includes(step.operation)) {
           const rows = Object.entries(params.columns ?? {}).slice(0, 18);
           return `
             <div class="control wide">
-              <label>Column mappings</label>
+              <label>Column renames</label>
               <div class="mapping-grid">
                 ${rows.map(([source, target], index) => `
                   <div class="mapping-row">
@@ -2509,6 +2686,43 @@
                 `).join("")}
               </div>
               <div class="meta">${escapeHtml(Object.keys(params.columns ?? {}).length)} mappings in this step.</div>
+            </div>
+          `;
+        }
+
+        if (step.operation === "normalize_fields") {
+          const mappings = Array.isArray(params.mappings) ? params.mappings : [];
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          return `
+            ${renderFieldListParam("fields", "Fields", params.fields, currentFields)}
+            <div class="control">
+              <label>Output type</label>
+              <select data-step-param="type">
+                ${["text", "category", "boolean", "date", "number"].map((value) => selectedOption(value, value, value === (params.type ?? "text"))).join("")}
+              </select>
+            </div>
+            <div class="control">
+              <label>Invalid values</label>
+              <select data-step-param="on_invalid">
+                ${["blank", "flag", "keep_original", "stop_run"].map((value) => selectedOption(value, value, value === (params.on_invalid ?? "blank"))).join("")}
+              </select>
+            </div>
+            ${mappings.length ? `
+              <div class="control wide">
+                <label>Output mappings</label>
+                <div class="mapping-grid">
+                  ${mappings.map((mapping, index) => `
+                    <div class="mapping-row">
+                      ${renderFieldSelect({ "data-step-param": "mappings", "data-param-index": index, "data-param-key": "source" }, mapping.source ?? "", currentFields)}
+                      <input data-step-param="mappings" data-param-index="${escapeHtml(index)}" data-param-key="output" value="${escapeHtml(mapping.output ?? mapping.target ?? mapping.source ?? "")}" placeholder="output field" />
+                      <span class="meta">source → output</span>
+                    </div>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ""}
+            <div class="control wide">
+              <div class="meta">Selected fields are overwritten in place. Output mappings are only used for steps that intentionally write to another field.</div>
             </div>
           `;
         }
@@ -2826,10 +3040,96 @@
                 <div class="eyebrow">Transformed Variables</div>
                 ${transformed.map((variable) => renderCompactVariable(variable, "transformed")).join("")}
               </div>
+              <div class="variable-list">
+                <div class="eyebrow">Quality Flags</div>
+                ${renderPreviewFlagSummary(preview)}
+              </div>
             </div>
             <div class="preview-table">${renderDataTable(preview.rows ?? [])}</div>
           </div>
         `;
+      }
+
+      function renderPreviewFlagSummary(preview) {
+        const flags = previewFlagSummaries(preview.quality_report ?? []);
+        if (!flags.length) {
+          return '<div class="empty">No quality flags in the preview sample.</div>';
+        }
+        return `
+          <div class="flag-summary">
+            ${flags.map((summary) => `
+              <div class="variable-row flag-card">
+                <div class="variable-row-top">
+                  <div class="variable-name">${escapeHtml(summary.flag)}</div>
+                  <span class="badge">${escapeHtml(summary.count)}</span>
+                </div>
+                <div class="meta">${escapeHtml(summary.count)} preview row${summary.count === 1 ? "" : "s"}</div>
+                <div class="flag-detail-list">
+                  ${summary.details.slice(0, 3).map(renderPreviewFlagDetail).join("")}
+                  ${summary.details.length > 3 ? `<div class="meta">+${escapeHtml(summary.details.length - 3)} more example${summary.details.length - 3 === 1 ? "" : "s"}</div>` : ""}
+                </div>
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      function previewFlagSummaries(report) {
+        const summaries = new Map();
+        for (const row of report) {
+          for (const flag of row.flags ?? []) {
+            if (!summaries.has(flag)) summaries.set(flag, { flag, count: 0, details: [] });
+            const summary = summaries.get(flag);
+            summary.count += 1;
+            const details = (row.flag_details ?? []).filter((detail) => detail.flag === flag);
+            if (details.length) {
+              for (const detail of details) summary.details.push({ ...detail, patient_id: row.patient_id });
+            } else {
+              summary.details.push({
+                flag,
+                patient_id: row.patient_id,
+                source_file: row.source_file,
+                message: "This row was flagged, but the step did not report value-level detail.",
+              });
+            }
+          }
+        }
+        return Array.from(summaries.values()).sort((left, right) => right.count - left.count || left.flag.localeCompare(right.flag));
+      }
+
+      function renderPreviewFlagDetail(detail) {
+        const step = detail.step_position && detail.step_label
+          ? `Step ${detail.step_position}: ${detail.step_label}`
+          : detail.step_label || detail.operation || "Step not reported";
+        const rowLabel = detail.patient_id ? `Patient ${detail.patient_id}` : detail.row_index !== undefined ? `Row ${detail.row_index}` : "";
+        const field = detail.field || detail.output || detail.source || "";
+        const rawValue = formatCellValue(detail.raw_value);
+        const valueLine = field
+          ? `<div class="flag-value">Field <code>${escapeHtml(field)}</code>${rawValue !== "" ? ` received <code>${escapeHtml(rawValue)}</code>` : " was missing or blank"}.</div>`
+          : "";
+        const contextLine = renderFlagContext(detail.context);
+        return `
+          <div class="flag-detail-row">
+            <div class="flag-detail-top">
+              <span class="flag-step">${escapeHtml(step)}</span>
+              ${rowLabel ? `<span class="meta">${escapeHtml(rowLabel)}</span>` : ""}
+            </div>
+            <div class="flag-message">${escapeHtml(detail.message || detail.flag)}</div>
+            ${valueLine}
+            ${contextLine}
+            ${detail.hint ? `<div class="flag-hint">${escapeHtml(detail.hint)}</div>` : ""}
+          </div>
+        `;
+      }
+
+      function renderFlagContext(context) {
+        if (!context || typeof context !== "object") return "";
+        const items = Object.entries(context)
+          .filter(([, value]) => value !== null && value !== undefined && value !== "")
+          .slice(0, 3);
+        if (!items.length) return "";
+        const text = items.map(([key, value]) => `${key.replaceAll("_", " ")}: ${formatCellValue(value)}`).join(" | ");
+        return `<div class="flag-value">${escapeHtml(text)}</div>`;
       }
 
       function renderCompactVariable(variable, scope = "dataset") {
@@ -3415,7 +3715,58 @@
             n=${escapeHtml(analysis.metadata?.n ?? "NA")} | ${escapeHtml(formatDate(analysis.run_datetime))}
           </div>
           ${renderVisualization(analysis)}
+          ${renderCohortTrace(analysis)}
           ${renderNotes(analysis)}
+        `;
+      }
+
+      function renderCohortTrace(analysis) {
+        const trace = analysis.cohort_trace;
+        if (!trace || analysis.cohort_display === "none") return "";
+        const ingestion = trace.ingestion ?? {};
+        const analysisTrace = trace.analysis ?? {};
+        const rawRows = ingestion.raw_rows ?? null;
+        const cleanRows = ingestion.clean_rows ?? analysisTrace.input_rows ?? null;
+        const includedRows = analysisTrace.included_rows ?? analysis.metadata?.n ?? null;
+        if (includedRows === null || includedRows === undefined) return "";
+
+        const flow = [];
+        if (rawRows !== null && rawRows !== undefined) {
+          flow.push(`${rawRows} raw rows`);
+          const sparse = (ingestion.rules ?? []).find((rule) => rule.rule === "sparse_rows" && Number(rule.count));
+          if (sparse) flow.push(`${Number(rawRows) - Number(sparse.count)} after sparse-row filter`);
+        }
+        if (cleanRows !== null && cleanRows !== undefined) flow.push(`${cleanRows} clean rows`);
+        flow.push(`${includedRows} analyzed rows`);
+
+        const analysisRules = (analysisTrace.rules ?? []).filter((rule) => Number(rule.count) > 0);
+        const ingestionRules = (ingestion.rules ?? []).filter((rule) => Number(rule.count) > 0);
+        const requiredFields = analysisTrace.required_fields?.length
+          ? `<div class="cohort-rule">Required fields: ${escapeHtml(analysisTrace.required_fields.join(", "))}</div>`
+          : "";
+        return `
+          <div class="cohort-trace">
+            <div>
+              <div class="eyebrow">Cohort Trace</div>
+              <div class="cohort-flow">
+                ${flow.map((item, index) => `
+                  ${index ? '<span class="cohort-arrow">→</span>' : ""}
+                  <span class="cohort-step">${escapeHtml(item)}</span>
+                `).join("")}
+              </div>
+            </div>
+            <div class="cohort-rule-list">
+              ${ingestionRules.map((rule) => `
+                <div class="cohort-rule">
+                  Ingestion: ${escapeHtml(rule.label ?? rule.rule)} excluded ${escapeHtml(rule.count)} row${Number(rule.count) === 1 ? "" : "s"}${rule.description ? ` — ${escapeHtml(rule.description)}` : ""}
+                </div>
+              `).join("")}
+              ${analysisRules.map((rule) => `
+                <div class="cohort-rule">Analysis: ${escapeHtml(rule.description || rule.rule)} Excluded ${escapeHtml(rule.count)} row${Number(rule.count) === 1 ? "" : "s"}.</div>
+              `).join("")}
+              ${requiredFields}
+            </div>
+          </div>
         `;
       }
 
@@ -3751,6 +4102,7 @@
         const maxValue = Math.max(...selected.map((row) => Number(row.abs_standardized_coefficient) || 0), 1);
         return `
           <div class="auc-ranking">
+            <div class="lasso-coefficient-note">Bars and right-side values use standardized coefficients, so terms are comparable across scales. OR and raw log-odds coefficients use the original predictor coding.</div>
             ${selected.slice(0, 16).map((row, index) => {
               const magnitude = Number(row.abs_standardized_coefficient) || 0;
               const width = `${Math.max((magnitude / maxValue) * 100, 2)}%`;
@@ -3762,9 +4114,12 @@
                     <div class="rank-title" title="${escapeHtml(row.term)}">${escapeHtml(row.term)}</div>
                     <div class="rank-track"><div class="rank-fill" style="--value:${width}"></div></div>
                   </div>
-                  <div class="rank-auc">${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  <div class="rank-auc rank-metric" title="Standardized coefficient">
+                    <div class="rank-metric-label">Std. coef.</div>
+                    <div>${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  </div>
                   <div class="rank-detail">
-                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | coefficient=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
+                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | raw log-odds coef=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
                   </div>
                 </div>
               `;
@@ -3931,6 +4286,12 @@
 
         if (param) {
           updateStepParam(step, target);
+          state.ingestionPreview = null;
+          state.ingestionStatus = "";
+          if (target.dataset.paramKind === "csv" && target.type === "checkbox") {
+            refreshFieldListControl(target.closest(".control"), step.params?.[param] ?? []);
+            return;
+          }
           renderStageDetail();
           return;
         }
@@ -4011,6 +4372,15 @@
           step.params.mappings = mappings;
           return;
         }
+        if (key === "fields" && target.dataset.paramKey) {
+          const index = Number(target.dataset.paramIndex);
+          const paramKey = target.dataset.paramKey;
+          const fields = Array.isArray(step.params.fields) ? step.params.fields : [];
+          const current = typeof fields[index] === "string" ? { source: fields[index], output: fields[index], type: "text" } : (fields[index] ?? {});
+          fields[index] = { ...current, [paramKey]: target.value };
+          step.params.fields = fields;
+          return;
+        }
         if (key === "conditions") {
           const index = Number(target.dataset.paramIndex);
           const paramKey = target.dataset.paramKey;
@@ -4032,7 +4402,33 @@
         step.params[key] = target.value;
       }
 
+      function refreshFieldListControl(control, selectedValues) {
+        if (!control) return;
+        const selected = new Set(Array.isArray(selectedValues) ? selectedValues : []);
+        control.querySelectorAll('.variable-choice').forEach((label) => {
+          const checkbox = label.querySelector('input[type="checkbox"]');
+          if (!checkbox) return;
+          const shouldShow = selected.has(checkbox.value);
+          const existing = label.querySelector('.badge.gold');
+          if (shouldShow && !existing) {
+            const badge = document.createElement("span");
+            badge.className = "badge gold";
+            badge.textContent = "selected";
+            label.appendChild(badge);
+          }
+          if (!shouldShow && existing) existing.remove();
+        });
+        const selectedList = control.querySelector(".selected-field-list");
+        if (!selectedList) return;
+        const items = Array.from(selected).filter(Boolean);
+        selectedList.innerHTML = items.length
+          ? items.map((field) => `<span class="badge" title="${escapeHtml(field)}">${escapeHtml(field)}</span>`).join("")
+          : '<span class="meta">No fields selected.</span>';
+      }
+
       function defaultParamsForOperation(operationId, adapter) {
+        if (operationId === "rename_columns") return { columns: {} };
+        if (operationId === "normalize_fields") return { fields: [], type: "text", on_invalid: "blank" };
         if (["normalize_text", "normalize_category", "normalize_boolean", "to_float"].includes(operationId)) return { fields: [] };
         if (operationId === "validate_required_columns") return { columns: [] };
         if (operationId === "remove_stub_rows") return { id_column: "patient_id" };
@@ -4144,7 +4540,7 @@
           state.selectedIngestionStepIndex = Math.max(0, Math.min(index, steps.length - 1));
         }
         state.ingestionPreview = null;
-        renderStageDetail();
+        renderStageDetailPreservingStepChain();
       }
 
       function moveIngestionStep(fromIndex, toIndex) {
@@ -4169,7 +4565,7 @@
         step.enabled = enabled;
         state.selectedIngestionStepIndex = index;
         state.ingestionPreview = null;
-        renderStageDetail();
+        renderStageDetailPreservingStepChain();
       }
 
       async function launchIngestionPreview() {
@@ -4315,7 +4711,7 @@
         const stepButton = event.target.closest("[data-ingestion-step]");
         if (stepButton) {
           state.selectedIngestionStepIndex = Number(stepButton.dataset.ingestionStep);
-          renderStageDetail();
+          renderStageDetailPreservingStepChain();
           return;
         }
         const button = event.target.closest("[data-history-step]");

@@ -1,0 +1,794 @@
+{
+  "run_id": "20260528_115829",
+  "pipeline_version": "0.1.0",
+  "run_datetime": "2026-05-28T11:58:29-04:00",
+  "sources": [
+    {
+      "adapter": "gbm_registry",
+      "file": "main_sheet_03_05_26.csv",
+      "rows_raw": 259,
+      "rows_stub": 50,
+      "rows_ingested": 197,
+      "spec_id": "gbm_registry_default",
+      "spec_version": "1.0.0"
+    }
+  ],
+  "summary": {
+    "source_files": 1,
+    "raw_rows": 259,
+    "stub_rows": 50,
+    "ingested_rows": 197,
+    "flagged_records": 135,
+    "quality_flags": 173,
+    "adapters": [
+      "gbm_registry"
+    ]
+  },
+  "steps": [
+    {
+      "step_id": "read_sources",
+      "label": "Read source files",
+      "summary": "1 file(s), 259 raw row(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "main_sheet_03_05_26.csv"
+      ],
+      "outputs": [
+        "raw dataframes"
+      ],
+      "metrics": {
+        "source_files": 1,
+        "raw_rows": 259
+      }
+    },
+    {
+      "step_id": "normalize",
+      "label": "Normalize to canonical schema",
+      "summary": "Adapter: gbm_registry | schema 1.0.0",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "raw dataframes"
+      ],
+      "outputs": [
+        "canonical records"
+      ],
+      "metrics": {
+        "canonical_schema_version": "1.0.0"
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:rename_columns",
+      "label": "Rename source columns",
+      "summary": "Rename known GBM registry columns to canonical and intermediate variables.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [
+        "renamed dataframe"
+      ],
+      "metrics": {
+        "operation": "rename_columns",
+        "mapped_columns": 27
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:remove_stub_rows",
+      "label": "Filter sparse rows",
+      "summary": "Drop rows with no patient identifier or fewer than two populated fields.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "patient_id"
+      ],
+      "outputs": [
+        "working dataframe"
+      ],
+      "metrics": {
+        "operation": "filter_rows",
+        "filtered_rows": 50,
+        "remaining_rows": 209,
+        "action": "drop"
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_text_fields",
+      "label": "Normalize text fields",
+      "summary": "Trim text fields and convert known null tokens to blank values.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 3,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_core_dates",
+      "label": "Normalize required dates",
+      "summary": "Parse core date fields and flag invalid values.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 2,
+        "invalid_values": 178
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_optional_dates",
+      "label": "Normalize optional dates",
+      "summary": "Parse optional date fields and leave invalid values blank.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 4,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:extract_recurrence_date",
+      "label": "Extract recurrence date",
+      "summary": "Parse recurrence evidence into a recurrence date when the value is date-like.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [
+        "recurrence_date"
+      ],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 1,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_numbers",
+      "label": "Normalize numeric fields",
+      "summary": "Convert presentation lab fields to numbers.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 2,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_categories",
+      "label": "Normalize categorical fields",
+      "summary": "Normalize source categorical labels.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 6,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:normalize_booleans",
+      "label": "Normalize boolean fields",
+      "summary": "Convert yes/no style fields to booleans and flag values that cannot be interpreted.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "normalize_fields",
+        "fields": 7,
+        "invalid_values": 0
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:map_lobes",
+      "label": "Apply lobe mapping",
+      "summary": "Map tumour and recurrence lobe values through the reference lobe mapping.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "tumour_lobe",
+        "recurrence_lobe",
+        "data/reference/lobe_mapping.json"
+      ],
+      "outputs": [
+        "canonical lobe labels"
+      ],
+      "metrics": {
+        "operation": "lookup_mapping",
+        "fields": 2,
+        "mapping_file": "data/reference/lobe_mapping.json"
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:histo_report",
+      "label": "Normalize histology report status",
+      "summary": "Route histology report values through the GBM adapter's Python normalizer.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "static_code",
+        "function": "gbm_registry.normalize_histo_report",
+        "outputs": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:split_qmc_local",
+      "label": "Split QMC local field",
+      "summary": "Route QMC Local through adapter Python to produce qmc_local and referring_centre.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "qmc_local_raw"
+      ],
+      "outputs": [
+        "qmc_local",
+        "referring_centre"
+      ],
+      "metrics": {
+        "operation": "static_code",
+        "function": "gbm_registry.split_qmc_local",
+        "outputs": 2
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:derive_age",
+      "label": "Resolve age at presentation",
+      "summary": "Use source age when present; otherwise compute age from DOB and presentation date.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "age_at_presentation",
+        "dob",
+        "presentation_date"
+      ],
+      "outputs": [
+        "age_at_presentation"
+      ],
+      "metrics": {
+        "operation": "derive_age",
+        "missing_age_records": 4
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:derive_nlr",
+      "label": "Compute NLR",
+      "summary": "Compute neutrophil-to-lymphocyte ratio from presentation labs.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "outputs": [
+        "nlr"
+      ],
+      "metrics": {
+        "operation": "math",
+        "derived_fields": 1,
+        "operator": "divide"
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:derive_resection_recurrence",
+      "label": "Derive resection type",
+      "summary": "Derive resection type from the presence of a resection date.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "resection_date"
+      ],
+      "outputs": [
+        "resection_type"
+      ],
+      "metrics": {
+        "operation": "static_code",
+        "function": "gbm_registry.derive_resection_type",
+        "outputs": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:derive_recurrence_type",
+      "label": "Derive recurrence type",
+      "summary": "Derive recurrence type from the original recurrence evidence field.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "recurrence_type"
+      ],
+      "metrics": {
+        "operation": "static_code",
+        "function": "gbm_registry.derive_recurrence_type",
+        "outputs": 1
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:rename_columns_1779983789474",
+      "label": "Filter Rows",
+      "summary": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [],
+      "metrics": {
+        "operation": "filter_rows",
+        "filtered_rows": 12,
+        "remaining_rows": 197,
+        "action": "drop"
+      }
+    },
+    {
+      "step_id": "main_sheet_03_05_26:finalize_output",
+      "label": "Finalize output",
+      "summary": "Drop helper fields, add any missing canonical fields, and place canonical fields first while preserving joined fields.",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": "main_sheet_03_05_26.csv",
+      "inputs": [],
+      "outputs": [
+        "clean records"
+      ],
+      "metrics": {
+        "operation": "finalize_output",
+        "output_fields": 39,
+        "dropped_fields": 1,
+        "canonical_fields": 33
+      }
+    },
+    {
+      "step_id": "validate_quality",
+      "label": "Validate and flag rows",
+      "summary": "50 stub row(s) skipped | 135 flagged record(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "canonical records"
+      ],
+      "outputs": [
+        "quality_report_20260528_115829.json"
+      ],
+      "metrics": {
+        "stub_rows": 50,
+        "flagged_records": 135,
+        "quality_flags": 173
+      }
+    },
+    {
+      "step_id": "write_outputs",
+      "label": "Write result files",
+      "summary": "197 canonical row(s)",
+      "status": "completed",
+      "execution_mode": "static_code",
+      "source_file": null,
+      "inputs": [
+        "canonical records",
+        "quality_report_20260528_115829.json"
+      ],
+      "outputs": [
+        "clean_dataset_20260528_115829.json",
+        "quality_report_20260528_115829.json"
+      ],
+      "metrics": {
+        "ingested_rows": 197
+      }
+    }
+  ],
+  "specs": [
+    {
+      "adapter_id": "gbm_registry",
+      "source_file": "main_sheet_03_05_26.csv",
+      "spec_id": "gbm_registry_default",
+      "version": "1.0.0",
+      "label": "GBM Registry Default",
+      "transient": true,
+      "spec": {
+        "spec_id": "gbm_registry_default",
+        "adapter_id": "gbm_registry",
+        "version": "1.0.0",
+        "label": "GBM Registry Default",
+        "description": "Default chain for converting the GBM main sheet CSV into the GLADR canonical dataset.",
+        "steps": [
+          {
+            "id": "rename_columns",
+            "operation": "rename_columns",
+            "label": "Rename source columns",
+            "description": "Rename known GBM registry columns to canonical and intermediate variables.",
+            "outputs": [
+              "renamed dataframe"
+            ],
+            "params": {
+              "columns": {
+                "Histo Report?": "histo_report",
+                "Contributor": "contributor",
+                "K-number": "patient_id",
+                "k-number": "patient_id",
+                "DOB": "dob",
+                "Sex": "sex",
+                "Presentation Date": "presentation_date",
+                "Age at presentation": "age_at_presentation",
+                "Neutrophils (presentation)": "neutrophils",
+                "Lymphocytes (presentation)": "lymphocytes",
+                "First contrast MRI": "first_mri_date",
+                "Side": "tumour_side",
+                "Lobe": "tumour_lobe",
+                "Peri-ventricular": "periventricular",
+                "Multifocal": "multifocal",
+                "Resection": "resection_date",
+                "Post-op MRI Date": "postop_mri_date",
+                "5-ALA": "five_ala",
+                "Residual contrast enhancement": "residual_enhancement",
+                "Radiotherapy": "radiotherapy",
+                "TMZ": "tmz",
+                "First recurrence evidence": "first_recurrence_evidence",
+                "Recurrence side": "recurrence_side",
+                "Recurrence lobe": "recurrence_lobe",
+                "Local": "recurrence_local",
+                "DOD": "dod",
+                "Notes": "notes",
+                "QMC Local": "qmc_local_raw"
+              }
+            }
+          },
+          {
+            "id": "remove_stub_rows",
+            "operation": "filter_rows",
+            "label": "Filter sparse rows",
+            "description": "Drop rows with no patient identifier or fewer than two populated fields.",
+            "inputs": [
+              "patient_id"
+            ],
+            "outputs": [
+              "working dataframe"
+            ],
+            "params": {
+              "action": "drop",
+              "match": "any",
+              "conditions": [
+                {
+                  "field": "patient_id",
+                  "operator": "is_missing"
+                }
+              ],
+              "minimum_populated_fields": 2,
+              "ignored_fields": [],
+              "counts_as": "stub_rows"
+            }
+          },
+          {
+            "id": "normalize_text_fields",
+            "operation": "normalize_fields",
+            "label": "Normalize text fields",
+            "description": "Trim text fields and convert known null tokens to blank values.",
+            "params": {
+              "fields": [
+                "patient_id",
+                "notes",
+                "first_recurrence_evidence"
+              ],
+              "type": "text",
+              "on_invalid": "blank"
+            }
+          },
+          {
+            "id": "normalize_core_dates",
+            "operation": "normalize_fields",
+            "label": "Normalize required dates",
+            "description": "Parse core date fields and flag invalid values.",
+            "params": {
+              "fields": [
+                "dob",
+                "presentation_date"
+              ],
+              "type": "date",
+              "on_invalid": "flag"
+            }
+          },
+          {
+            "id": "normalize_optional_dates",
+            "operation": "normalize_fields",
+            "label": "Normalize optional dates",
+            "description": "Parse optional date fields and leave invalid values blank.",
+            "params": {
+              "fields": [
+                "first_mri_date",
+                "resection_date",
+                "postop_mri_date",
+                "dod"
+              ],
+              "type": "date",
+              "on_invalid": "blank"
+            }
+          },
+          {
+            "id": "extract_recurrence_date",
+            "operation": "normalize_fields",
+            "label": "Extract recurrence date",
+            "description": "Parse recurrence evidence into a recurrence date when the value is date-like.",
+            "outputs": [
+              "recurrence_date"
+            ],
+            "params": {
+              "mappings": [
+                {
+                  "source": "first_recurrence_evidence",
+                  "output": "recurrence_date"
+                }
+              ],
+              "type": "date",
+              "on_invalid": "blank"
+            }
+          },
+          {
+            "id": "normalize_numbers",
+            "operation": "normalize_fields",
+            "label": "Normalize numeric fields",
+            "description": "Convert presentation lab fields to numbers.",
+            "params": {
+              "fields": [
+                "neutrophils",
+                "lymphocytes"
+              ],
+              "type": "number",
+              "on_invalid": "blank"
+            }
+          },
+          {
+            "id": "normalize_categories",
+            "operation": "normalize_fields",
+            "label": "Normalize categorical fields",
+            "description": "Normalize source categorical labels.",
+            "params": {
+              "fields": [
+                "contributor",
+                "sex",
+                "tumour_side",
+                "tumour_lobe",
+                "recurrence_side",
+                "recurrence_lobe"
+              ],
+              "type": "category",
+              "on_invalid": "blank"
+            }
+          },
+          {
+            "id": "normalize_booleans",
+            "operation": "normalize_fields",
+            "label": "Normalize boolean fields",
+            "description": "Convert yes/no style fields to booleans and flag values that cannot be interpreted.",
+            "params": {
+              "fields": [
+                "periventricular",
+                "multifocal",
+                "five_ala",
+                "residual_enhancement",
+                "radiotherapy",
+                "tmz",
+                "recurrence_local"
+              ],
+              "type": "boolean",
+              "on_invalid": "flag"
+            }
+          },
+          {
+            "id": "map_lobes",
+            "operation": "lookup_mapping",
+            "label": "Apply lobe mapping",
+            "description": "Map tumour and recurrence lobe values through the reference lobe mapping.",
+            "inputs": [
+              "tumour_lobe",
+              "recurrence_lobe",
+              "data/reference/lobe_mapping.json"
+            ],
+            "outputs": [
+              "canonical lobe labels"
+            ],
+            "params": {
+              "fields": [
+                "tumour_lobe",
+                "recurrence_lobe"
+              ],
+              "mapping_file": "data/reference/lobe_mapping.json"
+            }
+          },
+          {
+            "id": "histo_report",
+            "operation": "static_code",
+            "label": "Normalize histology report status",
+            "description": "Route histology report values through the GBM adapter's Python normalizer.",
+            "params": {
+              "function": "gbm_registry.normalize_histo_report",
+              "inputs": [
+                "histo_report"
+              ],
+              "outputs": [
+                "histo_report"
+              ]
+            }
+          },
+          {
+            "id": "split_qmc_local",
+            "operation": "static_code",
+            "label": "Split QMC local field",
+            "description": "Route QMC Local through adapter Python to produce qmc_local and referring_centre.",
+            "inputs": [
+              "qmc_local_raw"
+            ],
+            "outputs": [
+              "qmc_local",
+              "referring_centre"
+            ],
+            "params": {
+              "function": "gbm_registry.split_qmc_local",
+              "inputs": [
+                "qmc_local_raw"
+              ],
+              "outputs": [
+                "qmc_local",
+                "referring_centre"
+              ]
+            }
+          },
+          {
+            "id": "derive_age",
+            "operation": "derive_age",
+            "label": "Resolve age at presentation",
+            "description": "Use source age when present; otherwise compute age from DOB and presentation date.",
+            "inputs": [
+              "age_at_presentation",
+              "dob",
+              "presentation_date"
+            ],
+            "outputs": [
+              "age_at_presentation"
+            ],
+            "params": {
+              "source": "age_at_presentation",
+              "output": "age_at_presentation",
+              "dob": "dob",
+              "presentation_date": "presentation_date",
+              "missing_flag": "missing_age_at_presentation"
+            }
+          },
+          {
+            "id": "derive_nlr",
+            "operation": "math",
+            "label": "Compute NLR",
+            "description": "Compute neutrophil-to-lymphocyte ratio from presentation labs.",
+            "inputs": [
+              "neutrophils",
+              "lymphocytes"
+            ],
+            "outputs": [
+              "nlr"
+            ],
+            "params": {
+              "operator": "divide",
+              "left_field": "neutrophils",
+              "right_field": "lymphocytes",
+              "output": "nlr",
+              "precision": 3
+            }
+          },
+          {
+            "id": "derive_resection_recurrence",
+            "operation": "static_code",
+            "label": "Derive resection type",
+            "description": "Derive resection type from the presence of a resection date.",
+            "inputs": [
+              "resection_date"
+            ],
+            "outputs": [
+              "resection_type"
+            ],
+            "params": {
+              "function": "gbm_registry.derive_resection_type",
+              "inputs": [
+                "resection_date"
+              ],
+              "outputs": [
+                "resection_type"
+              ]
+            }
+          },
+          {
+            "id": "derive_recurrence_type",
+            "operation": "static_code",
+            "label": "Derive recurrence type",
+            "description": "Derive recurrence type from the original recurrence evidence field.",
+            "inputs": [
+              "first_recurrence_evidence"
+            ],
+            "outputs": [
+              "recurrence_type"
+            ],
+            "params": {
+              "function": "gbm_registry.derive_recurrence_type",
+              "inputs": [
+                "first_recurrence_evidence"
+              ],
+              "outputs": [
+                "recurrence_type"
+              ]
+            }
+          },
+          {
+            "id": "rename_columns_1779983789474",
+            "operation": "filter_rows",
+            "label": "Filter Rows",
+            "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+            "params": {
+              "action": "drop",
+              "match": "all",
+              "conditions": [
+                {
+                  "field": "IDH1/2 mutated",
+                  "operator": "equals",
+                  "value": "yes"
+                }
+              ],
+              "minimum_populated_fields": "",
+              "ignored_fields": []
+            }
+          },
+          {
+            "id": "finalize_output",
+            "operation": "finalize_output",
+            "label": "Finalize output",
+            "description": "Drop helper fields, add any missing canonical fields, and place canonical fields first while preserving joined fields.",
+            "outputs": [
+              "clean records"
+            ],
+            "params": {
+              "drop_fields": [
+                "qmc_local_raw"
+              ],
+              "canonical_fields_first": true,
+              "add_missing_canonical_fields": true
+            }
+          }
+        ],
+        "transient": true
+      }
+    }
+  ],
+  "total_rows": 197,
+  "canonical_schema_version": "1.0.0",
+  "notes": ""
+}

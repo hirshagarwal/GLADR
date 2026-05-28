@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import sys
 import tempfile
 import unittest
@@ -72,10 +73,14 @@ class AnalysisTemplateTests(unittest.TestCase):
 
         self.assertIn("lasso_logistic_regression", templates)
         self.assertEqual(templates["lasso_logistic_regression"]["category"], "Model Selection")
+        self.assertEqual(templates["lasso_logistic_regression"]["cohort_display"], "shared_model_frame")
         self.assertIn("multivariable_logistic_regression", templates)
         self.assertEqual(templates["multivariable_logistic_regression"]["category"], "Regression Modeling")
+        self.assertEqual(templates["multivariable_logistic_regression"]["cohort_display"], "shared_model_frame")
+        self.assertEqual(templates["univariate_auc_screen"]["cohort_display"], "none")
         self.assertIn("cox_regression", templates)
         self.assertEqual(templates["cox_regression"]["category"], "Survival Modeling")
+        self.assertEqual(templates["cox_regression"]["cohort_display"], "shared_model_frame")
         self.assertEqual(
             [parameter["name"] for parameter in templates["cox_regression"]["parameters"]],
             ["start_date", "event_date", "censor_date", "predictors"],
@@ -109,6 +114,11 @@ class AnalysisTemplateTests(unittest.TestCase):
 
         self.assertEqual(artifact["script_id"], "multivariable_logistic_regression")
         self.assertEqual(artifact["metadata"]["n"], 12)
+        self.assertEqual(artifact["cohort_display"], "shared_model_frame")
+        self.assertEqual(artifact["cohort"]["input_rows"], 12)
+        self.assertEqual(artifact["cohort"]["included_rows"], 12)
+        self.assertEqual(artifact["cohort"]["excluded_rows"], 0)
+        self.assertEqual(artifact["cohort"]["required_fields"], ["recurrence", "nlr", "age", "sex"])
         self.assertEqual(artifact["metadata"]["predictor_count"], 3)
         self.assertGreaterEqual(artifact["metadata"]["term_count"], 3)
         self.assertGreaterEqual(artifact["metadata"]["auc"], 0.9)
@@ -195,6 +205,9 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertEqual(artifact["metadata"]["predictor_count"], 3)
         self.assertGreaterEqual(artifact["metadata"]["candidate_terms"], 3)
         self.assertEqual(artifact["metadata"]["selection_method"], "cross_validation")
+        self.assertEqual(artifact["cohort_display"], "shared_model_frame")
+        self.assertEqual(artifact["cohort"]["basis"], "complete_case")
+        self.assertEqual(artifact["cohort"]["included_rows"], 12)
         self.assertEqual(artifact["metadata"]["selection_rule"], "lambda_1se")
         self.assertEqual(artifact["metadata"]["cv_folds"], 5)
         self.assertIsNotNone(artifact["metadata"]["lambda_min"])
@@ -205,6 +218,9 @@ class AnalysisTemplateTests(unittest.TestCase):
         selected = [row for row in artifact["data"]["rows"] if row["selected"]]
         self.assertTrue(selected)
         self.assertTrue(all("odds_ratio" in row for row in artifact["data"]["rows"]))
+        for row in artifact["data"]["rows"]:
+            self.assertAlmostEqual(row["odds_ratio"], round(math.exp(row["coefficient"]), 3), places=3)
+            self.assertEqual(row["abs_standardized_coefficient"], round(abs(row["standardized_coefficient"]), 4))
 
     def test_lasso_logistic_regression_uses_bic_fallback_when_cv_is_not_feasible(self) -> None:
         dataframe = pd.DataFrame(
@@ -255,6 +271,9 @@ class AnalysisTemplateTests(unittest.TestCase):
         )
 
         self.assertEqual(artifact["script_id"], "cox_regression")
+        self.assertEqual(artifact["cohort_display"], "shared_model_frame")
+        self.assertEqual(artifact["cohort"]["basis"], "valid_time_to_event_complete_case")
+        self.assertEqual(artifact["cohort"]["included_rows"], 5)
         self.assertEqual(artifact["metadata"]["events"], 3)
         self.assertEqual(artifact["metadata"]["censored"], 2)
         self.assertGreaterEqual(len(artifact["data"]["rows"]), 2)

@@ -39,6 +39,7 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
     latest_stats = read_latest_pointer(project_paths.analysis_outputs_dir / "latest.json")
     ingestion_runs = discover_ingestion_runs(project_paths, latest_clean)
     analyses = discover_analysis_artifacts(project_paths, latest_stats)
+    _attach_cohort_traces(analyses, ingestion_runs)
 
     return {
         "generated_at": _now_iso(),
@@ -91,6 +92,7 @@ def discover_ingestion_runs(
                 "sources": manifest.get("sources", []),
                 "summary": manifest.get("summary", {}),
                 "steps": manifest.get("steps", []),
+                "filter_steps": _filter_steps_from_specs(manifest),
                 "notes": manifest.get("notes", ""),
                 "manifest_filename": manifest_pointer,
                 "clean_dataset_filename": f"datasets/{clean_filename}"
@@ -132,6 +134,8 @@ def discover_analysis_artifacts(
                 "category": artifact.get("category", "Uncategorized"),
                 "priority": artifact.get("priority", 99),
                 "metadata": artifact.get("metadata", {}),
+                "cohort_display": _cohort_display_policy(artifact),
+                "cohort": artifact.get("cohort", {}),
                 "visualization": visualization,
                 "data": artifact.get("data", {}),
                 "is_latest": artifact_path.name in latest_by_filename,
@@ -197,13 +201,9 @@ def build_stage_summaries(
         (run for run in ingestion_runs if run.get("is_latest")),
         ingestion_runs[0] if ingestion_runs else None,
     )
-    latest_analysis = [analysis for analysis in analyses if analysis.get("is_latest")]
-    if not latest_analysis:
-        latest_analysis = analyses[:3]
+    latest_analysis = _latest_analysis_run_artifacts(analyses)
     visualization_artifacts = [analysis for analysis in analyses if analysis.get("visualization")]
-    latest_visualizations = [analysis for analysis in visualization_artifacts if analysis.get("is_latest")]
-    if not latest_visualizations:
-        latest_visualizations = visualization_artifacts[:3]
+    latest_visualizations = _latest_analysis_run_artifacts(visualization_artifacts)
 
     analysis_history = _group_analysis_history(analyses, include_visualizations=False)
     visualization_history = _group_analysis_history(visualization_artifacts, include_visualizations=True)
@@ -334,14 +334,18 @@ def _ingestion_flow(
 
 
 def _flow_step_from_manifest(step: dict[str, object]) -> dict[str, object]:
+    metrics = step.get("metrics") if isinstance(step.get("metrics"), dict) else {}
+    label = step.get("label") or step.get("step_id") or "Pipeline step"
+    if metrics.get("operation") == "filter_rows" and metrics.get("filter_label"):
+        label = f"{label} ({metrics.get('filter_label')})"
     return {
         "step_id": step.get("step_id"),
-        "label": step.get("label") or step.get("step_id") or "Pipeline step",
-        "detail": step.get("summary") or step.get("detail") or "",
+        "label": label,
+        "detail": metrics.get("filter_description") or step.get("summary") or step.get("detail") or "",
         "status": step.get("status", "completed"),
         "execution_mode": step.get("execution_mode", "unknown"),
         "source_file": step.get("source_file"),
-        "metrics": step.get("metrics") if isinstance(step.get("metrics"), dict) else {},
+        "metrics": metrics,
     }
 
 
@@ -404,6 +408,32 @@ def _summarize_step_group(items: list[dict[str, object]]) -> dict[str, object]:
     }
 
 
+def _filter_steps_from_specs(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    specs = manifest.get("specs") if isinstance(manifest.get("specs"), list) else []
+    filters: list[dict[str, Any]] = []
+    for spec_snapshot in specs:
+        if not isinstance(spec_snapshot, dict):
+            continue
+        spec = spec_snapshot.get("spec") if isinstance(spec_snapshot.get("spec"), dict) else {}
+        source_file = spec_snapshot.get("source_file")
+        for position, step in enumerate(spec.get("steps", []), start=1):
+            if not isinstance(step, dict) or step.get("operation") != "filter_rows":
+                continue
+            params = step.get("params") if isinstance(step.get("params"), dict) else {}
+            filters.append(
+                {
+                    "step_id": str(step.get("id") or f"{position}:filter_rows"),
+                    "label": step.get("label") or "Filter Rows",
+                    "source_file": source_file,
+                    "params": params,
+                    "filter_label": _filter_label(params),
+                    "filter_description": _filter_description(params),
+                    "filter_conditions": _filter_rule_summaries(params),
+                }
+            )
+    return filters
+
+
 def _artifact_label(filename: str) -> str:
     if "/datasets/" in f"/{filename}" or filename.startswith("datasets/"):
         return "Clean dataset"
@@ -421,15 +451,6 @@ def _analysis_stage_item(label: str, artifacts: list[dict[str, Any]]) -> dict[st
     run_ids = sorted({str(artifact.get("run_id")) for artifact in artifacts if artifact.get("run_id")})
     scripts = sorted({str(artifact.get("script_id")) for artifact in artifacts if artifact.get("script_id")})
     latest_datetime = max((str(artifact.get("run_datetime") or "") for artifact in artifacts), default="")
-    cohort_n = next(
-        (
-            artifact.get("metadata", {}).get("n")
-            for artifact in artifacts
-            if isinstance(artifact.get("metadata"), dict) and artifact.get("metadata", {}).get("n") is not None
-        ),
-        "NA",
-    )
-
     return {
         "title": f"{label} outputs",
         "run_id": ", ".join(run_ids) if run_ids else None,
@@ -438,7 +459,6 @@ def _analysis_stage_item(label: str, artifacts: list[dict[str, Any]]) -> dict[st
         "metrics": [
             {"label": "Artifacts", "value": len(artifacts)},
             {"label": "Scripts", "value": len(scripts)},
-            {"label": "Cohort n", "value": cohort_n},
         ],
         "outputs": [
             {
@@ -489,8 +509,228 @@ def _pipeline_visualization_node(analysis: dict[str, Any]) -> dict[str, Any]:
         "type": analysis.get("visualization_type"),
         "script_id": analysis.get("script_id"),
         "run_datetime": analysis.get("run_datetime"),
+        "cohort_display": analysis.get("cohort_display"),
         "is_latest": analysis.get("is_latest", False),
     }
+
+
+def _latest_analysis_run_artifacts(artifacts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not artifacts:
+        return []
+    latest_run_id = max(
+        (str(artifact.get("run_id") or "") for artifact in artifacts),
+        key=lambda run_id: max(
+            str(item.get("run_datetime") or item.get("run_id") or "")
+            for item in artifacts
+            if str(item.get("run_id") or "") == run_id
+        ),
+    )
+    return [artifact for artifact in artifacts if str(artifact.get("run_id") or "") == latest_run_id]
+
+
+def _cohort_display_policy(artifact: dict[str, Any]) -> str:
+    explicit = artifact.get("cohort_display")
+    if explicit:
+        return str(explicit)
+    metadata = artifact.get("metadata") if isinstance(artifact.get("metadata"), dict) else {}
+    template_id = str(metadata.get("template_id") or artifact.get("script_id") or "")
+    template_policies = {
+        str(template["template_id"]): str(template.get("cohort_display") or "none")
+        for template in list_analysis_templates()
+    }
+    return template_policies.get(template_id, "none")
+
+
+def _attach_cohort_traces(analyses: list[dict[str, Any]], ingestion_runs: list[dict[str, Any]]) -> None:
+    ingestion_by_run = {str(run.get("run_id")): run for run in ingestion_runs if run.get("run_id")}
+    for analysis in analyses:
+        if analysis.get("cohort_display") == "none":
+            analysis["cohort_trace"] = None
+            continue
+        ingestion = ingestion_by_run.get(str(analysis.get("manifest_run_id") or ""))
+        analysis["cohort_trace"] = _cohort_trace(analysis, ingestion)
+
+
+def _cohort_trace(analysis: dict[str, Any], ingestion_run: dict[str, Any] | None) -> dict[str, Any] | None:
+    metadata = analysis.get("metadata") if isinstance(analysis.get("metadata"), dict) else {}
+    cohort = analysis.get("cohort") if isinstance(analysis.get("cohort"), dict) else {}
+    included_rows = _optional_int(cohort.get("included_rows")) or _optional_int(metadata.get("n"))
+    if included_rows is None:
+        return None
+
+    ingestion = _ingestion_cohort_trace(ingestion_run)
+    clean_rows = _optional_int(ingestion.get("clean_rows")) if ingestion else None
+    input_rows = _optional_int(cohort.get("input_rows")) or clean_rows
+    excluded_rows = _optional_int(cohort.get("excluded_rows"))
+    if excluded_rows is None and input_rows is not None:
+        excluded_rows = max(input_rows - included_rows, 0)
+
+    rules = cohort.get("rules") if isinstance(cohort.get("rules"), list) else []
+    if not rules and excluded_rows is not None:
+        rules = [
+            {
+                "rule": "analysis_exclusion",
+                "count": excluded_rows,
+                "description": metadata.get("exclusions") or "Rows were excluded by the analysis cohort rule.",
+            }
+        ]
+
+    return {
+        "display": analysis.get("cohort_display"),
+        "ingestion": ingestion,
+        "analysis": {
+            "input_rows": input_rows,
+            "included_rows": included_rows,
+            "excluded_rows": excluded_rows,
+            "basis": cohort.get("basis"),
+            "required_fields": cohort.get("required_fields") if isinstance(cohort.get("required_fields"), list) else [],
+            "rules": rules,
+        },
+    }
+
+
+def _ingestion_cohort_trace(run: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not run:
+        return None
+    sources = run.get("sources") if isinstance(run.get("sources"), list) else []
+    raw_rows = sum(int(source.get("rows_raw") or 0) for source in sources if isinstance(source, dict))
+    stub_rows = sum(int(source.get("rows_stub") or 0) for source in sources if isinstance(source, dict))
+    clean_rows = _optional_int(run.get("total_rows"))
+    rules = _ingestion_filter_rules(run)
+    if stub_rows and not any(rule.get("rule") == "sparse_rows" for rule in rules):
+        rules.insert(
+            0,
+            {
+                "rule": "sparse_rows",
+                "label": "Sparse row filter",
+                "count": stub_rows,
+                "description": "Rows with no patient identifier or too few populated fields were removed.",
+            },
+        )
+    return {
+        "run_id": run.get("run_id"),
+        "raw_rows": raw_rows if raw_rows else None,
+        "stub_rows": stub_rows,
+        "clean_rows": clean_rows,
+        "rules": rules,
+    }
+
+
+def _ingestion_filter_rules(run: dict[str, Any]) -> list[dict[str, Any]]:
+    rules: list[dict[str, Any]] = []
+    steps = run.get("steps") if isinstance(run.get("steps"), list) else []
+    filter_specs = run.get("filter_steps") if isinstance(run.get("filter_steps"), list) else []
+    filter_index = 0
+    for step in steps:
+        if not isinstance(step, dict):
+            continue
+        metrics = step.get("metrics") if isinstance(step.get("metrics"), dict) else {}
+        if metrics.get("operation") != "filter_rows":
+            continue
+        spec_filter = filter_specs[filter_index] if filter_index < len(filter_specs) and isinstance(filter_specs[filter_index], dict) else {}
+        filter_index += 1
+        count = _optional_int(metrics.get("filtered_rows"))
+        if not count:
+            continue
+        filter_label = metrics.get("filter_label") or spec_filter.get("filter_label")
+        label = str(step.get("label") or spec_filter.get("label") or "Filter rows")
+        display_label = f"{label} ({filter_label})" if filter_label else label
+        description = (
+            metrics.get("filter_description")
+            or spec_filter.get("filter_description")
+            or step.get("summary")
+            or ""
+        )
+        rules.append(
+            {
+                "rule": "sparse_rows" if "sparse" in label.lower() else "filter_rows",
+                "label": display_label,
+                "count": count,
+                "remaining_rows": _optional_int(metrics.get("remaining_rows")),
+                "description": description,
+                "conditions": metrics.get("filter_conditions") or spec_filter.get("filter_conditions") or [],
+            }
+        )
+    return rules
+
+
+def _filter_label(params: dict[str, Any]) -> str:
+    if params.get("minimum_populated_fields") not in (None, ""):
+        return "sparse rows"
+    conditions = params.get("conditions")
+    if isinstance(conditions, list):
+        fields = [
+            str(condition.get("field"))
+            for condition in conditions
+            if isinstance(condition, dict) and condition.get("field")
+        ]
+        if fields:
+            return ", ".join(dict.fromkeys(fields))
+    required_field = params.get("required_field")
+    if required_field:
+        return str(required_field)
+    return ""
+
+
+def _filter_description(params: dict[str, Any]) -> str:
+    pieces = _filter_condition_summaries(params)
+    minimum = params.get("minimum_populated_fields")
+    if minimum not in (None, ""):
+        pieces.append(f"fewer than {minimum} populated field(s)")
+    action = str(params.get("action") or "keep")
+    match = str(params.get("match") or "all")
+    if not pieces:
+        return f"{action.title()} rows matching this filter."
+    return f"{action.title()} rows where {match} of: {'; '.join(pieces)}."
+
+
+def _filter_condition_summaries(params: dict[str, Any]) -> list[str]:
+    conditions = params.get("conditions")
+    if not isinstance(conditions, list):
+        return []
+    return [
+        _filter_condition_summary(condition)
+        for condition in conditions
+        if isinstance(condition, dict)
+    ]
+
+
+def _filter_rule_summaries(params: dict[str, Any]) -> list[str]:
+    summaries = _filter_condition_summaries(params)
+    minimum = params.get("minimum_populated_fields")
+    if minimum not in (None, ""):
+        summaries.append(f"fewer than {minimum} populated field(s)")
+    return summaries
+
+
+def _filter_condition_summary(condition: dict[str, Any]) -> str:
+    field = str(condition.get("field") or "field")
+    operator = str(condition.get("operator") or "equals")
+    value = condition.get("value")
+    labels = {
+        "is_missing": "is missing",
+        "is_not_missing": "is present",
+        "equals": f"equals {value}",
+        "not_equals": f"does not equal {value}",
+        "contains": f"contains {value}",
+        "not_contains": f"does not contain {value}",
+        "gt": f"> {value}",
+        "gte": f">= {value}",
+        "lt": f"< {value}",
+        "lte": f"<= {value}",
+        "in": f"in {value}",
+        "not_in": f"not in {value}",
+    }
+    return f"{field} {labels.get(operator, operator)}"
+
+
+def _optional_int(value: object) -> int | None:
+    if value is None or value == "":
+        return None
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _load_json_object(path: Path) -> dict[str, Any] | None:

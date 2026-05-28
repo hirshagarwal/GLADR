@@ -1150,6 +1150,27 @@
         font-weight: 850;
       }
 
+      .rank-metric {
+        display: grid;
+        gap: 2px;
+        justify-items: end;
+      }
+
+      .rank-metric-label {
+        color: var(--muted);
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .lasso-coefficient-note {
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.4;
+      }
+
       .rank-detail {
         grid-column: 2 / 4;
         color: var(--muted);
@@ -3001,6 +3022,7 @@
         const maxValue = Math.max(...selected.map((row) => Number(row.abs_standardized_coefficient) || 0), 1);
         return `
           <div class="auc-ranking">
+            <div class="lasso-coefficient-note">Bars and right-side values use standardized coefficients, so terms are comparable across scales. OR and raw log-odds coefficients use the original predictor coding.</div>
             ${selected.slice(0, 16).map((row, index) => {
               const magnitude = Number(row.abs_standardized_coefficient) || 0;
               const width = `${Math.max((magnitude / maxValue) * 100, 2)}%`;
@@ -3012,9 +3034,12 @@
                     <div class="rank-title" title="${escapeHtml(row.term)}">${escapeHtml(row.term)}</div>
                     <div class="rank-track"><div class="rank-fill" style="--value:${width}"></div></div>
                   </div>
-                  <div class="rank-auc">${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  <div class="rank-auc rank-metric" title="Standardized coefficient">
+                    <div class="rank-metric-label">Std. coef.</div>
+                    <div>${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  </div>
                   <div class="rank-detail">
-                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | coefficient=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
+                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | raw log-odds coef=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
                   </div>
                 </div>
               `;

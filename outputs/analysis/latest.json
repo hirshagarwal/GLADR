@@ -2,8 +2,8 @@
   "age_distribution": "artifacts/age_distribution_20260419_194518.json",
   "cohort_summary": "artifacts/cohort_summary_20260419_194518.json",
   "cox_regression": "artifacts/cox_regression_20260510_210233.json",
-  "lasso_logistic_regression": "artifacts/lasso_logistic_regression_20260528_004001.json",
-  "multivariable_logistic_regression": "artifacts/multivariable_logistic_regression_20260528_004056.json",
+  "lasso_logistic_regression": "artifacts/lasso_logistic_regression_20260528_090442.json",
+  "multivariable_logistic_regression": "artifacts/multivariable_logistic_regression_20260528_121927.json",
   "sex_breakdown": "artifacts/sex_breakdown_20260419_194518.json",
-  "univariate_auc_screen": "artifacts/univariate_auc_screen_20260528_004033.json"
+  "univariate_auc_screen": "artifacts/univariate_auc_screen_20260528_115538.json"
 }

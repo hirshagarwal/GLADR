@@ -32,14 +32,15 @@ class IngestionWorkbenchTests(unittest.TestCase):
 
             self.assertEqual(adapter["adapter_id"], "gbm_registry")
             self.assertEqual(adapter["default_spec_source"], "packaged")
-            self.assertIn("map_columns", operation_ids)
+            self.assertIn("rename_columns", operation_ids)
             self.assertIn("filter_rows", operation_ids)
+            self.assertIn("normalize_fields", operation_ids)
             self.assertIn("math", operation_ids)
             self.assertIn("derive_age", operation_ids)
             self.assertIn("join_data_file", operation_ids)
             self.assertIn("finalize_output", operation_ids)
-            self.assertIn("select_canonical_fields", operation_ids)
             self.assertIn("filter_rows", default_step_operations)
+            self.assertIn("normalize_fields", default_step_operations)
             self.assertIn("math", default_step_operations)
             self.assertIn("finalize_output", default_step_operations)
             self.assertEqual(adapter["default_spec"]["adapter_id"], "gbm_registry")
@@ -108,7 +109,39 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertEqual(preview["rows"][0]["patient_id"], "K0000001")
             self.assertEqual(preview["rows"][0]["nlr"], 2.0)
             self.assertEqual(preview["rows"][0]["qmc_local"], True)
+            self.assertEqual(preview["rows"][0]["source"], "gbm_registry")
+            self.assertEqual(preview["rows"][0]["data_quality_flags"], [])
             self.assertFalse(paths.registry_datasets_outputs_dir.exists())
+
+    def test_preview_quality_report_includes_value_level_flag_details(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            source_path = paths.root / "data" / "raw" / "registry" / "main_sheet" / "main_sheet_example.csv"
+            source_path.write_text(
+                "K-number,DOB,Presentation Date,Age at presentation,Neutrophils (presentation),"
+                "Lymphocytes (presentation),QMC Local\n"
+                "K0000001,not-a-date,01/01/2020,60,4,2,QMC\n",
+                encoding="utf-8",
+            )
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = payload["adapters"][0]
+
+            preview = preview_ingestion_spec(
+                "gbm_registry",
+                adapter["source_files"][0]["path"],
+                adapter["default_spec"],
+                paths=paths,
+            )
+
+            report_row = preview["quality_report"][0]
+            detail = next(item for item in report_row["flag_details"] if item["flag"] == "invalid_date_dob")
+            self.assertIn("invalid_date_dob", report_row["flags"])
+            self.assertEqual(detail["step_label"], "Normalize required dates")
+            self.assertEqual(detail["step_position"], 4)
+            self.assertEqual(detail["operation"], "normalize_fields")
+            self.assertEqual(detail["field"], "dob")
+            self.assertEqual(detail["raw_value"], "not-a-date")
+            self.assertIn("date", detail["hint"])
 
     def test_ui_run_writes_registry_artifacts_under_supplied_paths(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
