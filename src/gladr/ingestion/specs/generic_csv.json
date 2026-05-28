@@ -1,0 +1,21 @@
+{
+  "spec_id": "generic_csv_default",
+  "adapter_id": "generic_csv",
+  "version": "1.0.0",
+  "label": "Generic CSV Default",
+  "description": "Default chain for importing a user-supplied CSV through configurable workbench transforms.",
+  "steps": [
+    {
+      "id": "finalize_output",
+      "operation": "finalize_output",
+      "label": "Finalize output",
+      "description": "Add any missing canonical fields and place canonical fields first while preserving imported fields.",
+      "outputs": ["clean records"],
+      "params": {
+        "drop_fields": [],
+        "canonical_fields_first": true,
+        "add_missing_canonical_fields": true
+      }
+    }
+  ]
+}

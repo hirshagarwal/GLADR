@@ -19,6 +19,7 @@ class DiscoveryTests(unittest.TestCase):
         adapters = discover_subclasses("gladr.ingestion.adapters", BaseAdapter)
         adapter_ids = {adapter.adapter_id for adapter in adapters}
         self.assertIn("gbm_registry", adapter_ids)
+        self.assertIn("generic_csv", adapter_ids)
 
     def test_discovers_analysis_scripts(self) -> None:
         scripts = discover_subclasses("gladr.analysis.scripts", BaseAnalysisScript)

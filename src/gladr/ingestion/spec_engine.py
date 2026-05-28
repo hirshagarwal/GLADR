@@ -320,7 +320,7 @@ def _apply_operation(
         rename_map = {
             str(source): str(target)
             for source, target in columns.items()
-            if source in working.columns and (str(target) not in working.columns or source == str(target))
+            if source in working.columns and str(target) and (str(target) not in working.columns or source == str(target))
         }
         return working.rename(columns=rename_map), {"mapped_columns": len(rename_map)}
 

@@ -114,6 +114,35 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertEqual(preview["rows"][0]["data_quality_flags"], [])
             self.assertFalse(paths.registry_datasets_outputs_dir.exists())
 
+    def test_generic_csv_preview_can_type_rename_targets(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = next(item for item in payload["adapters"] if item["adapter_id"] == "generic_csv")
+            spec = json.loads(json.dumps(adapter["default_spec"]))
+            spec["steps"].insert(
+                0,
+                {
+                    "id": "rename_columns",
+                    "operation": "rename_columns",
+                    "label": "Rename generic columns",
+                    "params": {
+                        "columns": {
+                            "Subject ID": "patient_id",
+                            "Study Arm": "cohort_label",
+                        }
+                    },
+                },
+            )
+
+            preview = preview_ingestion_spec("generic_csv", adapter["source_files"][0]["path"], spec, paths=paths)
+
+            self.assertEqual(adapter["default_spec_source"], "packaged")
+            self.assertEqual(adapter["source_files"][0]["path"], "data/raw/imports/generic_import.csv")
+            self.assertEqual(preview["rows"][0]["patient_id"], "S001")
+            self.assertEqual(preview["rows"][0]["cohort_label"], "Treatment")
+            self.assertEqual(preview["rows"][0]["source"], "generic_csv")
+
     def test_preview_can_remap_values_inline_for_selected_field(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             paths = self._make_project(Path(directory))
@@ -229,10 +258,12 @@ class IngestionWorkbenchTests(unittest.TestCase):
 
     def _make_project(self, root: Path) -> ProjectPaths:
         source_dir = root / "data" / "raw" / "registry" / "main_sheet"
+        imports_dir = root / "data" / "raw" / "imports"
         reference_dir = root / "data" / "reference"
         histology_dir = root / "outputs" / "ingestion" / "histology"
         histology_dataset_dir = histology_dir / "datasets"
         source_dir.mkdir(parents=True)
+        imports_dir.mkdir(parents=True)
         reference_dir.mkdir(parents=True)
         histology_dataset_dir.mkdir(parents=True)
         (reference_dir / "lobe_mapping.json").write_text("{}", encoding="utf-8")
@@ -240,6 +271,11 @@ class IngestionWorkbenchTests(unittest.TestCase):
             "K-number,DOB,Presentation Date,Age at presentation,Neutrophils (presentation),"
             "Lymphocytes (presentation),QMC Local,Contributor\n"
             "K0000001,01/01/1960,01/01/2020,,4,2,QMC,QMC\n",
+            encoding="utf-8",
+        )
+        (imports_dir / "generic_import.csv").write_text(
+            "Subject ID,Study Arm,Score\n"
+            "S001,Treatment,42\n",
             encoding="utf-8",
         )
         (histology_dataset_dir / "histology_dataset_test.json").write_text(

@@ -2413,6 +2413,10 @@
                       ${files.length ? files.map((file) => selectedOption(file.path, `${file.name} (${file.rows ?? "?"} rows)`, file.path === state.ingestionSourceFile)).join("") : option("", "No matched files")}
                     </select>
                   </div>
+                  <div class="control">
+                    <label for="ingestion-upload-file">Import CSV</label>
+                    <input id="ingestion-upload-file" type="file" accept=".csv,text/csv" data-ingestion-upload="csv" />
+                  </div>
                 </div>
                 <div class="operation-picker">
                   <div class="control">
@@ -2673,7 +2677,8 @@
       function renderOperationParams(step, adapter) {
         const params = step.params ?? {};
         if (["rename_columns", "map_columns"].includes(step.operation)) {
-          const rows = Object.entries(params.columns ?? {}).slice(0, 18);
+          const mappings = Object.entries(params.columns ?? {}).slice(0, 18);
+          const rows = [...mappings, ["", ""]];
           return `
             <div class="control wide">
               <label>Column renames</label>
@@ -2681,7 +2686,7 @@
                 ${rows.map(([source, target], index) => `
                   <div class="mapping-row">
                     ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "source" }, source, ingestionSourceFieldOptions())}
-                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "target" }, target, ingestionFieldOptions())}
+                    <input list="ingestion-field-options" data-step-param="columns" data-param-index="${escapeHtml(index)}" data-param-side="target" value="${escapeHtml(target)}" placeholder="output field" />
                     <span class="meta">source → output</span>
                   </div>
                 `).join("")}
@@ -3335,6 +3340,13 @@
           templateIds: ["multivariable_logistic_regression", "lasso_logistic_regression"],
         },
         {
+          id: "validation",
+          label: "Validation",
+          icon: "V",
+          description: "Estimate model optimism and internal validation metrics.",
+          templateIds: ["bootstrapped_multivariable_logistic_regression"],
+        },
+        {
           id: "time",
           label: "Time",
           icon: "T",
@@ -3539,7 +3551,7 @@
       function shouldShowCompleteCaseCoverage(parameter) {
         const templateId = currentTemplate()?.template_id;
         return parameter.kind === "multi_variable"
-          && ["multivariable_logistic_regression", "lasso_logistic_regression", "cox_regression"].includes(templateId);
+          && ["multivariable_logistic_regression", "bootstrapped_multivariable_logistic_regression", "lasso_logistic_regression", "cox_regression"].includes(templateId);
       }
 
       function completeCaseCoverage(parameter, variables) {
@@ -3632,6 +3644,23 @@
               <div class="meta">
                 Fits a multivariable L1-regularized logistic model, selects lambda by stratified cross-validation when feasible, and stores coefficient rankings for Results.
               </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "bootstrapped_multivariable_logistic_regression") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} bootstrapped LR validation</span>
+                <span class="badge gold">1000 resamples</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and reports bootstrap optimism-corrected AUC with percentile confidence intervals.
+              </div>
+              <div class="meta">${escapeHtml(predictors.length)} selected predictors</div>
             </div>
           `;
           return;
@@ -3813,6 +3842,9 @@
         const visualization = analysis.visualization ?? {};
         if (analysis.script_id === "multivariable_logistic_regression") {
           return renderMultivariableLogisticRegression(analysis.data ?? {});
+        }
+        if (analysis.script_id === "bootstrapped_multivariable_logistic_regression") {
+          return renderBootstrappedMultivariableLogisticRegression(analysis.data ?? {});
         }
         if (analysis.script_id === "univariate_auc_screen" || analysis.data?.roc_curves) {
           return renderAucComparison(analysis.data ?? {});
@@ -4079,6 +4111,51 @@
         `;
       }
 
+      function renderBootstrappedMultivariableLogisticRegression(data) {
+        const rows = data.rows ?? [];
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Optimism-corrected AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.optimism_corrected_auc, "float3"))}</div>
+              <div class="meta">optimism ${escapeHtml(formatValue(data.bootstrap_optimism, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Bootstrap samples</div>
+              <div class="card-value">${escapeHtml(data.bootstrap_completed_resamples ?? "NA")}</div>
+              <div class="meta">of ${escapeHtml(data.bootstrap_resamples ?? "NA")} requested</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderRocOverlay(data.roc_curves ?? [], [{ predictor: "Bootstrapped multivariable model" }], false)}
+          ${renderBootstrappedLogisticTerms(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderBootstrappedLogisticTerms(rows) {
+        if (!rows.length) return '<div class="empty">No logistic model terms available.</div>';
+        const columns = [
+          { field: "term", label: "Term", format: "string" },
+          { field: "odds_ratio", label: "OR", format: "float3" },
+          { field: "bootstrap_ci_low", label: "Bootstrap 95% CI low", format: "float3" },
+          { field: "bootstrap_ci_high", label: "Bootstrap 95% CI high", format: "float3" },
+          { field: "bootstrap_odds_ratio_median", label: "Bootstrap median OR", format: "float3" },
+          { field: "p_value", label: "P", format: "pvalue" },
+        ];
+        return renderTable(columns, rows);
+      }
+
       function renderLogisticTerms(rows) {
         if (!rows.length) return '<div class="empty">No logistic model terms available.</div>';
         const columns = [
@@ -4315,6 +4392,35 @@
           renderStageDetail();
           return;
         }
+      }
+
+      async function uploadIngestionCsv(target) {
+        const file = target.files?.[0];
+        if (!file) return;
+        state.ingestionStatus = "Uploading CSV...";
+        renderStageDetail();
+        try {
+          const content = await file.text();
+          const response = await fetch("/api/ingestion-upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ filename: file.name, content }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `CSV upload returned ${response.status}`);
+          state.payload.ingestion_workbench = payload.workbench;
+          state.ingestionAdapterId = "generic_csv";
+          state.ingestionSourceFile = payload.file?.path ?? null;
+          const adapter = currentIngestionAdapter();
+          if (adapter) state.ingestionSpecsByAdapter[adapter.adapter_id] = cloneJson(adapter.default_spec);
+          state.selectedIngestionStepIndex = 0;
+          state.ingestionPreview = null;
+          state.ingestionStatus = `Imported ${payload.file?.name ?? file.name}.`;
+        } catch (error) {
+          state.ingestionStatus = error.message;
+        }
+        target.value = "";
+        renderStageDetail();
       }
 
       function syncIngestionStepField(target) {
@@ -4769,6 +4875,10 @@
         moveStageHistory(button.dataset.historyStep);
       });
       els.stageDetail.addEventListener("change", (event) => {
+        if (event.target.dataset.ingestionUpload) {
+          uploadIngestionCsv(event.target);
+          return;
+        }
         if (event.target.dataset.stepEnabledIndex !== undefined) {
           setIngestionStepEnabled(Number(event.target.dataset.stepEnabledIndex), event.target.checked);
           return;

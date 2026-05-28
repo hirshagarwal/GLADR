@@ -12,6 +12,10 @@ import pandas as pd
 from gladr.core.run_context import RunContext
 
 
+BOOTSTRAP_LOGISTIC_RESAMPLES = 1000
+BOOTSTRAP_LOGISTIC_RANDOM_SEED = 20260528
+
+
 @dataclass(frozen=True)
 class AnalysisTemplate:
     template_id: str
@@ -73,6 +77,33 @@ MULTIVARIABLE_LOGISTIC_TEMPLATE = AnalysisTemplate(
     category="Regression Modeling",
     icon="LR",
     run_label="Run logistic regression",
+    cohort_display="shared_model_frame",
+    parameters=[
+        {
+            "name": "outcome",
+            "label": "Binary outcome",
+            "kind": "single_variable",
+            "accepted_types": ["binary"],
+            "required": True,
+        },
+        {
+            "name": "predictors",
+            "label": "Model predictors",
+            "kind": "multi_variable",
+            "accepted_types": ["binary", "categorical", "numeric"],
+            "required": True,
+        },
+    ],
+)
+
+BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE = AnalysisTemplate(
+    template_id="bootstrapped_multivariable_logistic_regression",
+    title="Bootstrapped Multivariable Logistic Regression",
+    description="Fits one user-selected multivariable logistic model and validates apparent performance with bootstrap resampling.",
+    output="Apparent AUC, bootstrap optimism-corrected AUC, odds ratios, bootstrap confidence intervals, and model warnings.",
+    category="Model Validation",
+    icon="bLR",
+    run_label="Run bootstrapped LR",
     cohort_display="shared_model_frame",
     parameters=[
         {
@@ -170,6 +201,7 @@ def list_analysis_templates() -> list[dict[str, Any]]:
     return [
         UNIVARIATE_AUC_TEMPLATE.as_dict(),
         MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
+        BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
         LASSO_LOGISTIC_TEMPLATE.as_dict(),
         COX_REGRESSION_TEMPLATE.as_dict(),
     ]
@@ -186,6 +218,8 @@ def run_analysis_template(
         return build_univariate_auc_screen(dataframe, run_context, manifest_run_id, parameters)
     if template_id == MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id:
         return build_multivariable_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
+    if template_id == BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id:
+        return build_bootstrapped_multivariable_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == LASSO_LOGISTIC_TEMPLATE.template_id:
         return build_lasso_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == COX_REGRESSION_TEMPLATE.template_id:
@@ -441,6 +475,183 @@ def build_multivariable_logistic_regression(
             "cv_fold_aucs": [_round_optional(value, 3) for value in cv_result.get("fold_aucs", [])],
             "cv_fallback_reason": cv_result.get("reason"),
             "roc_curves": [{"predictor": "Multivariable model", "points": roc_points}],
+            "rows": rows,
+            "warnings": warnings,
+            "skipped": skipped,
+        },
+    }
+
+
+def build_bootstrapped_multivariable_logistic_regression(
+    dataframe: pd.DataFrame,
+    run_context: RunContext,
+    manifest_run_id: str,
+    parameters: dict[str, Any],
+) -> dict[str, object]:
+    outcome = str(parameters.get("outcome") or "")
+    predictors = [str(value) for value in parameters.get("predictors") or []]
+    if outcome not in dataframe.columns:
+        raise ValueError(f"Outcome variable is not in the clean dataset: {outcome}")
+    if not predictors:
+        raise ValueError("Select at least one predictor variable.")
+
+    outcome_encoded, outcome_levels = _encode_binary_outcome(dataframe[outcome])
+    design, terms, skipped = _build_lasso_design_matrix(dataframe, predictors, outcome)
+    if design.shape[1] == 0:
+        raise ValueError("No usable predictor terms are available after encoding.")
+
+    model_frame = design.copy()
+    model_frame["outcome"] = outcome_encoded
+    model_frame = model_frame.dropna()
+    if model_frame.empty:
+        raise ValueError("No complete cases remain after applying the selected predictors.")
+    if int(model_frame["outcome"].nunique()) != 2:
+        raise ValueError("Complete cases do not include both outcome classes.")
+
+    x_terms = model_frame.drop(columns=["outcome"]).to_numpy(dtype=float)
+    y = model_frame["outcome"].astype(float).to_numpy()
+    usable_mask = np.isfinite(x_terms.std(axis=0)) & (x_terms.std(axis=0) > 1e-12)
+    if not np.any(usable_mask):
+        raise ValueError("No predictor terms vary within the complete-case model frame.")
+    x_terms = x_terms[:, usable_mask]
+    terms = [term for term, usable in zip(terms, usable_mask, strict=True) if usable]
+    x = np.column_stack([np.ones(len(y)), x_terms])
+
+    beta, converged, fit_warning = _fit_logistic(x, y)
+    probabilities = _sigmoid(x @ beta)
+    auc = _auc_score(y, probabilities)
+    roc_points = _roc_points(y, probabilities)
+    standard_errors = _logistic_standard_errors(x, beta)
+    bootstrap = _bootstrap_logistic_validation(
+        x_terms,
+        y,
+        apparent_auc=auc,
+        resamples=BOOTSTRAP_LOGISTIC_RESAMPLES,
+        random_seed=BOOTSTRAP_LOGISTIC_RANDOM_SEED,
+    )
+
+    rows = []
+    coefficient_summaries = bootstrap.get("coefficient_summaries", [])
+    for index, term in enumerate(terms, start=1):
+        coefficient = float(beta[index])
+        se = float(standard_errors[index]) if standard_errors is not None else math.nan
+        z_value = coefficient / se if se and not math.isnan(se) and se > 0 else math.nan
+        p_value = _two_sided_normal_p(z_value) if not math.isnan(z_value) else None
+        coefficient_summary = coefficient_summaries[index - 1] if index - 1 < len(coefficient_summaries) else {}
+        rows.append({
+            "term": term["name"],
+            "predictor": term["predictor"],
+            "kind": term["kind"],
+            "reference_level": term.get("reference"),
+            "coefficient": round(coefficient, 4),
+            "odds_ratio": round(float(math.exp(np.clip(coefficient, -30, 30))), 3),
+            "ci_low": round(float(math.exp(np.clip(coefficient - 1.96 * se, -30, 30))), 3) if not math.isnan(se) else None,
+            "ci_high": round(float(math.exp(np.clip(coefficient + 1.96 * se, -30, 30))), 3) if not math.isnan(se) else None,
+            "bootstrap_coefficient_median": _round_optional(coefficient_summary.get("median"), 4),
+            "bootstrap_odds_ratio_median": _round_optional(coefficient_summary.get("odds_ratio_median"), 3),
+            "bootstrap_ci_low": _round_optional(coefficient_summary.get("odds_ratio_ci_low"), 3),
+            "bootstrap_ci_high": _round_optional(coefficient_summary.get("odds_ratio_ci_high"), 3),
+            "standard_error": round(se, 4) if not math.isnan(se) else None,
+            "z": round(z_value, 3) if not math.isnan(z_value) else None,
+            "p_value": round(p_value, 4) if p_value is not None else None,
+        })
+
+    warnings = []
+    if fit_warning:
+        warnings.append(fit_warning)
+    if not converged:
+        warnings.append("Model did not fully converge.")
+    if standard_errors is None:
+        warnings.append("Wald confidence intervals are unavailable because the model information matrix is unstable.")
+    if bootstrap["status"] == "fallback":
+        warnings.append(f"Bootstrap validation was not estimated: {bootstrap['reason']}.")
+    elif int(bootstrap["completed_resamples"]) < BOOTSTRAP_LOGISTIC_RESAMPLES:
+        warnings.append(
+            f"Bootstrap validation skipped {bootstrap['skipped_resamples']} resamples because they did not contain both outcome classes."
+        )
+
+    event_count = int(y.sum())
+    non_event_count = int(len(y) - event_count)
+    if min(event_count, non_event_count) < 5:
+        warnings.append("Low event or non-event count.")
+    if event_count <= max(len(terms) * 5, 5):
+        warnings.append("Low event count relative to model terms; estimates may be unstable.")
+
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
+
+    return {
+        "script_id": BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id,
+        "run_id": run_context.run_id,
+        "manifest_run_id": manifest_run_id,
+        "run_datetime": run_context.run_datetime,
+        "title": f"Bootstrapped multivariable logistic regression for {outcome}",
+        "description": "User-selected multivariable logistic regression with bootstrap internal validation for a binary outcome.",
+        "category": "Model Validation",
+        "priority": 8,
+        "metadata": {
+            "n": int(len(y)),
+            "template_id": BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id,
+            "outcome": outcome,
+            "event_level": outcome_levels["event"],
+            "reference_level": outcome_levels["reference"],
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "bootstrap_resamples": BOOTSTRAP_LOGISTIC_RESAMPLES,
+            "bootstrap_completed_resamples": bootstrap.get("completed_resamples", 0),
+            "bootstrap_apparent_auc": _round_optional(bootstrap.get("bootstrap_apparent_auc"), 3),
+            "bootstrap_test_auc": _round_optional(bootstrap.get("bootstrap_test_auc"), 3),
+            "bootstrap_optimism": _round_optional(bootstrap.get("optimism"), 3),
+            "optimism_corrected_auc": _round_optional(bootstrap.get("optimism_corrected_auc"), 3),
+            "validation_method": "bootstrap_optimism",
+            "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+            "notes": f"Predictors are user-selected. AUC is apparent AUC on the fitting data; optimism-corrected AUC and coefficient intervals use {BOOTSTRAP_LOGISTIC_RESAMPLES} bootstrap resamples.",
+        },
+        "cohort_display": BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.cohort_display,
+        "cohort": cohort,
+        "visualization": {
+            "type": "multi",
+            "library": "generic",
+            "panels": [
+                {
+                    "type": "table",
+                    "config": {
+                        "columns": [
+                            {"field": "term", "label": "Term", "format": "string"},
+                            {"field": "odds_ratio", "label": "OR", "format": "float3"},
+                            {"field": "bootstrap_ci_low", "label": "Bootstrap 95% CI low", "format": "float3"},
+                            {"field": "bootstrap_ci_high", "label": "Bootstrap 95% CI high", "format": "float3"},
+                            {"field": "p_value", "label": "P", "format": "pvalue"},
+                        ],
+                    },
+                },
+            ],
+        },
+        "data": {
+            "outcome": outcome,
+            "outcome_levels": outcome_levels,
+            "n": int(len(y)),
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "bootstrap_resamples": BOOTSTRAP_LOGISTIC_RESAMPLES,
+            "bootstrap_completed_resamples": bootstrap.get("completed_resamples", 0),
+            "bootstrap_skipped_resamples": bootstrap.get("skipped_resamples", 0),
+            "bootstrap_apparent_auc": _round_optional(bootstrap.get("bootstrap_apparent_auc"), 3),
+            "bootstrap_test_auc": _round_optional(bootstrap.get("bootstrap_test_auc"), 3),
+            "bootstrap_optimism": _round_optional(bootstrap.get("optimism"), 3),
+            "optimism_corrected_auc": _round_optional(bootstrap.get("optimism_corrected_auc"), 3),
+            "bootstrap_fallback_reason": bootstrap.get("reason"),
+            "roc_curves": [{"predictor": "Bootstrapped multivariable model", "points": roc_points}],
             "rows": rows,
             "warnings": warnings,
             "skipped": skipped,
@@ -1049,6 +1260,82 @@ def _fit_univariate_auc(predictor_series: pd.Series, outcome_encoded: pd.Series,
             "warnings": warnings,
         },
         "roc_points": roc_points,
+    }
+
+
+def _bootstrap_logistic_validation(
+    x_terms: np.ndarray,
+    y: np.ndarray,
+    *,
+    apparent_auc: float | None,
+    resamples: int,
+    random_seed: int,
+) -> dict[str, Any]:
+    if apparent_auc is None:
+        return {"status": "fallback", "reason": "apparent AUC could not be estimated"}
+
+    rng = np.random.default_rng(random_seed)
+    x_original = np.column_stack([np.ones(len(y)), x_terms])
+    apparent_aucs = []
+    test_aucs = []
+    coefficients = []
+    skipped_resamples = 0
+
+    for _ in range(resamples):
+        sample_index = rng.integers(0, len(y), len(y))
+        y_bootstrap = y[sample_index]
+        if int(np.unique(y_bootstrap).size) != 2:
+            skipped_resamples += 1
+            continue
+
+        x_bootstrap = x_original[sample_index]
+        bootstrap_beta, _, _ = _fit_logistic(x_bootstrap, y_bootstrap)
+        bootstrap_apparent_auc = _auc_score(y_bootstrap, _sigmoid(x_bootstrap @ bootstrap_beta))
+        bootstrap_test_auc = _auc_score(y, _sigmoid(x_original @ bootstrap_beta))
+        if bootstrap_apparent_auc is None or bootstrap_test_auc is None:
+            skipped_resamples += 1
+            continue
+        if not math.isfinite(bootstrap_apparent_auc) or not math.isfinite(bootstrap_test_auc):
+            skipped_resamples += 1
+            continue
+
+        apparent_aucs.append(float(bootstrap_apparent_auc))
+        test_aucs.append(float(bootstrap_test_auc))
+        coefficients.append(bootstrap_beta[1:].copy())
+
+    if not apparent_aucs:
+        return {
+            "status": "fallback",
+            "reason": "no bootstrap resamples contained both outcome classes and estimable AUC",
+            "completed_resamples": 0,
+            "skipped_resamples": skipped_resamples,
+        }
+
+    apparent_mean = float(np.mean(apparent_aucs))
+    test_mean = float(np.mean(test_aucs))
+    optimism = float(np.mean(np.array(apparent_aucs) - np.array(test_aucs)))
+    optimism_corrected_auc = float(np.clip(apparent_auc - optimism, 0, 1))
+    coefficient_matrix = np.vstack(coefficients)
+
+    return {
+        "status": "fit",
+        "completed_resamples": len(apparent_aucs),
+        "skipped_resamples": skipped_resamples,
+        "bootstrap_apparent_auc": apparent_mean,
+        "bootstrap_test_auc": test_mean,
+        "optimism": optimism,
+        "optimism_corrected_auc": optimism_corrected_auc,
+        "coefficient_summaries": [
+            {
+                "median": float(percentiles[1]),
+                "ci_low": float(percentiles[0]),
+                "ci_high": float(percentiles[2]),
+                "odds_ratio_median": float(math.exp(np.clip(percentiles[1], -30, 30))),
+                "odds_ratio_ci_low": float(math.exp(np.clip(percentiles[0], -30, 30))),
+                "odds_ratio_ci_high": float(math.exp(np.clip(percentiles[2], -30, 30))),
+            }
+            for percentiles in np.percentile(coefficient_matrix, [2.5, 50, 97.5], axis=0).T
+        ],
     }
 
 

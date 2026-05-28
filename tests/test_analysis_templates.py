@@ -16,6 +16,7 @@ if str(SRC_DIR) not in sys.path:
 
 from gladr.analysis.profiling import build_dataset_profile
 from gladr.analysis.templates import (
+    build_bootstrapped_multivariable_logistic_regression,
     build_cox_regression,
     build_lasso_logistic_regression,
     build_multivariable_logistic_regression,
@@ -77,6 +78,9 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertIn("multivariable_logistic_regression", templates)
         self.assertEqual(templates["multivariable_logistic_regression"]["category"], "Regression Modeling")
         self.assertEqual(templates["multivariable_logistic_regression"]["cohort_display"], "shared_model_frame")
+        self.assertIn("bootstrapped_multivariable_logistic_regression", templates)
+        self.assertEqual(templates["bootstrapped_multivariable_logistic_regression"]["category"], "Model Validation")
+        self.assertEqual(templates["bootstrapped_multivariable_logistic_regression"]["cohort_display"], "shared_model_frame")
         self.assertEqual(templates["univariate_auc_screen"]["cohort_display"], "none")
         self.assertIn("cox_regression", templates)
         self.assertEqual(templates["cox_regression"]["category"], "Survival Modeling")
@@ -173,6 +177,40 @@ class AnalysisTemplateTests(unittest.TestCase):
 
         self.assertEqual(artifact["metadata"]["term_count"], 1)
         self.assertEqual(artifact["data"]["rows"][0]["term"], "residual_enhancement: yes")
+
+    def test_bootstrapped_multivariable_logistic_regression_uses_1000_resamples(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": False, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 5.2, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 5.6, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 6.0, "age": 65, "sex": "F"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "M"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "F"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_bootstrapped_multivariable_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "bootstrapped_multivariable_logistic_regression")
+        self.assertEqual(artifact["metadata"]["bootstrap_resamples"], 1000)
+        self.assertEqual(artifact["data"]["bootstrap_resamples"], 1000)
+        self.assertEqual(artifact["metadata"]["validation_method"], "bootstrap_optimism")
+        self.assertEqual(artifact["metadata"]["bootstrap_completed_resamples"], 1000)
+        self.assertIsNotNone(artifact["metadata"]["optimism_corrected_auc"])
+        self.assertTrue(all("bootstrap_ci_low" in row for row in artifact["data"]["rows"]))
 
     def test_lasso_logistic_regression_selects_terms(self) -> None:
         dataframe = pd.DataFrame(

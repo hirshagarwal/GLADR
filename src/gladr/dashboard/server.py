@@ -6,6 +6,7 @@ import json
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from importlib import resources
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
@@ -69,6 +70,10 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
                 self._handle_ingestion_run()
                 return
 
+            if route == "/api/ingestion-upload":
+                self._handle_ingestion_upload()
+                return
+
             if route != "/api/analysis-runs":
                 self.send_error(HTTPStatus.NOT_FOUND, "Not found")
                 return
@@ -106,6 +111,30 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
             self._send_json({
                 "artifacts": {name: path.name for name, path in written.items()},
                 "dashboard": load_dashboard_payload(paths),
+            }, status=HTTPStatus.CREATED)
+
+        def _handle_ingestion_upload(self) -> None:
+            try:
+                payload = self._read_json_body()
+                filename = _safe_upload_filename(str(payload.get("filename") or ""))
+                content = payload.get("content")
+                if not isinstance(content, str):
+                    raise ValueError("Upload request must include CSV content.")
+                upload_dir = paths.raw_data_dir / "imports"
+                upload_dir.mkdir(parents=True, exist_ok=True)
+                output_path = upload_dir / filename
+                output_path.write_text(content, encoding="utf-8")
+                workbench = build_ingestion_workbench_payload(paths)
+            except (OSError, ValueError, KeyError) as error:
+                self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            self._send_json({
+                "file": {
+                    "name": output_path.name,
+                    "path": output_path.relative_to(paths.root).as_posix(),
+                },
+                "workbench": workbench,
             }, status=HTTPStatus.CREATED)
 
         def _handle_analysis_run(self) -> None:
@@ -162,3 +191,12 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
 def _load_index_html() -> str:
     source = resources.files("gladr.dashboard.static_app").joinpath("index.html")
     return source.read_text(encoding="utf-8")
+
+
+def _safe_upload_filename(filename: str) -> str:
+    name = Path(filename).name.strip()
+    if not name:
+        raise ValueError("Upload filename is required.")
+    if Path(name).suffix.lower() != ".csv":
+        raise ValueError("Only CSV uploads are supported.")
+    return name
