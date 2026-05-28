@@ -13,14 +13,14 @@ from gladr.core.paths import ProjectPaths
 
 def load_latest_clean_dataframe(paths: ProjectPaths | None = None) -> tuple[pd.DataFrame, dict[str, Any]]:
     project_paths = paths or ProjectPaths.discover()
-    latest_clean = read_latest_pointer(project_paths.registry_ingestion_outputs_dir / "latest.json")
+    latest_clean = read_latest_pointer(project_paths.canonical_ingestion_outputs_dir / "latest.json")
     clean_dataset = latest_clean.get("clean_dataset")
     manifest_filename = latest_clean.get("manifest") or latest_clean.get("run_manifest")
     if not clean_dataset or not manifest_filename:
         raise FileNotFoundError("No clean dataset latest pointer found. Run ingestion first.")
 
-    clean_path = project_paths.registry_ingestion_outputs_dir / str(clean_dataset)
-    manifest_path = project_paths.registry_ingestion_outputs_dir / str(manifest_filename)
+    clean_path = project_paths.canonical_ingestion_outputs_dir / str(clean_dataset)
+    manifest_path = project_paths.canonical_ingestion_outputs_dir / str(manifest_filename)
     with clean_path.open("r", encoding="utf-8") as handle:
         clean_payload = json.load(handle)
     with manifest_path.open("r", encoding="utf-8") as handle:

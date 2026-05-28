@@ -13,11 +13,11 @@ contracts:
 examples:
   - examples/dashboard_payload_sample.json
 commands:
-  build: python main.py dashboard
-  serve: python main.py dashboard --serve
+  build: python main.py dashboard --project-root /path/to/project
+  serve: python main.py dashboard --serve --project-root /path/to/project
   test: python -B -m unittest discover -s tests
 llm_rules:
-  - Treat outputs/ingestion and outputs/analysis as read-only inputs.
+  - Treat project outputs/ingestion and outputs/analysis as read-only inputs.
   - Keep dashboard changes compatible with contracts/dashboard_payload_schema.json.
   - Prefer adding payload fields in manifest_loader.py over hard-coding artifact assumptions in the UI.
   - Do not make dashboard code responsible for pipeline execution.

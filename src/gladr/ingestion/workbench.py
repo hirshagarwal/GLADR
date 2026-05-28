@@ -31,12 +31,12 @@ def discover_data_files(paths: ProjectPaths | None = None) -> list[dict[str, Any
     project_paths = paths or ProjectPaths.discover()
     candidates: list[tuple[str, Path, str]] = []
     candidates.extend(("Histology dataset", path, "histology_dataset") for path in project_paths.histology_datasets_outputs_dir.glob("*.json"))
-    candidates.extend(("Registry clean dataset", path, "registry_dataset") for path in project_paths.registry_datasets_outputs_dir.glob("*.json"))
+    candidates.extend(("Canonical clean dataset", path, "canonical_dataset") for path in project_paths.canonical_datasets_outputs_dir.glob("*.json"))
     candidates.extend(("Reference data", path, "reference") for path in project_paths.reference_data_dir.glob("*.json"))
     candidates.extend(("Histology marker CSV", path, "histology_marker_csv") for path in project_paths.histology_marker_csv_dir.glob("*.csv"))
 
     latest_histology = _latest_file(project_paths.histology_ingestion_outputs_dir / "latest.json", project_paths.histology_ingestion_outputs_dir, "histology_dataset")
-    latest_registry = _latest_file(project_paths.registry_ingestion_outputs_dir / "latest.json", project_paths.registry_ingestion_outputs_dir, "clean_dataset")
+    latest_canonical = _latest_file(project_paths.canonical_ingestion_outputs_dir / "latest.json", project_paths.canonical_ingestion_outputs_dir, "clean_dataset")
 
     files = []
     seen: set[Path] = set()
@@ -54,7 +54,7 @@ def discover_data_files(paths: ProjectPaths | None = None) -> list[dict[str, Any
                 "rows": _data_file_row_count(path),
                 "columns": _data_file_columns(path),
                 "column_values": _data_file_column_values(path),
-                "is_latest": resolved in {item.resolve() for item in (latest_histology, latest_registry) if item},
+                "is_latest": resolved in {item.resolve() for item in (latest_histology, latest_canonical) if item},
             }
         )
     return files
@@ -180,7 +180,7 @@ def _save_default_spec(adapter: BaseAdapter, spec: dict[str, Any], paths: Projec
 
 
 def _saved_default_spec_path(paths: ProjectPaths, adapter: BaseAdapter) -> Path:
-    return paths.ingestion_outputs_dir / "specs" / f"{adapter.adapter_id}.json"
+    return paths.ingestion_specs_dir / f"{adapter.adapter_id}.json"
 
 
 def _resolve_source_file(paths: ProjectPaths, adapter: BaseAdapter, source_file: str | None) -> Path:

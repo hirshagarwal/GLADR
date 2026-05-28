@@ -14,8 +14,8 @@ from gladr.core.paths import ProjectPaths
 from gladr.core.run_context import RunContext
 
 
-def run_analysis(script_ids: list[str] | None = None) -> dict[str, Path]:
-    paths = ProjectPaths.discover()
+def run_analysis(script_ids: list[str] | None = None, paths: ProjectPaths | None = None) -> dict[str, Path]:
+    paths = paths or ProjectPaths.discover()
     paths.ensure_runtime_dirs()
 
     dataframe, manifest = load_latest_clean_dataframe(paths)
@@ -61,8 +61,12 @@ def run_analysis(script_ids: list[str] | None = None) -> dict[str, Path]:
     return written
 
 
-def run_parameterized_analysis(template_id: str, parameters: dict[str, object]) -> Path:
-    paths = ProjectPaths.discover()
+def run_parameterized_analysis(
+    template_id: str,
+    parameters: dict[str, object],
+    paths: ProjectPaths | None = None,
+) -> Path:
+    paths = paths or ProjectPaths.discover()
     paths.ensure_runtime_dirs()
     dataframe, manifest = load_latest_clean_dataframe(paths)
     run_context = RunContext.now()

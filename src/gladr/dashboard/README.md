@@ -24,21 +24,21 @@ Avoid by default:
 The dashboard reads runtime artifacts from:
 
 ```text
-outputs/ingestion/registry/
-outputs/analysis/
+<project>/outputs/ingestion/
+<project>/outputs/analysis/
 ```
 
 The dashboard API payload is described by `contracts/dashboard_payload_schema.json`.
 
 ## Outputs
 
-`python main.py dashboard` copies the dashboard shell to:
+`python main.py dashboard --project-root /path/to/project` copies the dashboard shell to:
 
 ```text
-outputs/dashboard/builds/index.html
+<project>/outputs/dashboard/builds/index.html
 ```
 
-`python main.py dashboard --serve` starts the local dynamic dashboard and exposes:
+`python main.py dashboard --serve --project-root /path/to/project` starts the local dynamic dashboard and exposes:
 
 ```text
 /

@@ -1,6 +1,6 @@
 # Ingestion Module
 
-This module converts raw registry source files into the canonical clean dataset used by downstream GLADR stages.
+This module converts raw project source files into the canonical clean dataset used by downstream GLADR stages.
 
 ## LLM edit scope
 
@@ -26,20 +26,20 @@ Avoid by default:
 Raw source files are matched by adapters. The current GBM registry adapter reads CSV files from:
 
 ```text
-data/raw/registry/main_sheet/*.csv
+<project>/data/raw/registry/main_sheet/*.csv
 ```
 
 The histology ingestion stage reads text reports from:
 
 ```text
-data/raw/histology/text_reports/*.txt
+<project>/data/raw/histology/text_reports/*.txt
 ```
 
-It writes per-report marker CSVs to `data/interim/histology/extracted_marker_csv/` and compiles those CSVs into one combined JSON histology dataset with a `k_number` identifier column derived from each filename. Passing an `--output` path ending in `.csv` writes the combined dataset as CSV instead.
+It writes per-report marker CSVs to `<project>/data/interim/histology/extracted_marker_csv/` and compiles those CSVs into one combined JSON histology dataset with a `k_number` identifier column derived from each filename. Passing an `--output` path ending in `.csv` writes the combined dataset as CSV instead.
 
 ## Outputs
 
-Registry ingestion writes versioned artifacts into `outputs/ingestion/registry/`:
+Canonical ingestion writes versioned artifacts into `<project>/outputs/ingestion/canonical/`:
 
 ```text
 datasets/clean_dataset_<run_id>.json
@@ -48,7 +48,7 @@ reports/quality_report_<run_id>.json
 latest.json
 ```
 
-Histology ingestion writes versioned artifacts into `outputs/ingestion/histology/`:
+Histology ingestion writes versioned artifacts into `<project>/outputs/ingestion/histology/`:
 
 ```text
 datasets/histology_dataset_<run_id>.json
@@ -64,11 +64,11 @@ Run manifests include a `summary` object and ordered `steps` array. The dashboar
 ## Run command
 
 ```bash
-python main.py ingest
-python main.py ingest --adapter gbm_registry
-python main.py ingest --adapter gbm_registry --file data/raw/registry/main_sheet/example.csv
-python main.py ingest-histology
-python main.py ingest-histology --no-generate
+python main.py ingest --project-root /path/to/project
+python main.py ingest --project-root /path/to/project --adapter gbm_registry
+python main.py ingest --project-root /path/to/project --adapter gbm_registry --file data/raw/registry/main_sheet/example.csv
+python main.py ingest-histology --project-root /path/to/project
+python main.py ingest-histology --project-root /path/to/project --no-generate
 ```
 
 ## Implementation pattern
@@ -79,7 +79,7 @@ Adapters subclass `BaseAdapter` and return `AdapterRunResult`. Registry adapters
 - `ingestion_report`: row-level quality flag records.
 - `source_summary`: source-level row counts and metadata.
 
-The runner concatenates all adapter dataframes, writes artifacts, and updates `outputs/ingestion/registry/latest.json`.
+The runner concatenates all adapter dataframes, writes artifacts, and updates `<project>/outputs/ingestion/canonical/latest.json`.
 
 The dashboard may trigger ingestion through the local server, but transform behavior must stay in ingestion-owned Python modules and packaged specs. UI-submitted specs are transient unless an explicit save flow is added later.
 

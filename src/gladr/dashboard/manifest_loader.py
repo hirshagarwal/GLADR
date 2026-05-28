@@ -35,7 +35,7 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
     project_paths = paths or ProjectPaths.discover()
     project_paths.ensure_runtime_dirs()
 
-    latest_clean = read_latest_pointer(project_paths.registry_ingestion_outputs_dir / "latest.json")
+    latest_clean = read_latest_pointer(project_paths.canonical_ingestion_outputs_dir / "latest.json")
     latest_stats = read_latest_pointer(project_paths.analysis_outputs_dir / "latest.json")
     ingestion_runs = discover_ingestion_runs(project_paths, latest_clean)
     analyses = discover_analysis_artifacts(project_paths, latest_stats)
@@ -70,17 +70,17 @@ def discover_ingestion_runs(
     latest_manifest = latest.get("manifest") or latest.get("run_manifest")
     runs: list[dict[str, Any]] = []
 
-    for manifest_path in sorted(paths.registry_manifests_outputs_dir.glob("manifest_*.json")):
+    for manifest_path in sorted(paths.canonical_manifests_outputs_dir.glob("manifest_*.json")):
         manifest = _load_json_object(manifest_path)
         if not manifest:
             continue
 
         run_id = str(manifest.get("run_id") or _run_id_from_filename(manifest_path, "manifest_"))
         report_filename = f"quality_report_{run_id}.json"
-        report_path = paths.registry_reports_outputs_dir / report_filename
+        report_path = paths.canonical_reports_outputs_dir / report_filename
         clean_filename = f"clean_dataset_{run_id}.json"
         report_summary = _summarize_ingestion_report(report_path)
-        manifest_pointer = manifest_path.relative_to(paths.registry_ingestion_outputs_dir).as_posix()
+        manifest_pointer = manifest_path.relative_to(paths.canonical_ingestion_outputs_dir).as_posix()
 
         runs.append(
             {
@@ -96,7 +96,7 @@ def discover_ingestion_runs(
                 "notes": manifest.get("notes", ""),
                 "manifest_filename": manifest_pointer,
                 "clean_dataset_filename": f"datasets/{clean_filename}"
-                if (paths.registry_datasets_outputs_dir / clean_filename).exists()
+                if (paths.canonical_datasets_outputs_dir / clean_filename).exists()
                 else None,
                 "ingestion_report_filename": f"reports/{report_filename}" if report_path.exists() else None,
                 "flagged_records": report_summary["flagged_records"],

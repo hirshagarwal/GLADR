@@ -160,11 +160,11 @@ class IngestionWorkbenchTests(unittest.TestCase):
 
             self.assertTrue(written["clean_dataset"].exists())
             self.assertTrue(written["manifest"].exists())
-            self.assertTrue((paths.registry_ingestion_outputs_dir / "latest.json").exists())
+            self.assertTrue((paths.canonical_ingestion_outputs_dir / "latest.json").exists())
             manifest = json.loads(written["manifest"].read_text(encoding="utf-8"))
             self.assertTrue(manifest["specs"][0]["transient"])
             self.assertEqual(manifest["specs"][0]["adapter_id"], "gbm_registry")
-            saved_spec_path = paths.ingestion_outputs_dir / "specs" / "gbm_registry.json"
+            saved_spec_path = paths.ingestion_specs_dir / "gbm_registry.json"
             saved_spec = json.loads(saved_spec_path.read_text(encoding="utf-8"))
             self.assertEqual(saved_spec["steps"][0]["label"], "Saved map source columns")
             self.assertNotIn("transient", saved_spec)

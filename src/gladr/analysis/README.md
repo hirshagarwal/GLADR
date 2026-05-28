@@ -22,15 +22,15 @@ Safe edit points:
 Avoid by default:
 - Do not edit ingestion internals for a stats-only task.
 - Do not edit dashboard code unless a new visualization type or artifact shape is required.
-- Do not edit generated files in `outputs/analysis/` manually.
+- Do not edit generated files in a project's `outputs/analysis/` manually.
 
 ## Inputs
 
-The runner reads the latest registry clean dataset from `outputs/ingestion/registry/latest.json`. Analysis code should treat the clean dataset as a stable input contract described by `contracts/clean_dataset_schema.json`.
+The runner reads the latest canonical clean dataset from `<project>/outputs/ingestion/canonical/latest.json`. Analysis code should treat the clean dataset as a stable input contract described by `contracts/clean_dataset_schema.json`.
 
 ## Outputs
 
-Each script emits one JSON artifact into `outputs/analysis/artifacts/`:
+Each script emits one JSON artifact into `<project>/outputs/analysis/artifacts/`:
 
 ```text
 <script_id>_<run_id>.json
@@ -39,7 +39,7 @@ Each script emits one JSON artifact into `outputs/analysis/artifacts/`:
 The runner updates:
 
 ```text
-outputs/analysis/latest.json
+<project>/outputs/analysis/latest.json
 ```
 
 Each artifact should follow `contracts/analysis_artifact_schema.json` and may include a visualization contract described by `contracts/visualization_schema.json`.
@@ -47,8 +47,8 @@ Each artifact should follow `contracts/analysis_artifact_schema.json` and may in
 ## Run command
 
 ```bash
-python main.py analyze
-python main.py analyze --scripts cohort_summary
+python main.py analyze --project-root /path/to/project
+python main.py analyze --project-root /path/to/project --scripts cohort_summary
 ```
 
 ## Script pattern

@@ -44,7 +44,7 @@ def run_ingestion(
 
     for adapter in adapters:
         adapter_spec = _spec_for_adapter(adapter, spec)
-        matched_files = [Path(source_file)] if source_file else adapter.match_files(project_paths.root)
+        matched_files = [_resolve_source_file(project_paths, source_file)] if source_file else adapter.match_files(project_paths.root)
         if not matched_files:
             continue
 
@@ -62,9 +62,9 @@ def run_ingestion(
         raise FileNotFoundError("No source files were found for the selected ingestion adapters")
 
     clean_df = pd.concat(collected_frames, ignore_index=True)
-    clean_path = project_paths.registry_datasets_outputs_dir / f"clean_dataset_{run_context.run_id}.json"
-    manifest_path = project_paths.registry_manifests_outputs_dir / f"manifest_{run_context.run_id}.json"
-    report_path = project_paths.registry_reports_outputs_dir / f"quality_report_{run_context.run_id}.json"
+    clean_path = project_paths.canonical_datasets_outputs_dir / f"clean_dataset_{run_context.run_id}.json"
+    manifest_path = project_paths.canonical_manifests_outputs_dir / f"manifest_{run_context.run_id}.json"
+    report_path = project_paths.canonical_reports_outputs_dir / f"quality_report_{run_context.run_id}.json"
 
     clean_payload = {
         "run_id": run_context.run_id,
@@ -98,11 +98,11 @@ def run_ingestion(
     _write_json(manifest_path, manifest)
     _write_json(report_path, ingestion_report)
     write_latest_pointer(
-        project_paths.registry_ingestion_outputs_dir / "latest.json",
+        project_paths.canonical_ingestion_outputs_dir / "latest.json",
         {
-            "clean_dataset": clean_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
-            "manifest": manifest_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
-            "quality_report": report_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
+            "clean_dataset": clean_path.relative_to(project_paths.canonical_ingestion_outputs_dir).as_posix(),
+            "manifest": manifest_path.relative_to(project_paths.canonical_ingestion_outputs_dir).as_posix(),
+            "quality_report": report_path.relative_to(project_paths.canonical_ingestion_outputs_dir).as_posix(),
         },
     )
 
@@ -120,6 +120,13 @@ def _spec_for_adapter(adapter: BaseAdapter, spec: dict[str, Any] | None) -> dict
     if spec_adapter and spec_adapter != adapter.adapter_id:
         raise ValueError(f"Spec adapter_id {spec_adapter} does not match selected adapter {adapter.adapter_id}.")
     return spec
+
+
+def _resolve_source_file(paths: ProjectPaths, source_file: str) -> Path:
+    path = Path(source_file)
+    if path.is_absolute():
+        return path
+    return paths.root / path
 
 
 def _spec_snapshot(adapter_id: str, source_file: str, spec: dict[str, Any]) -> dict[str, Any]:

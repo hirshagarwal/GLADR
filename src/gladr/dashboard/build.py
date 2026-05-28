@@ -8,8 +8,8 @@ from pathlib import Path
 from gladr.core.paths import ProjectPaths
 
 
-def build_dashboard() -> Path:
-    paths = ProjectPaths.discover()
+def build_dashboard(paths: ProjectPaths | None = None) -> Path:
+    paths = paths or ProjectPaths.discover()
     paths.ensure_runtime_dirs()
 
     source = resources.files("gladr.dashboard.static_app").joinpath("index.html")

@@ -1,3 +1,14 @@
-/data/
+.DS_Store
 .env
 .idea/
+.gladr/
+
+/data/
+/outputs/
+/notebooks/
+/deliverables/
+/projects/
+
+**/__pycache__/
+**/*.py[cod]
+*.egg-info/

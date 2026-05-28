@@ -15,9 +15,9 @@ examples:
   - examples/clean_dataset_sample.json
   - examples/ingestion_report_sample.json
 commands:
-  run_all: python main.py ingest
-  run_adapter: python main.py ingest --adapter gbm_registry
-  run_histology: python main.py ingest-histology
+  run_all: python main.py ingest --project-root /path/to/project
+  run_adapter: python main.py ingest --project-root /path/to/project --adapter gbm_registry
+  run_histology: python main.py ingest-histology --project-root /path/to/project
   test: python -B -m unittest discover -s tests
 llm_rules:
   - Read this module README before editing ingestion behavior.

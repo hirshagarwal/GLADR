@@ -23,10 +23,10 @@ DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 8765
 
 
-def serve_dashboard(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT) -> None:
+def serve_dashboard(host: str = DEFAULT_HOST, port: int = DEFAULT_PORT, paths: ProjectPaths | None = None) -> None:
     """Serve the dashboard and dynamic artifact API until interrupted."""
 
-    paths = ProjectPaths.discover()
+    paths = paths or ProjectPaths.discover()
     paths.ensure_runtime_dirs()
     handler = _handler_factory(paths)
     server = ThreadingHTTPServer((host, port), handler)
@@ -115,7 +115,7 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
                 parameters = payload.get("parameters")
                 if not isinstance(parameters, dict):
                     raise ValueError("Request must include parameter object.")
-                output_path = run_parameterized_analysis(template_id, parameters)
+                output_path = run_parameterized_analysis(template_id, parameters, paths=paths)
             except (OSError, ValueError, KeyError) as error:
                 self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
                 return

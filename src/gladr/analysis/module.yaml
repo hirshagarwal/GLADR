@@ -16,11 +16,11 @@ examples:
   - examples/cohort_summary_artifact.json
   - examples/age_distribution_artifact.json
 commands:
-  run_all: python main.py analyze
-  run_one: python main.py analyze --scripts cohort_summary
+  run_all: python main.py analyze --project-root /path/to/project
+  run_one: python main.py analyze --project-root /path/to/project --scripts cohort_summary
   test: python -B -m unittest discover -s tests
 llm_rules:
   - Read this module README before adding or changing an analysis.
   - Add new stats as focused scripts under scripts/.
   - Keep artifacts compatible with contracts/analysis_artifact_schema.json.
-  - Do not edit outputs/analysis manually.
+  - Do not edit generated project outputs manually.

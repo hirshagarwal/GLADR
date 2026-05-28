@@ -1,6 +1,6 @@
 # GLADR
 
-GLADR is a package-first clinical registry analysis pipeline. It is currently built around a GBM registry, but the code is organized so new data sources, statistics, and dashboard views can be added through isolated pipeline modules rather than broad rewrites.
+GLADR is a package-first clinical research analysis pipeline. The committed repository contains reusable code, contracts, tests, and sanitized examples. Local research projects live in separate project workspaces that own private data, saved specs, outputs, notebooks, and deliverables.
 
 The system has three runtime stages:
 
@@ -15,13 +15,13 @@ Every pipeline output is versioned by run id. `latest.json` files point downstre
 Run the full pipeline:
 
 ```bash
-python main.py run-all
+python main.py run-all --project-root /path/to/project
 ```
 
 Serve the dynamic dashboard:
 
 ```bash
-python main.py dashboard --serve
+python main.py dashboard --serve --project-root /path/to/project
 ```
 
 Open:
@@ -30,78 +30,67 @@ Open:
 http://127.0.0.1:8765
 ```
 
-If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans `outputs/ingestion/registry/` and `outputs/analysis/` on each request.
+If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans the active project's `outputs/ingestion/` and `outputs/analysis/` directories on each request.
 
 ## Current Commands
 
 ```bash
 # Ingestion
-python main.py ingest
-python main.py ingest --adapter gbm_registry
-python main.py ingest --adapter gbm_registry --file data/raw/registry/main_sheet/main_sheet_19.04.26.csv
+python main.py ingest --project-root /path/to/project
+python main.py ingest --project-root /path/to/project --adapter gbm_registry
+python main.py ingest --project-root /path/to/project --adapter gbm_registry --file data/raw/registry/main_sheet/example.csv
 
 # Analysis
-python main.py analyze
-python main.py analyze --scripts cohort_summary age_distribution sex_breakdown
+python main.py analyze --project-root /path/to/project
+python main.py analyze --project-root /path/to/project --scripts cohort_summary age_distribution sex_breakdown
 
 # Dashboard
-python main.py dashboard
-python main.py dashboard --serve
+python main.py dashboard --project-root /path/to/project
+python main.py dashboard --serve --project-root /path/to/project
 
 # Full pipeline
-python main.py run-all
+python main.py run-all --project-root /path/to/project
 ```
 
 ## Runtime Flow
 
 ```text
-data/raw/registry/main_sheet/*.csv
-  -> outputs/ingestion/registry/datasets/clean_dataset_<run_id>.json
-  -> outputs/ingestion/registry/manifests/manifest_<run_id>.json
-  -> outputs/ingestion/registry/reports/quality_report_<run_id>.json
-  -> outputs/ingestion/registry/latest.json
-  -> outputs/analysis/artifacts/<script_id>_<run_id>.json
-  -> outputs/analysis/manifests/analysis_manifest_<run_id>.json
-  -> outputs/analysis/latest.json
+<project>/data/raw/registry/main_sheet/*.csv
+  -> <project>/outputs/ingestion/canonical/datasets/clean_dataset_<run_id>.json
+  -> <project>/outputs/ingestion/canonical/manifests/manifest_<run_id>.json
+  -> <project>/outputs/ingestion/canonical/reports/quality_report_<run_id>.json
+  -> <project>/outputs/ingestion/canonical/latest.json
+  -> <project>/outputs/analysis/artifacts/<script_id>_<run_id>.json
+  -> <project>/outputs/analysis/manifests/analysis_manifest_<run_id>.json
+  -> <project>/outputs/analysis/latest.json
   -> dashboard API discovers artifacts and renders the browser UI
 ```
 
 Histology text reports follow their own ingestion source lane:
 
 ```text
-data/raw/histology/text_reports/*.txt
-  -> data/interim/histology/extracted_marker_csv/*.csv
-  -> outputs/ingestion/histology/datasets/histology_dataset_<run_id>.json
-  -> outputs/ingestion/histology/manifests/manifest_<run_id>.json
-  -> outputs/ingestion/histology/reports/extraction_report_<run_id>.json
-  -> outputs/ingestion/histology/latest.json
+<project>/data/raw/histology/text_reports/*.txt
+  -> <project>/data/interim/histology/extracted_marker_csv/*.csv
+  -> <project>/outputs/ingestion/histology/datasets/histology_dataset_<run_id>.json
+  -> <project>/outputs/ingestion/histology/manifests/manifest_<run_id>.json
+  -> <project>/outputs/ingestion/histology/reports/extraction_report_<run_id>.json
+  -> <project>/outputs/ingestion/histology/latest.json
 ```
 
-The dashboard shell can be rebuilt into `outputs/dashboard/builds/index.html` with:
+The dashboard shell can be rebuilt into the active project's `outputs/dashboard/builds/index.html` with:
 
 ```bash
-python main.py dashboard
+python main.py dashboard --project-root /path/to/project
 ```
 
-For normal use, prefer `python main.py dashboard --serve`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
+For normal use, prefer `python main.py dashboard --serve --project-root /path/to/project`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
 
 ## Repository Layout
 
 ```text
 GLADR/
-├── data/
-│   ├── raw/
-│   │   ├── registry/
-│   │   └── histology/
-│   ├── interim/
-│   └── reference/
-├── deliverables/
-├── notebooks/
-│   └── exploratory/
-├── outputs/
-│   ├── ingestion/
-│   ├── analysis/
-│   └── dashboard/
+├── examples/
+│   └── starter_project/
 ├── src/
 │   └── gladr/
 │       ├── analysis/
@@ -113,6 +102,18 @@ GLADR/
 ├── main.py
 ├── pyproject.toml
 └── readme.md
+```
+
+Local project workspaces are intentionally gitignored:
+
+```text
+projects/<project_id>/
+├── project.json
+├── specs/
+├── data/
+├── outputs/
+├── notebooks/
+└── deliverables/
 ```
 
 ## Module-Local LLM Context
@@ -147,16 +148,16 @@ Primary files:
 
 Use this module when changing how raw source data is read, normalized, validated, flagged, or converted into canonical records.
 
-Registry ingestion writes:
+Canonical ingestion writes:
 
 ```text
-outputs/ingestion/registry/datasets/clean_dataset_<run_id>.json
-outputs/ingestion/registry/manifests/manifest_<run_id>.json
-outputs/ingestion/registry/reports/quality_report_<run_id>.json
-outputs/ingestion/registry/latest.json
+outputs/ingestion/canonical/datasets/clean_dataset_<run_id>.json
+outputs/ingestion/canonical/manifests/manifest_<run_id>.json
+outputs/ingestion/canonical/reports/quality_report_<run_id>.json
+outputs/ingestion/canonical/latest.json
 ```
 
-Histology ingestion writes under `outputs/ingestion/histology/` and keeps generated per-report marker CSVs in `data/interim/histology/extracted_marker_csv/`.
+Histology ingestion writes under `outputs/ingestion/histology/` in the active project and keeps generated per-report marker CSVs in the project's `data/interim/histology/extracted_marker_csv/`.
 
 Do not edit these generated files manually. Change ingestion code and rerun ingestion.
 
@@ -186,9 +187,9 @@ Current scripts:
 Analysis writes:
 
 ```text
-outputs/analysis/artifacts/<script_id>_<run_id>.json
-outputs/analysis/manifests/analysis_manifest_<run_id>.json
-outputs/analysis/latest.json
+<project>/outputs/analysis/artifacts/<script_id>_<run_id>.json
+<project>/outputs/analysis/manifests/analysis_manifest_<run_id>.json
+<project>/outputs/analysis/latest.json
 ```
 
 Each stats artifact is self-describing. It includes metadata, data, and optionally a `visualization` block that tells the dashboard how to render it.
@@ -292,13 +293,13 @@ Prefer one focused script per analysis question so outputs stay easy to version 
 5. Rebuild the static shell:
 
 ```bash
-python main.py dashboard
+python main.py dashboard --project-root /path/to/project
 ```
 
 6. Serve and verify:
 
 ```bash
-python main.py dashboard --serve
+python main.py dashboard --serve --project-root /path/to/project
 ```
 
 ## Testing

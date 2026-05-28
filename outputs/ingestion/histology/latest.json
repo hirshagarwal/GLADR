@@ -1,8 +1,0 @@
-{
-  "histology_dataset": "datasets/histology_dataset_20260502_181253.json",
-  "manifest": "manifests/manifest_20260502_181253.json",
-  "extraction_report": "reports/extraction_report_20260502_181253.json",
-  "rows": 1090,
-  "source_csvs": 218,
-  "missing_csvs": 0
-}

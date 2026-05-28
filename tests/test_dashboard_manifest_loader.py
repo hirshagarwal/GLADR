@@ -22,7 +22,7 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             paths.ensure_runtime_dirs()
 
             _write_json(
-                paths.registry_manifests_outputs_dir / "manifest_20260419_100000.json",
+                paths.canonical_manifests_outputs_dir / "manifest_20260419_100000.json",
                 {
                     "run_id": "20260419_100000",
                     "pipeline_version": "0.1.0",
@@ -81,7 +81,7 @@ class DashboardManifestLoaderTests(unittest.TestCase):
                 },
             )
             _write_json(
-                paths.registry_ingestion_outputs_dir / "latest.json",
+                paths.canonical_ingestion_outputs_dir / "latest.json",
                 {"manifest": "manifests/manifest_20260419_100000.json"},
             )
             _write_json(
