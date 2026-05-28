@@ -40,6 +40,7 @@ class AnalysisTemplateTests(unittest.TestCase):
             self.assertEqual(variables["residual_enhancement"]["type"], "binary")
             self.assertEqual(variables["age_at_presentation"]["type"], "numeric")
             self.assertEqual(variables["tumour_lobe"]["type"], "categorical")
+            self.assertEqual(variables["age_at_presentation"]["present_rows"], [0, 1, 2])
             self.assertEqual(variables["tumour_lobe"]["value_counts"][0], {"value": "Frontal", "count": 2})
             self.assertFalse(variables["tumour_lobe"]["value_counts_truncated"])
 

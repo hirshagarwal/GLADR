@@ -1,0 +1,18 @@
+{
+  "run_id": "20260528_003522",
+  "run_datetime": "2026-05-28T00:35:22-04:00",
+  "manifest_run_id": "20260527_225645",
+  "template_id": "univariate_auc_screen",
+  "parameters": {
+    "outcome": "recurrence_local",
+    "predictors": [
+      "five_ala"
+    ]
+  },
+  "scripts": [
+    "univariate_auc_screen"
+  ],
+  "artifacts": {
+    "univariate_auc_screen": "artifacts/univariate_auc_screen_20260528_003522.json"
+  }
+}

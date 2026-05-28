@@ -51,15 +51,18 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             )
             _write_json(
                 paths.analysis_outputs_dir / "latest.json",
-                {"cohort_summary": "artifacts/cohort_summary_20260419_100500.json"},
+                {
+                    "cohort_summary": "artifacts/cohort_summary_20260419_100500.json",
+                    "age_distribution": "artifacts/age_distribution_20260419_100600.json",
+                },
             )
             _write_json(
                 paths.analysis_artifacts_outputs_dir / "cohort_summary_20260419_100500.json",
-                _analysis_payload("cohort_summary", "Cohort", "20260419_100500", "20260419_100000", "2026-04-19T10:05:00-04:00"),
+                _analysis_payload("cohort_summary", "Cohort", "20260419_100500", "20260419_100000", "2026-04-19T10:05:00-04:00", 4),
             )
             _write_json(
                 paths.analysis_artifacts_outputs_dir / "age_distribution_20260419_100600.json",
-                _analysis_payload("age_distribution", "Age", "20260419_100600", "20260419_100000", "2026-04-19T10:06:00-04:00"),
+                _analysis_payload("age_distribution", "Age", "20260419_100600", "20260419_100000", "2026-04-19T10:06:00-04:00", 2),
             )
 
             payload = load_dashboard_payload(paths)
@@ -78,15 +81,17 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             self.assertEqual(ingestion_flow["steps"][0]["label"], "Demo manifest step")
             self.assertEqual(ingestion_flow["steps"][0]["detail"], "This step came from the manifest.")
             self.assertEqual(ingestion_flow["steps"][0]["execution_mode"], "static_code")
-            self.assertEqual(payload["stage_summaries"][1]["current"]["metrics"][0]["value"], 1)
-            self.assertEqual(payload["stage_summaries"][2]["current"]["metrics"][0]["value"], 1)
+            self.assertEqual(payload["stage_summaries"][1]["current"]["metrics"][0]["value"], 2)
+            self.assertEqual(payload["stage_summaries"][2]["current"]["metrics"][0]["value"], 2)
+            self.assertEqual(payload["stage_summaries"][1]["current"]["metrics"][2]["value"], 2)
+            self.assertEqual(payload["stage_summaries"][2]["current"]["metrics"][2]["value"], 2)
 
 
 def _project_paths(root: Path) -> ProjectPaths:
     return ProjectPaths.from_root(root)
 
 
-def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: str, run_datetime: str) -> dict[str, object]:
+def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: str, run_datetime: str, n: int) -> dict[str, object]:
     return {
         "script_id": script_id,
         "run_id": run_id,
@@ -96,7 +101,7 @@ def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: 
         "description": "Demo analysis",
         "category": "Demo",
         "priority": 1,
-        "metadata": {"n": 4},
+        "metadata": {"n": n},
         "visualization": {"type": "bar"},
         "data": {"rows": [{"label": "A", "value": 4}]},
     }

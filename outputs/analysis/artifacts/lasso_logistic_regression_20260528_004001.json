@@ -1,0 +1,363 @@
+{
+  "script_id": "lasso_logistic_regression",
+  "run_id": "20260528_004001",
+  "manifest_run_id": "20260527_225645",
+  "run_datetime": "2026-05-28T00:40:01-04:00",
+  "title": "LASSO logistic regression for recurrence_local",
+  "description": "L1-regularized logistic regression for binary-outcome predictor selection.",
+  "category": "Model Selection",
+  "priority": 8,
+  "metadata": {
+    "n": 55,
+    "template_id": "lasso_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "predictor_count": 2,
+    "candidate_terms": 9,
+    "selected_terms": 2,
+    "penalty": 0.10787,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.5788,
+    "cv_se_loss": 0.0276,
+    "lambda_min": 0.048016,
+    "lambda_1se": 0.10787,
+    "bic_penalty": 0.071969,
+    "bic": 69.292,
+    "auc": 0.696,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Penalty strength selected by stratified 5-fold cross-validation using lambda_1se on log loss. AUC is apparent AUC on the fitting data."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "selected_rank",
+              "label": "Rank",
+              "format": "int"
+            },
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "standardized_coefficient",
+              "label": "Std coef",
+              "format": "float3"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "selected",
+              "label": "Selected",
+              "format": "string"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 55,
+    "events": 39,
+    "non_events": 16,
+    "candidate_terms": 9,
+    "selected_terms": 2,
+    "penalty": 0.10787,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.5788,
+    "cv_se_loss": 0.0276,
+    "lambda_min": 0.048016,
+    "lambda_1se": 0.10787,
+    "lambda_min_cv_loss": 0.533,
+    "lambda_1se_cv_loss": 0.5788,
+    "bic_penalty": 0.071969,
+    "bic": 69.292,
+    "fallback_reason": null,
+    "cv_path": [
+      {
+        "penalty": 0.16168,
+        "mean_log_loss": 0.6095,
+        "se_log_loss": 0.0169
+      },
+      {
+        "penalty": 0.141277,
+        "mean_log_loss": 0.6067,
+        "se_log_loss": 0.0207
+      },
+      {
+        "penalty": 0.123448,
+        "mean_log_loss": 0.5931,
+        "se_log_loss": 0.0265
+      },
+      {
+        "penalty": 0.10787,
+        "mean_log_loss": 0.5788,
+        "se_log_loss": 0.0276
+      },
+      {
+        "penalty": 0.094257,
+        "mean_log_loss": 0.5611,
+        "se_log_loss": 0.0297
+      },
+      {
+        "penalty": 0.082362,
+        "mean_log_loss": 0.549,
+        "se_log_loss": 0.0328
+      },
+      {
+        "penalty": 0.071969,
+        "mean_log_loss": 0.5415,
+        "se_log_loss": 0.0359
+      },
+      {
+        "penalty": 0.062887,
+        "mean_log_loss": 0.537,
+        "se_log_loss": 0.0392
+      },
+      {
+        "penalty": 0.054951,
+        "mean_log_loss": 0.5341,
+        "se_log_loss": 0.0433
+      },
+      {
+        "penalty": 0.048016,
+        "mean_log_loss": 0.533,
+        "se_log_loss": 0.0473
+      },
+      {
+        "penalty": 0.041957,
+        "mean_log_loss": 0.5333,
+        "se_log_loss": 0.0514
+      },
+      {
+        "penalty": 0.036662,
+        "mean_log_loss": 0.534,
+        "se_log_loss": 0.0549
+      },
+      {
+        "penalty": 0.032036,
+        "mean_log_loss": 0.5352,
+        "se_log_loss": 0.0582
+      },
+      {
+        "penalty": 0.027993,
+        "mean_log_loss": 0.5364,
+        "se_log_loss": 0.0611
+      },
+      {
+        "penalty": 0.02446,
+        "mean_log_loss": 0.5385,
+        "se_log_loss": 0.0636
+      },
+      {
+        "penalty": 0.021374,
+        "mean_log_loss": 0.5406,
+        "se_log_loss": 0.066
+      },
+      {
+        "penalty": 0.018676,
+        "mean_log_loss": 0.5425,
+        "se_log_loss": 0.068
+      },
+      {
+        "penalty": 0.01632,
+        "mean_log_loss": 0.5444,
+        "se_log_loss": 0.0699
+      },
+      {
+        "penalty": 0.01426,
+        "mean_log_loss": 0.5462,
+        "se_log_loss": 0.0716
+      },
+      {
+        "penalty": 0.012461,
+        "mean_log_loss": 0.5479,
+        "se_log_loss": 0.0731
+      },
+      {
+        "penalty": 0.010888,
+        "mean_log_loss": 0.5497,
+        "se_log_loss": 0.0745
+      },
+      {
+        "penalty": 0.009514,
+        "mean_log_loss": 0.5514,
+        "se_log_loss": 0.0757
+      },
+      {
+        "penalty": 0.008313,
+        "mean_log_loss": 0.5531,
+        "se_log_loss": 0.0768
+      },
+      {
+        "penalty": 0.007264,
+        "mean_log_loss": 0.5547,
+        "se_log_loss": 0.0777
+      },
+      {
+        "penalty": 0.006348,
+        "mean_log_loss": 0.5564,
+        "se_log_loss": 0.0785
+      },
+      {
+        "penalty": 0.005547,
+        "mean_log_loss": 0.5578,
+        "se_log_loss": 0.0792
+      },
+      {
+        "penalty": 0.004847,
+        "mean_log_loss": 0.5591,
+        "se_log_loss": 0.0798
+      },
+      {
+        "penalty": 0.004235,
+        "mean_log_loss": 0.5603,
+        "se_log_loss": 0.0804
+      },
+      {
+        "penalty": 0.003701,
+        "mean_log_loss": 0.5613,
+        "se_log_loss": 0.0809
+      },
+      {
+        "penalty": 0.003234,
+        "mean_log_loss": 0.5622,
+        "se_log_loss": 0.0813
+      }
+    ],
+    "auc": 0.696,
+    "rows": [
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.7571,
+        "standardized_coefficient": 0.2523,
+        "abs_standardized_coefficient": 0.2523,
+        "odds_ratio": 2.132,
+        "selected": true,
+        "selected_rank": 1
+      },
+      {
+        "term": "tumour_lobe: Parieto-Occipital",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": -0.8095,
+        "standardized_coefficient": -0.1515,
+        "abs_standardized_coefficient": 0.1515,
+        "odds_ratio": 0.445,
+        "selected": true,
+        "selected_rank": 2
+      },
+      {
+        "term": "tumour_lobe: Frontal",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Frontotemporal",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Insular",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Occipital",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": -0.0,
+        "standardized_coefficient": -0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Parietal",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Temporal",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": -0.0,
+        "standardized_coefficient": -0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tumour_lobe: Temporoparietal",
+        "predictor": "tumour_lobe",
+        "kind": "indicator",
+        "reference_level": "Cerebellar",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      }
+    ],
+    "warnings": [],
+    "skipped": []
+  }
+}

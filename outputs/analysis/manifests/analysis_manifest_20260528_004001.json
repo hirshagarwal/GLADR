@@ -1,0 +1,19 @@
+{
+  "run_id": "20260528_004001",
+  "run_datetime": "2026-05-28T00:40:01-04:00",
+  "manifest_run_id": "20260527_225645",
+  "template_id": "lasso_logistic_regression",
+  "parameters": {
+    "outcome": "recurrence_local",
+    "predictors": [
+      "tmz",
+      "tumour_lobe"
+    ]
+  },
+  "scripts": [
+    "lasso_logistic_regression"
+  ],
+  "artifacts": {
+    "lasso_logistic_regression": "artifacts/lasso_logistic_regression_20260528_004001.json"
+  }
+}

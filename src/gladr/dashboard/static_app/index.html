@@ -720,16 +720,101 @@
 
       .tool-library-controls {
         display: grid;
-        grid-template-columns: minmax(180px, 1fr) minmax(150px, 0.72fr);
+        grid-template-columns: 1fr;
         gap: 10px;
       }
 
       .canned-tool-selector {
         display: grid;
         gap: 8px;
-        max-height: 310px;
-        overflow: auto;
+        overflow: visible;
         padding: 2px;
+      }
+
+      .template-group {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .template-group.open {
+        overflow: visible;
+      }
+
+      .template-group-toggle {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        width: 100%;
+        padding: 9px 10px;
+        color: var(--ink);
+        text-align: left;
+        border: 0;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .template-group-toggle:hover {
+        background: rgba(241, 245, 249, 0.8);
+      }
+
+      .template-group-icon {
+        display: grid;
+        width: 38px;
+        height: 38px;
+        place-items: center;
+        border-radius: var(--radius);
+        color: white;
+        background: linear-gradient(135deg, #0f766e, #2563eb);
+        font-size: 0.76rem;
+        font-weight: 880;
+        letter-spacing: 0;
+      }
+
+      .template-group-title {
+        font-weight: 830;
+      }
+
+      .template-group-meta {
+        color: var(--muted);
+        font-size: 0.78rem;
+        line-height: 1.3;
+      }
+
+      .template-group-count {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .template-group-caret {
+        color: var(--muted);
+        font-size: 1rem;
+        font-weight: 900;
+        line-height: 1;
+        transform: rotate(-90deg);
+        transition: transform 160ms ease;
+      }
+
+      .template-group.open .template-group-caret {
+        transform: rotate(0deg);
+      }
+
+      .template-group-body {
+        display: grid;
+        gap: 7px;
+        max-height: 0;
+        overflow: hidden;
+        padding: 0 9px;
+        transition: padding 180ms ease;
+      }
+
+      .template-group.open .template-group-body {
+        max-height: none;
+        overflow: visible;
+        padding: 0 9px 9px;
       }
 
       .template-card {
@@ -1630,10 +1715,6 @@
               <label for="template-search">Find tool</label>
               <input id="template-search" type="search" placeholder="Search tools" autocomplete="off" />
             </div>
-            <div class="control">
-              <label for="template-category-filter">Category</label>
-              <select id="template-category-filter"></select>
-            </div>
           </div>
           <div class="canned-tool-selector" id="template-selector" aria-label="Canned analysis tools"></div>
           <div class="parameter-grid" id="parameter-controls" aria-label="Analysis setup"></div>
@@ -1677,7 +1758,7 @@
         stageHistoryIndex: 0,
         selectedTemplateId: null,
         templateSearch: "",
-        templateCategory: "all",
+        expandedTemplateGroups: {},
         parametersByTemplate: {},
         ingestionAdapterId: null,
         ingestionSourceFile: null,
@@ -1703,7 +1784,6 @@
         variableList: document.getElementById("variable-list"),
         templateSelect: document.getElementById("template-select"),
         templateSearch: document.getElementById("template-search"),
-        templateCategoryFilter: document.getElementById("template-category-filter"),
         templateCount: document.getElementById("template-count"),
         templateTitle: document.getElementById("template-title"),
         templateSelector: document.getElementById("template-selector"),
@@ -2915,25 +2995,85 @@
         return state.parametersByTemplate[state.selectedTemplateId];
       }
 
+      const templateGroups = [
+        {
+          id: "single",
+          label: "Single Variable",
+          icon: "1",
+          description: "Screen one predictor at a time.",
+          templateIds: ["univariate_auc_screen"],
+        },
+        {
+          id: "multi",
+          label: "Multi-variable",
+          icon: "MV",
+          description: "Fit or select models with multiple predictors.",
+          templateIds: ["multivariable_logistic_regression", "lasso_logistic_regression"],
+        },
+        {
+          id: "time",
+          label: "Time",
+          icon: "T",
+          description: "Analyze time-to-event endpoints.",
+          templateIds: ["cox_regression"],
+        },
+      ];
+
+      function templateGroupFor(template) {
+        return templateGroups.find((group) => group.templateIds.includes(template.template_id))
+          ?? { id: "other", label: "Other", icon: "O", description: "Additional analysis tools.", templateIds: [] };
+      }
+
       function renderTemplateSelector(templates) {
-        const categories = uniqueValues(templates.map((template) => template.category).filter(Boolean));
-        if (state.templateCategory !== "all" && !categories.includes(state.templateCategory)) state.templateCategory = "all";
         const query = state.templateSearch.trim().toLowerCase();
         const visibleTemplates = templates.filter((template) => {
-          const matchesCategory = state.templateCategory === "all" || template.category === state.templateCategory;
-          const searchable = [template.title, template.description, template.output, template.category]
+          const group = templateGroupFor(template);
+          const searchable = [template.title, template.description, template.output, template.category, group.label]
             .filter(Boolean)
             .join(" ")
             .toLowerCase();
-          return matchesCategory && (!query || searchable.includes(query));
+          return !query || searchable.includes(query);
         });
+        const selectedTemplate = templates.find((template) => template.template_id === state.selectedTemplateId);
+        const selectedGroup = selectedTemplate ? templateGroupFor(selectedTemplate) : null;
+        const hasOpenGroup = templateGroups.some((group) => state.expandedTemplateGroups[group.id]);
+        if (selectedGroup && !hasOpenGroup) {
+          openTemplateGroup(selectedGroup.id);
+        }
 
         els.templateSearch.value = state.templateSearch;
-        els.templateCategoryFilter.innerHTML = option("all", "All categories") + categories.map((category) => option(category, category)).join("");
-        els.templateCategoryFilter.value = categories.includes(state.templateCategory) ? state.templateCategory : "all";
         els.templateCount.textContent = `${visibleTemplates.length}/${templates.length} tools`;
-        els.templateSelector.innerHTML = visibleTemplates.length
-          ? visibleTemplates.map((template) => `
+        const templateByGroup = new Map(templateGroups.map((group) => [group.id, []]));
+        for (const template of visibleTemplates) {
+          const group = templateGroupFor(template);
+          if (!templateByGroup.has(group.id)) templateByGroup.set(group.id, []);
+          templateByGroup.get(group.id).push(template);
+        }
+        const visibleGroups = templateGroups
+          .filter((group) => (templateByGroup.get(group.id) ?? []).length)
+          .map((group) => renderTemplateGroup(group, templateByGroup.get(group.id) ?? []));
+        els.templateSelector.innerHTML = visibleGroups.length
+          ? visibleGroups.join("")
+          : '<div class="empty">No canned tools match the current filters.</div>';
+      }
+
+      function renderTemplateGroup(group, templates) {
+        const open = Boolean(state.expandedTemplateGroups[group.id]);
+        return `
+          <section class="template-group ${open ? "open" : ""}" data-template-group-section="${escapeHtml(group.id)}">
+            <button class="template-group-toggle" type="button" data-template-group="${escapeHtml(group.id)}">
+              <span class="template-group-icon">${escapeHtml(group.icon)}</span>
+              <span>
+                <span class="template-group-title">${escapeHtml(group.label)}</span>
+                <span class="template-group-meta">${escapeHtml(group.description)}</span>
+              </span>
+              <span class="template-group-count">
+                <span class="badge">${escapeHtml(templates.length)} tool${templates.length === 1 ? "" : "s"}</span>
+                <span class="template-group-caret">v</span>
+              </span>
+            </button>
+            <div class="template-group-body">
+              ${templates.map((template) => `
             <button class="template-card ${template.template_id === state.selectedTemplateId ? "active" : ""}" type="button" data-template-id="${escapeHtml(template.template_id)}">
               <span class="tool-icon">${escapeHtml(template.icon ?? "GL")}</span>
               <span class="tool-card-body">
@@ -2942,8 +3082,14 @@
               </span>
               <span class="badge">${escapeHtml(template.category ?? "Analysis")}</span>
             </button>
-          `).join("")
-          : '<div class="empty">No canned tools match the current filters.</div>';
+              `).join("")}
+            </div>
+          </section>
+        `;
+      }
+
+      function openTemplateGroup(groupId) {
+        state.expandedTemplateGroups = Object.fromEntries(templateGroups.map((group) => [group.id, group.id === groupId]));
       }
 
       function ensureTemplateParameters(template, variables) {
@@ -3003,7 +3149,7 @@
         if (parameter.kind === "multi_variable") {
           const selected = new Set(Array.isArray(values[parameter.name]) ? values[parameter.name] : []);
           const filter = values[`${parameter.name}__filter`] ?? "all";
-          const coverage = completeCaseCoverage(parameter, variables);
+          const coverage = shouldShowCompleteCaseCoverage(parameter) ? completeCaseCoverage(parameter, variables) : null;
           const filterOptions = ["all", ...(parameter.accepted_types ?? [])]
             .map((type) => `<option value="${escapeHtml(type)}" ${type === filter ? "selected" : ""}>${escapeHtml(type === "all" ? "All modelable" : type)}</option>`)
             .join("");
@@ -3027,10 +3173,10 @@
                 <label for="analysis-param-${escapeHtml(parameter.name)}">${escapeHtml(parameter.label)}${requiredLabel}</label>
                 <span class="badge gold">${escapeHtml(selected.size)} selected</span>
               </div>
-              <div class="coverage-line">
+              ${coverage ? `<div class="coverage-line">
                 <span class="meta">Complete data</span>
                 <span class="badge">${escapeHtml(coverage.label)}</span>
-              </div>
+              </div>` : ""}
               <select class="type-filter" data-param-filter="${escapeHtml(parameter.name)}">${filterOptions}</select>
               <div class="multi-choice-list" id="analysis-param-${escapeHtml(parameter.name)}">
                 ${choices}
@@ -3049,6 +3195,12 @@
             </select>
           </div>
         `;
+      }
+
+      function shouldShowCompleteCaseCoverage(parameter) {
+        const templateId = currentTemplate()?.template_id;
+        return parameter.kind === "multi_variable"
+          && ["multivariable_logistic_regression", "lasso_logistic_regression", "cox_regression"].includes(templateId);
       }
 
       function completeCaseCoverage(parameter, variables) {
@@ -4099,15 +4251,21 @@
         state.templateSearch = els.templateSearch.value;
         renderTemplateSelector(state.payload?.analysis_templates ?? []);
       });
-      els.templateCategoryFilter.addEventListener("change", () => {
-        state.templateCategory = els.templateCategoryFilter.value;
-        renderTemplateSelector(state.payload?.analysis_templates ?? []);
-      });
       els.templateSelector.addEventListener("click", (event) => {
+        const groupButton = event.target.closest("[data-template-group]");
+        if (groupButton) {
+          const groupId = groupButton.dataset.templateGroup;
+          const wasOpen = Boolean(state.expandedTemplateGroups[groupId]);
+          state.expandedTemplateGroups = Object.fromEntries(templateGroups.map((group) => [group.id, false]));
+          if (!wasOpen) state.expandedTemplateGroups[groupId] = true;
+          renderTemplateSelector(state.payload?.analysis_templates ?? []);
+          return;
+        }
         const button = event.target.closest("[data-template-id]");
         if (!button) return;
         state.selectedTemplateId = button.dataset.templateId;
         els.templateSelect.value = state.selectedTemplateId;
+        openTemplateGroup(templateGroupFor(currentTemplate()).id);
         els.analysisRunStatus.textContent = "";
         renderAnalysisSetup();
       });
