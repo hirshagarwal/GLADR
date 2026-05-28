@@ -18,6 +18,7 @@ from gladr.analysis.profiling import build_dataset_profile
 from gladr.analysis.templates import (
     build_bootstrapped_multivariable_logistic_regression,
     build_cox_regression,
+    build_hosmer_lemeshow_calibration,
     build_lasso_logistic_regression,
     build_multivariable_logistic_regression,
     build_univariate_auc_screen,
@@ -81,6 +82,9 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertIn("bootstrapped_multivariable_logistic_regression", templates)
         self.assertEqual(templates["bootstrapped_multivariable_logistic_regression"]["category"], "Model Validation")
         self.assertEqual(templates["bootstrapped_multivariable_logistic_regression"]["cohort_display"], "shared_model_frame")
+        self.assertIn("hosmer_lemeshow_calibration", templates)
+        self.assertEqual(templates["hosmer_lemeshow_calibration"]["category"], "Model Validation")
+        self.assertEqual(templates["hosmer_lemeshow_calibration"]["cohort_display"], "shared_model_frame")
         self.assertEqual(templates["univariate_auc_screen"]["cohort_display"], "none")
         self.assertIn("cox_regression", templates)
         self.assertEqual(templates["cox_regression"]["category"], "Survival Modeling")
@@ -211,6 +215,49 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertEqual(artifact["metadata"]["bootstrap_completed_resamples"], 1000)
         self.assertIsNotNone(artifact["metadata"]["optimism_corrected_auc"])
         self.assertTrue(all("bootstrap_ci_low" in row for row in artifact["data"]["rows"]))
+
+    def test_hosmer_lemeshow_calibration_builds_grouped_test(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": True, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 2.7, "age": 55, "sex": "F"},
+                {"recurrence": False, "nlr": 3.0, "age": 56, "sex": "M"},
+                {"recurrence": True, "nlr": 3.3, "age": 58, "sex": "F"},
+                {"recurrence": False, "nlr": 3.7, "age": 59, "sex": "M"},
+                {"recurrence": True, "nlr": 4.1, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 4.4, "age": 61, "sex": "M"},
+                {"recurrence": False, "nlr": 4.8, "age": 62, "sex": "F"},
+                {"recurrence": True, "nlr": 5.2, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 5.6, "age": 65, "sex": "F"},
+                {"recurrence": False, "nlr": 5.9, "age": 66, "sex": "M"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "F"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "M"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "F"},
+                {"recurrence": True, "nlr": 7.5, "age": 74, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_hosmer_lemeshow_calibration(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "hosmer_lemeshow_calibration")
+        self.assertEqual(artifact["metadata"]["risk_groups"], 10)
+        self.assertEqual(artifact["metadata"]["degrees_of_freedom"], 8)
+        self.assertIsNotNone(artifact["metadata"]["p_value"])
+        self.assertGreaterEqual(artifact["metadata"]["p_value"], 0)
+        self.assertLessEqual(artifact["metadata"]["p_value"], 1)
+        self.assertEqual(len(artifact["data"]["rows"]), 10)
+        self.assertTrue(all("expected_events" in row for row in artifact["data"]["rows"]))
 
     def test_lasso_logistic_regression_selects_terms(self) -> None:
         dataframe = pd.DataFrame(

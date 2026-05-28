@@ -3344,7 +3344,7 @@
           label: "Validation",
           icon: "V",
           description: "Estimate model optimism and internal validation metrics.",
-          templateIds: ["bootstrapped_multivariable_logistic_regression"],
+          templateIds: ["bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration"],
         },
         {
           id: "time",
@@ -3551,7 +3551,7 @@
       function shouldShowCompleteCaseCoverage(parameter) {
         const templateId = currentTemplate()?.template_id;
         return parameter.kind === "multi_variable"
-          && ["multivariable_logistic_regression", "bootstrapped_multivariable_logistic_regression", "lasso_logistic_regression", "cox_regression"].includes(templateId);
+          && ["multivariable_logistic_regression", "bootstrapped_multivariable_logistic_regression", "hosmer_lemeshow_calibration", "lasso_logistic_regression", "cox_regression"].includes(templateId);
       }
 
       function completeCaseCoverage(parameter, variables) {
@@ -3661,6 +3661,22 @@
                 Fits one user-selected logistic regression model and reports bootstrap optimism-corrected AUC with percentile confidence intervals.
               </div>
               <div class="meta">${escapeHtml(predictors.length)} selected predictors</div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "hosmer_lemeshow_calibration") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} Hosmer-Lemeshow calibration</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} predictors</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and compares observed versus expected events across predicted-risk groups.
+              </div>
             </div>
           `;
           return;
@@ -3845,6 +3861,9 @@
         }
         if (analysis.script_id === "bootstrapped_multivariable_logistic_regression") {
           return renderBootstrappedMultivariableLogisticRegression(analysis.data ?? {});
+        }
+        if (analysis.script_id === "hosmer_lemeshow_calibration") {
+          return renderHosmerLemeshowCalibration(analysis.data ?? {});
         }
         if (analysis.script_id === "univariate_auc_screen" || analysis.data?.roc_curves) {
           return renderAucComparison(analysis.data ?? {});
@@ -4152,6 +4171,53 @@
           { field: "bootstrap_ci_high", label: "Bootstrap 95% CI high", format: "float3" },
           { field: "bootstrap_odds_ratio_median", label: "Bootstrap median OR", format: "float3" },
           { field: "p_value", label: "P", format: "pvalue" },
+        ];
+        return renderTable(columns, rows);
+      }
+
+      function renderHosmerLemeshowCalibration(data) {
+        const rows = data.rows ?? [];
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">HL chi-square</div>
+              <div class="card-value">${escapeHtml(formatValue(data.hosmer_lemeshow_statistic, "float3"))}</div>
+              <div class="meta">${escapeHtml(data.degrees_of_freedom ?? "NA")} df</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">P value</div>
+              <div class="card-value">${escapeHtml(formatValue(data.p_value, "pvalue"))}</div>
+              <div class="meta">${escapeHtml(data.risk_groups ?? "NA")} risk groups</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderHosmerLemeshowTable(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderHosmerLemeshowTable(rows) {
+        if (!rows.length) return '<div class="empty">No calibration groups available.</div>';
+        const columns = [
+          { field: "group", label: "Group", format: "int" },
+          { field: "n", label: "N", format: "int" },
+          { field: "risk_min", label: "Risk min", format: "float3" },
+          { field: "risk_max", label: "Risk max", format: "float3" },
+          { field: "observed_events", label: "Observed events", format: "float3" },
+          { field: "expected_events", label: "Expected events", format: "float3" },
+          { field: "observed_event_rate", label: "Observed rate", format: "float3" },
+          { field: "expected_event_rate", label: "Expected rate", format: "float3" },
+          { field: "contribution", label: "Chi-square", format: "float3" },
         ];
         return renderTable(columns, rows);
       }

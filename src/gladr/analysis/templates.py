@@ -123,6 +123,33 @@ BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE = AnalysisTemplate(
     ],
 )
 
+HOSMER_LEMESHOW_TEMPLATE = AnalysisTemplate(
+    template_id="hosmer_lemeshow_calibration",
+    title="Hosmer-Lemeshow Calibration Test",
+    description="Fits one user-selected logistic model and compares observed versus expected events by predicted-risk group.",
+    output="Hosmer-Lemeshow chi-square statistic, p-value, and observed versus expected calibration table.",
+    category="Model Validation",
+    icon="HL",
+    run_label="Run Hosmer-Lemeshow",
+    cohort_display="shared_model_frame",
+    parameters=[
+        {
+            "name": "outcome",
+            "label": "Binary outcome",
+            "kind": "single_variable",
+            "accepted_types": ["binary"],
+            "required": True,
+        },
+        {
+            "name": "predictors",
+            "label": "Model predictors",
+            "kind": "multi_variable",
+            "accepted_types": ["binary", "categorical", "numeric"],
+            "required": True,
+        },
+    ],
+)
+
 COX_REGRESSION_TEMPLATE = AnalysisTemplate(
     template_id="cox_regression",
     title="COX Regression",
@@ -202,6 +229,7 @@ def list_analysis_templates() -> list[dict[str, Any]]:
         UNIVARIATE_AUC_TEMPLATE.as_dict(),
         MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
         BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.as_dict(),
+        HOSMER_LEMESHOW_TEMPLATE.as_dict(),
         LASSO_LOGISTIC_TEMPLATE.as_dict(),
         COX_REGRESSION_TEMPLATE.as_dict(),
     ]
@@ -220,6 +248,8 @@ def run_analysis_template(
         return build_multivariable_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == BOOTSTRAPPED_MULTIVARIABLE_LOGISTIC_TEMPLATE.template_id:
         return build_bootstrapped_multivariable_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
+    if template_id == HOSMER_LEMESHOW_TEMPLATE.template_id:
+        return build_hosmer_lemeshow_calibration(dataframe, run_context, manifest_run_id, parameters)
     if template_id == LASSO_LOGISTIC_TEMPLATE.template_id:
         return build_lasso_logistic_regression(dataframe, run_context, manifest_run_id, parameters)
     if template_id == COX_REGRESSION_TEMPLATE.template_id:
@@ -653,6 +683,139 @@ def build_bootstrapped_multivariable_logistic_regression(
             "bootstrap_fallback_reason": bootstrap.get("reason"),
             "roc_curves": [{"predictor": "Bootstrapped multivariable model", "points": roc_points}],
             "rows": rows,
+            "warnings": warnings,
+            "skipped": skipped,
+        },
+    }
+
+
+def build_hosmer_lemeshow_calibration(
+    dataframe: pd.DataFrame,
+    run_context: RunContext,
+    manifest_run_id: str,
+    parameters: dict[str, Any],
+) -> dict[str, object]:
+    outcome = str(parameters.get("outcome") or "")
+    predictors = [str(value) for value in parameters.get("predictors") or []]
+    if outcome not in dataframe.columns:
+        raise ValueError(f"Outcome variable is not in the clean dataset: {outcome}")
+    if not predictors:
+        raise ValueError("Select at least one predictor variable.")
+
+    outcome_encoded, outcome_levels = _encode_binary_outcome(dataframe[outcome])
+    design, terms, skipped = _build_lasso_design_matrix(dataframe, predictors, outcome)
+    if design.shape[1] == 0:
+        raise ValueError("No usable predictor terms are available after encoding.")
+
+    model_frame = design.copy()
+    model_frame["outcome"] = outcome_encoded
+    model_frame = model_frame.dropna()
+    if model_frame.empty:
+        raise ValueError("No complete cases remain after applying the selected predictors.")
+    if int(model_frame["outcome"].nunique()) != 2:
+        raise ValueError("Complete cases do not include both outcome classes.")
+
+    x_terms = model_frame.drop(columns=["outcome"]).to_numpy(dtype=float)
+    y = model_frame["outcome"].astype(float).to_numpy()
+    usable_mask = np.isfinite(x_terms.std(axis=0)) & (x_terms.std(axis=0) > 1e-12)
+    if not np.any(usable_mask):
+        raise ValueError("No predictor terms vary within the complete-case model frame.")
+    x_terms = x_terms[:, usable_mask]
+    terms = [term for term, usable in zip(terms, usable_mask, strict=True) if usable]
+    x = np.column_stack([np.ones(len(y)), x_terms])
+
+    beta, converged, fit_warning = _fit_logistic(x, y)
+    probabilities = _sigmoid(x @ beta)
+    auc = _auc_score(y, probabilities)
+    calibration = _hosmer_lemeshow_test(probabilities, y)
+
+    warnings = []
+    if fit_warning:
+        warnings.append(fit_warning)
+    if not converged:
+        warnings.append("Model did not fully converge.")
+    if calibration["status"] == "fallback":
+        warnings.append(f"Hosmer-Lemeshow test was not estimated: {calibration['reason']}.")
+    elif calibration.get("low_expected_count"):
+        warnings.append("At least one calibration group has expected event or non-event count below 5.")
+
+    event_count = int(y.sum())
+    non_event_count = int(len(y) - event_count)
+    if min(event_count, non_event_count) < 5:
+        warnings.append("Low event or non-event count.")
+    if event_count <= max(len(terms) * 5, 5):
+        warnings.append("Low event count relative to model terms; calibration estimates may be unstable.")
+
+    cohort = _complete_case_cohort(
+        input_rows=len(dataframe),
+        included_rows=len(model_frame),
+        required_fields=[outcome, *predictors],
+        rule_description="Rows require complete outcome and selected predictor values.",
+    )
+
+    return {
+        "script_id": HOSMER_LEMESHOW_TEMPLATE.template_id,
+        "run_id": run_context.run_id,
+        "manifest_run_id": manifest_run_id,
+        "run_datetime": run_context.run_datetime,
+        "title": f"Hosmer-Lemeshow calibration for {outcome}",
+        "description": "Hosmer-Lemeshow observed-versus-expected calibration test for a user-selected logistic model.",
+        "category": "Model Validation",
+        "priority": 8,
+        "metadata": {
+            "n": int(len(y)),
+            "template_id": HOSMER_LEMESHOW_TEMPLATE.template_id,
+            "outcome": outcome,
+            "event_level": outcome_levels["event"],
+            "reference_level": outcome_levels["reference"],
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "risk_groups": calibration.get("group_count", 0),
+            "hosmer_lemeshow_statistic": _round_optional(calibration.get("statistic"), 4),
+            "degrees_of_freedom": calibration.get("degrees_of_freedom", 0),
+            "p_value": _round_optional(calibration.get("p_value"), 4),
+            "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+            "notes": "Predicted probabilities are grouped into deciles when possible. The Hosmer-Lemeshow p-value is based on a chi-square approximation with risk_groups - 2 degrees of freedom.",
+        },
+        "cohort_display": HOSMER_LEMESHOW_TEMPLATE.cohort_display,
+        "cohort": cohort,
+        "visualization": {
+            "type": "multi",
+            "library": "generic",
+            "panels": [
+                {
+                    "type": "table",
+                    "config": {
+                        "columns": [
+                            {"field": "group", "label": "Risk group", "format": "int"},
+                            {"field": "n", "label": "N", "format": "int"},
+                            {"field": "observed_events", "label": "Observed events", "format": "float3"},
+                            {"field": "expected_events", "label": "Expected events", "format": "float3"},
+                            {"field": "observed_event_rate", "label": "Observed rate", "format": "float3"},
+                            {"field": "expected_event_rate", "label": "Expected rate", "format": "float3"},
+                            {"field": "contribution", "label": "Chi-square contribution", "format": "float3"},
+                        ],
+                    },
+                },
+            ],
+        },
+        "data": {
+            "outcome": outcome,
+            "outcome_levels": outcome_levels,
+            "n": int(len(y)),
+            "events": event_count,
+            "non_events": non_event_count,
+            "predictor_count": len(predictors),
+            "term_count": len(terms),
+            "auc": round(float(auc), 3) if auc is not None else None,
+            "risk_groups": calibration.get("group_count", 0),
+            "hosmer_lemeshow_statistic": _round_optional(calibration.get("statistic"), 4),
+            "degrees_of_freedom": calibration.get("degrees_of_freedom", 0),
+            "p_value": _round_optional(calibration.get("p_value"), 4),
+            "rows": calibration.get("rows", []),
             "warnings": warnings,
             "skipped": skipped,
         },
@@ -1189,6 +1352,62 @@ def _two_sided_normal_p(z_value: float) -> float:
     return min(max(2 * tail, 0.0), 1.0)
 
 
+def _chi_square_sf(statistic: float, degrees_of_freedom: int) -> float | None:
+    if degrees_of_freedom < 1 or not math.isfinite(statistic):
+        return None
+    if statistic <= 0:
+        return 1.0
+    return _regularized_gamma_q(degrees_of_freedom / 2, statistic / 2)
+
+
+def _regularized_gamma_q(a: float, x: float) -> float:
+    if x < 0 or a <= 0:
+        return math.nan
+    if x == 0:
+        return 1.0
+    if x < a + 1:
+        return max(0.0, min(1.0, 1.0 - _regularized_gamma_p_series(a, x)))
+    return max(0.0, min(1.0, _regularized_gamma_q_fraction(a, x)))
+
+
+def _regularized_gamma_p_series(a: float, x: float) -> float:
+    epsilon = 1e-12
+    ap = a
+    delta = 1 / a
+    total = delta
+    for _ in range(1000):
+        ap += 1
+        delta *= x / ap
+        total += delta
+        if abs(delta) < abs(total) * epsilon:
+            break
+    return total * math.exp(-x + a * math.log(x) - math.lgamma(a))
+
+
+def _regularized_gamma_q_fraction(a: float, x: float) -> float:
+    epsilon = 1e-12
+    tiny = 1e-300
+    b = x + 1 - a
+    c = 1 / tiny
+    d = 1 / max(b, tiny)
+    h = d
+    for iteration in range(1, 1000):
+        an = -iteration * (iteration - a)
+        b += 2
+        d = an * d + b
+        if abs(d) < tiny:
+            d = tiny
+        c = b + an / c
+        if abs(c) < tiny:
+            c = tiny
+        d = 1 / d
+        delta = d * c
+        h *= delta
+        if abs(delta - 1) < epsilon:
+            break
+    return math.exp(-x + a * math.log(x) - math.lgamma(a)) * h
+
+
 def _round_optional(value: object, digits: int) -> float | None:
     if value is None:
         return None
@@ -1336,6 +1555,64 @@ def _bootstrap_logistic_validation(
             }
             for percentiles in np.percentile(coefficient_matrix, [2.5, 50, 97.5], axis=0).T
         ],
+    }
+
+
+def _hosmer_lemeshow_test(probabilities: np.ndarray, y: np.ndarray, group_count: int = 10) -> dict[str, Any]:
+    if len(y) < 3:
+        return {"status": "fallback", "reason": "fewer than 3 complete cases"}
+
+    actual_group_count = min(group_count, len(y))
+    if actual_group_count < 3:
+        return {"status": "fallback", "reason": "fewer than 3 risk groups can be formed"}
+
+    sorted_index = np.argsort(probabilities)
+    groups = [group for group in np.array_split(sorted_index, actual_group_count) if len(group)]
+    if len(groups) < 3:
+        return {"status": "fallback", "reason": "fewer than 3 non-empty risk groups can be formed"}
+
+    rows = []
+    statistic = 0.0
+    low_expected_count = False
+    for index, group_index in enumerate(groups, start=1):
+        group_probabilities = probabilities[group_index]
+        group_y = y[group_index]
+        observed_events = float(group_y.sum())
+        expected_events = float(group_probabilities.sum())
+        observed_non_events = float(len(group_y) - observed_events)
+        expected_non_events = float(len(group_y) - expected_events)
+        if expected_events < 5 or expected_non_events < 5:
+            low_expected_count = True
+        event_component = ((observed_events - expected_events) ** 2) / max(expected_events, 1e-12)
+        non_event_component = ((observed_non_events - expected_non_events) ** 2) / max(expected_non_events, 1e-12)
+        contribution = float(event_component + non_event_component)
+        statistic += contribution
+        rows.append({
+            "group": index,
+            "n": int(len(group_y)),
+            "risk_min": round(float(group_probabilities.min()), 4),
+            "risk_max": round(float(group_probabilities.max()), 4),
+            "observed_events": round(observed_events, 3),
+            "expected_events": round(expected_events, 3),
+            "observed_non_events": round(observed_non_events, 3),
+            "expected_non_events": round(expected_non_events, 3),
+            "observed_event_rate": round(observed_events / len(group_y), 4),
+            "expected_event_rate": round(expected_events / len(group_y), 4),
+            "contribution": round(contribution, 4),
+        })
+
+    degrees_of_freedom = len(groups) - 2
+    if degrees_of_freedom < 1:
+        return {"status": "fallback", "reason": "risk_groups - 2 degrees of freedom is below 1", "rows": rows}
+
+    return {
+        "status": "fit",
+        "group_count": len(groups),
+        "degrees_of_freedom": degrees_of_freedom,
+        "statistic": float(statistic),
+        "p_value": _chi_square_sf(float(statistic), degrees_of_freedom),
+        "low_expected_count": low_expected_count,
+        "rows": rows,
     }
 
 
