@@ -2,13 +2,16 @@
 .env
 .idea/
 .gladr/
+.claude/worktrees/
 
 /data/
 /outputs/
 /notebooks/
 /deliverables/
 /projects/
+/tools/legacy_cli_wrappers/
 
+**/.ipynb_checkpoints/
 **/__pycache__/
 **/*.py[cod]
 *.egg-info/
