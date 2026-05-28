@@ -8,6 +8,8 @@ An LLM working on ingestion should normally read only this folder plus the raw s
 
 Safe edit points:
 - `adapters/`: source-specific loading and transformation logic.
+- `specs/`: default executable ingestion specs built from predefined operations.
+- `spec_engine.py`: shared execution engine for spec-defined transforms.
 - `normalizers.py`: reusable parsing and normalization helpers.
 - `validators.py`: source and row validation helpers.
 - `quality_flags.py`: row-level quality flag helpers.
@@ -71,10 +73,14 @@ python main.py ingest-histology --no-generate
 
 ## Implementation pattern
 
-Adapters subclass `BaseAdapter` and return `AdapterRunResult`:
+Adapters subclass `BaseAdapter` and return `AdapterRunResult`. Registry adapters can run from an executable spec so the same transform chain can be previewed, edited transiently in the dashboard, run from the UI, or run from the CLI default:
 
 - `dataframe`: canonical records with all canonical fields present.
 - `ingestion_report`: row-level quality flag records.
 - `source_summary`: source-level row counts and metadata.
 
 The runner concatenates all adapter dataframes, writes artifacts, and updates `outputs/ingestion/registry/latest.json`.
+
+The dashboard may trigger ingestion through the local server, but transform behavior must stay in ingestion-owned Python modules and packaged specs. UI-submitted specs are transient unless an explicit save flow is added later.
+
+Specs should prefer generic operations such as mapping, normalization, derivation, joins, and canonical field selection. Source-specific transforms should be exposed as allowlisted `static_code` functions so they can appear in the same chain without pretending to be reusable generic operations. The join operation can combine another workspace CSV/JSON data file, including long-form histology marker datasets that are pivoted before joining.

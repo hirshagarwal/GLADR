@@ -12,6 +12,7 @@ from gladr.analysis.templates import list_analysis_templates
 from gladr.core.latest_pointer import read_latest_pointer
 from gladr.core.paths import ProjectPaths
 from gladr.core.run_context import DEFAULT_TIMEZONE
+from gladr.ingestion.workbench import build_ingestion_workbench_payload
 
 try:
     from zoneinfo import ZoneInfo
@@ -52,6 +53,7 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
         },
         "dataset_profile": build_dataset_profile(project_paths),
         "analysis_templates": list_analysis_templates(),
+        "ingestion_workbench": build_ingestion_workbench_payload(project_paths),
         "ingestion_runs": ingestion_runs,
         "analyses": analyses,
         "pipeline": build_pipeline_summary(ingestion_runs, analyses),
@@ -139,9 +141,9 @@ def discover_analysis_artifacts(
         )
 
     artifacts.sort(key=lambda artifact: str(artifact.get("title") or ""))
-    artifacts.sort(key=lambda artifact: str(artifact.get("run_datetime") or artifact.get("run_id") or ""), reverse=True)
     artifacts.sort(key=lambda artifact: int(artifact.get("priority") or 99))
     artifacts.sort(key=lambda artifact: 0 if artifact.get("is_latest") else 1)
+    artifacts.sort(key=lambda artifact: str(artifact.get("run_datetime") or artifact.get("run_id") or ""), reverse=True)
     return artifacts
 
 
@@ -195,15 +197,15 @@ def build_stage_summaries(
         (run for run in ingestion_runs if run.get("is_latest")),
         ingestion_runs[0] if ingestion_runs else None,
     )
-    latest_stats = [analysis for analysis in analyses if analysis.get("is_latest")]
-    if not latest_stats:
-        latest_stats = analyses[:3]
+    latest_analysis = [analysis for analysis in analyses if analysis.get("is_latest")]
+    if not latest_analysis:
+        latest_analysis = analyses[:3]
     visualization_artifacts = [analysis for analysis in analyses if analysis.get("visualization")]
     latest_visualizations = [analysis for analysis in visualization_artifacts if analysis.get("is_latest")]
     if not latest_visualizations:
         latest_visualizations = visualization_artifacts[:3]
 
-    stats_history = _group_analysis_history(analyses, include_visualizations=False)
+    analysis_history = _group_analysis_history(analyses, include_visualizations=False)
     visualization_history = _group_analysis_history(visualization_artifacts, include_visualizations=True)
 
     return [
@@ -215,16 +217,16 @@ def build_stage_summaries(
             "history": [_ingestion_stage_item(run) for run in ingestion_runs],
         },
         {
-            "id": "stats",
-            "label": "Stats",
-            "status": "completed" if latest_stats else ("failed" if latest_ingestion else "pending"),
-            "current": _analysis_stage_item("Stats", latest_stats),
-            "history": stats_history,
+            "id": "analysis",
+            "label": "Analysis",
+            "status": "completed" if latest_analysis else ("failed" if latest_ingestion else "pending"),
+            "current": _analysis_stage_item("Analysis", latest_analysis),
+            "history": analysis_history,
         },
         {
             "id": "visualization",
             "label": "Visualization",
-            "status": "completed" if latest_visualizations else ("failed" if latest_stats else "pending"),
+            "status": "completed" if latest_visualizations else ("failed" if latest_analysis else "pending"),
             "current": _analysis_stage_item("Visualization", latest_visualizations),
             "history": visualization_history,
         },
@@ -419,11 +421,14 @@ def _analysis_stage_item(label: str, artifacts: list[dict[str, Any]]) -> dict[st
     run_ids = sorted({str(artifact.get("run_id")) for artifact in artifacts if artifact.get("run_id")})
     scripts = sorted({str(artifact.get("script_id")) for artifact in artifacts if artifact.get("script_id")})
     latest_datetime = max((str(artifact.get("run_datetime") or "") for artifact in artifacts), default="")
-    n_values = [
-        artifact.get("metadata", {}).get("n")
-        for artifact in artifacts
-        if isinstance(artifact.get("metadata"), dict) and artifact.get("metadata", {}).get("n") is not None
-    ]
+    cohort_n = next(
+        (
+            artifact.get("metadata", {}).get("n")
+            for artifact in artifacts
+            if isinstance(artifact.get("metadata"), dict) and artifact.get("metadata", {}).get("n") is not None
+        ),
+        "NA",
+    )
 
     return {
         "title": f"{label} outputs",
@@ -433,7 +438,7 @@ def _analysis_stage_item(label: str, artifacts: list[dict[str, Any]]) -> dict[st
         "metrics": [
             {"label": "Artifacts", "value": len(artifacts)},
             {"label": "Scripts", "value": len(scripts)},
-            {"label": "Cohort n", "value": max(n_values) if n_values else "NA"},
+            {"label": "Cohort n", "value": cohort_n},
         ],
         "outputs": [
             {
@@ -454,7 +459,7 @@ def _group_analysis_history(artifacts: list[dict[str, Any]], include_visualizati
         grouped.setdefault(run_id, []).append(artifact)
 
     history = [
-        _analysis_stage_item("Visualization" if include_visualizations else "Stats", items)
+        _analysis_stage_item("Visualization" if include_visualizations else "Analysis", items)
         for items in grouped.values()
     ]
     return sorted(

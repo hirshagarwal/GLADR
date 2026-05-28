@@ -60,6 +60,7 @@ def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
         "missing_pct": round((missing / len(series)) * 100, 1) if len(series) else 0,
         "unique_count": unique_count,
         "sample_values": [_json_safe(value) for value in non_null.head(4).tolist()],
+        "present_rows": [int(index) for index in series[series.notna()].index.tolist()],
         "is_binary": _is_binary(non_null),
         "is_numeric": bool(pd.api.types.is_numeric_dtype(non_null)),
     }
@@ -73,11 +74,17 @@ def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
                 "max": _round_float(numeric.max()),
             }
 
-    top_values = non_null.astype(str).value_counts().head(5)
+    value_counts = non_null.astype(str).value_counts()
+    top_values = value_counts.head(5)
     profile["top_values"] = [
         {"value": _json_safe(value), "count": int(count)}
         for value, count in top_values.items()
     ]
+    profile["value_counts"] = [
+        {"value": _json_safe(value), "count": int(count)}
+        for value, count in value_counts.head(100).items()
+    ]
+    profile["value_counts_truncated"] = int(value_counts.shape[0]) > 100
     return profile
 
 
@@ -117,6 +124,9 @@ def _normalize_binary_value(value: object) -> object | None:
     normalized = str(value).strip().lower()
     if normalized in {"true", "false", "yes", "no", "y", "n", "0", "1", "m", "f"}:
         return normalized
+    leading_token = normalized.replace("–", "-").replace("—", "-").split(maxsplit=1)[0].strip(":-;,.")
+    if leading_token in {"true", "false", "yes", "no", "y", "n", "0", "1", "m", "f"}:
+        return leading_token
     return str(value)
 
 

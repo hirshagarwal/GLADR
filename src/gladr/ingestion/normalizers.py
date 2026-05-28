@@ -56,6 +56,11 @@ def normalize_boolean(value: object) -> bool | None:
         return True
     if lowered in FALSE_TOKENS:
         return False
+    leading_token = lowered.replace("–", "-").replace("—", "-").split(maxsplit=1)[0].strip(":-;,.")
+    if leading_token in TRUE_TOKENS:
+        return True
+    if leading_token in FALSE_TOKENS:
+        return False
     return None
 
 
@@ -88,11 +93,16 @@ def safe_float(value: object) -> float | None:
 
 
 def compute_age_years(dob: str | None, presentation_date: str | None) -> int | None:
-    if not dob or not presentation_date:
+    dob_text = normalize_text(dob)
+    presentation_text = normalize_text(presentation_date)
+    if not dob_text or not presentation_text:
         return None
 
-    dob_dt = datetime.fromisoformat(dob)
-    presentation_dt = datetime.fromisoformat(presentation_date)
+    try:
+        dob_dt = datetime.fromisoformat(dob_text)
+        presentation_dt = datetime.fromisoformat(presentation_text)
+    except ValueError:
+        return None
     return int((presentation_dt - dob_dt).days // 365.25)
 
 

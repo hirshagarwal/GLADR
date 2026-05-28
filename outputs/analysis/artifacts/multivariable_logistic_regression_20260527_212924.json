@@ -1,0 +1,146 @@
+{
+  "script_id": "multivariable_logistic_regression",
+  "run_id": "20260527_212924",
+  "manifest_run_id": "20260527_212811",
+  "run_datetime": "2026-05-27T21:29:24-04:00",
+  "title": "Multivariable logistic regression for recurrence_local",
+  "description": "User-selected multivariable logistic regression for a binary outcome.",
+  "category": "Regression Modeling",
+  "priority": 8,
+  "metadata": {
+    "n": 65,
+    "template_id": "multivariable_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "events": 48,
+    "non_events": 17,
+    "predictor_count": 2,
+    "term_count": 2,
+    "auc": 0.732,
+    "cv_auc": 0.735,
+    "cv_auc_se": 0.043,
+    "cv_folds": 5,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Predictors are user-selected. AUC is apparent AUC on the fitting data; stratified cross-validated AUC is reported when each class has enough complete cases."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "ci_low",
+              "label": "95% CI low",
+              "format": "float3"
+            },
+            {
+              "field": "ci_high",
+              "label": "95% CI high",
+              "format": "float3"
+            },
+            {
+              "field": "p_value",
+              "label": "P",
+              "format": "pvalue"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 65,
+    "events": 48,
+    "non_events": 17,
+    "predictor_count": 2,
+    "term_count": 2,
+    "auc": 0.732,
+    "cv_auc": 0.735,
+    "cv_auc_se": 0.043,
+    "cv_folds": 5,
+    "cv_fold_aucs": [
+      0.85,
+      0.637,
+      0.633,
+      0.796,
+      0.759
+    ],
+    "cv_fallback_reason": null,
+    "roc_curves": [
+      {
+        "predictor": "Multivariable model",
+        "points": [
+          {
+            "fpr": 0.0,
+            "tpr": 0.0
+          },
+          {
+            "fpr": 0.1765,
+            "tpr": 0.5625
+          },
+          {
+            "fpr": 0.7059,
+            "tpr": 0.9375
+          },
+          {
+            "fpr": 0.8824,
+            "tpr": 0.9792
+          },
+          {
+            "fpr": 1.0,
+            "tpr": 1.0
+          }
+        ]
+      }
+    ],
+    "rows": [
+      {
+        "term": "residual_enhancement: True",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 1.298,
+        "odds_ratio": 3.662,
+        "ci_low": 1.016,
+        "ci_high": 13.197,
+        "standard_error": 0.6541,
+        "z": 1.984,
+        "p_value": 0.0472
+      },
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 2.1404,
+        "odds_ratio": 8.503,
+        "ci_low": 1.552,
+        "ci_high": 46.598,
+        "standard_error": 0.8679,
+        "z": 2.466,
+        "p_value": 0.0137
+      }
+    ],
+    "warnings": [],
+    "skipped": []
+  }
+}

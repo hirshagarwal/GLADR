@@ -1,0 +1,279 @@
+{
+  "script_id": "lasso_logistic_regression",
+  "run_id": "20260527_225753",
+  "manifest_run_id": "20260527_225645",
+  "run_datetime": "2026-05-27T22:57:53-04:00",
+  "title": "LASSO logistic regression for recurrence_local",
+  "description": "L1-regularized logistic regression for binary-outcome predictor selection.",
+  "category": "Model Selection",
+  "priority": 8,
+  "metadata": {
+    "n": 55,
+    "template_id": "lasso_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "predictor_count": 2,
+    "candidate_terms": 2,
+    "selected_terms": 2,
+    "penalty": 0.10787,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.5803,
+    "cv_se_loss": 0.0311,
+    "lambda_min": 0.01426,
+    "lambda_1se": 0.10787,
+    "bic_penalty": 0.003234,
+    "bic": 66.6578,
+    "auc": 0.773,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Penalty strength selected by stratified 5-fold cross-validation using lambda_1se on log loss. AUC is apparent AUC on the fitting data."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "selected_rank",
+              "label": "Rank",
+              "format": "int"
+            },
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "standardized_coefficient",
+              "label": "Std coef",
+              "format": "float3"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "selected",
+              "label": "Selected",
+              "format": "string"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 55,
+    "events": 39,
+    "non_events": 16,
+    "candidate_terms": 2,
+    "selected_terms": 2,
+    "penalty": 0.10787,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.5803,
+    "cv_se_loss": 0.0311,
+    "lambda_min": 0.01426,
+    "lambda_1se": 0.10787,
+    "lambda_min_cv_loss": 0.524,
+    "lambda_1se_cv_loss": 0.5803,
+    "bic_penalty": 0.003234,
+    "bic": 66.6578,
+    "fallback_reason": null,
+    "cv_path": [
+      {
+        "penalty": 0.16168,
+        "mean_log_loss": 0.6095,
+        "se_log_loss": 0.0169
+      },
+      {
+        "penalty": 0.141277,
+        "mean_log_loss": 0.6074,
+        "se_log_loss": 0.0204
+      },
+      {
+        "penalty": 0.123448,
+        "mean_log_loss": 0.593,
+        "se_log_loss": 0.0266
+      },
+      {
+        "penalty": 0.10787,
+        "mean_log_loss": 0.5803,
+        "se_log_loss": 0.0311
+      },
+      {
+        "penalty": 0.094257,
+        "mean_log_loss": 0.5676,
+        "se_log_loss": 0.0334
+      },
+      {
+        "penalty": 0.082362,
+        "mean_log_loss": 0.5568,
+        "se_log_loss": 0.0359
+      },
+      {
+        "penalty": 0.071969,
+        "mean_log_loss": 0.5484,
+        "se_log_loss": 0.0383
+      },
+      {
+        "penalty": 0.062887,
+        "mean_log_loss": 0.542,
+        "se_log_loss": 0.0406
+      },
+      {
+        "penalty": 0.054951,
+        "mean_log_loss": 0.5371,
+        "se_log_loss": 0.0428
+      },
+      {
+        "penalty": 0.048016,
+        "mean_log_loss": 0.5333,
+        "se_log_loss": 0.0449
+      },
+      {
+        "penalty": 0.041957,
+        "mean_log_loss": 0.5305,
+        "se_log_loss": 0.0468
+      },
+      {
+        "penalty": 0.036662,
+        "mean_log_loss": 0.5284,
+        "se_log_loss": 0.0486
+      },
+      {
+        "penalty": 0.032036,
+        "mean_log_loss": 0.5269,
+        "se_log_loss": 0.0503
+      },
+      {
+        "penalty": 0.027993,
+        "mean_log_loss": 0.5258,
+        "se_log_loss": 0.0518
+      },
+      {
+        "penalty": 0.02446,
+        "mean_log_loss": 0.525,
+        "se_log_loss": 0.0532
+      },
+      {
+        "penalty": 0.021374,
+        "mean_log_loss": 0.5245,
+        "se_log_loss": 0.0545
+      },
+      {
+        "penalty": 0.018676,
+        "mean_log_loss": 0.5242,
+        "se_log_loss": 0.0557
+      },
+      {
+        "penalty": 0.01632,
+        "mean_log_loss": 0.5241,
+        "se_log_loss": 0.0568
+      },
+      {
+        "penalty": 0.01426,
+        "mean_log_loss": 0.524,
+        "se_log_loss": 0.0577
+      },
+      {
+        "penalty": 0.012461,
+        "mean_log_loss": 0.524,
+        "se_log_loss": 0.0586
+      },
+      {
+        "penalty": 0.010888,
+        "mean_log_loss": 0.5241,
+        "se_log_loss": 0.0594
+      },
+      {
+        "penalty": 0.009514,
+        "mean_log_loss": 0.5242,
+        "se_log_loss": 0.0601
+      },
+      {
+        "penalty": 0.008313,
+        "mean_log_loss": 0.5243,
+        "se_log_loss": 0.0607
+      },
+      {
+        "penalty": 0.007264,
+        "mean_log_loss": 0.5244,
+        "se_log_loss": 0.0613
+      },
+      {
+        "penalty": 0.006348,
+        "mean_log_loss": 0.5246,
+        "se_log_loss": 0.0618
+      },
+      {
+        "penalty": 0.005547,
+        "mean_log_loss": 0.5247,
+        "se_log_loss": 0.0622
+      },
+      {
+        "penalty": 0.004847,
+        "mean_log_loss": 0.5248,
+        "se_log_loss": 0.0626
+      },
+      {
+        "penalty": 0.004235,
+        "mean_log_loss": 0.5249,
+        "se_log_loss": 0.0629
+      },
+      {
+        "penalty": 0.003701,
+        "mean_log_loss": 0.5251,
+        "se_log_loss": 0.0632
+      },
+      {
+        "penalty": 0.003234,
+        "mean_log_loss": 0.5252,
+        "se_log_loss": 0.0635
+      }
+    ],
+    "auc": 0.773,
+    "rows": [
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.7293,
+        "standardized_coefficient": 0.2431,
+        "abs_standardized_coefficient": 0.2431,
+        "odds_ratio": 2.074,
+        "selected": true,
+        "selected_rank": 1
+      },
+      {
+        "term": "residual_enhancement: True",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.1882,
+        "standardized_coefficient": 0.094,
+        "abs_standardized_coefficient": 0.094,
+        "odds_ratio": 1.207,
+        "selected": true,
+        "selected_rank": 2
+      }
+    ],
+    "warnings": [],
+    "skipped": []
+  }
+}

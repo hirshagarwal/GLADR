@@ -1,0 +1,424 @@
+{
+  "spec_id": "gbm_registry_default",
+  "adapter_id": "gbm_registry",
+  "version": "1.0.0",
+  "label": "GBM Registry Default",
+  "description": "Default chain for converting the GBM main sheet CSV into the GLADR canonical dataset.",
+  "steps": [
+    {
+      "id": "map_columns",
+      "operation": "map_columns",
+      "label": "Map source columns",
+      "description": "Map known GBM registry columns to canonical and intermediate variables.",
+      "outputs": [
+        "renamed dataframe"
+      ],
+      "params": {
+        "columns": {
+          "Histo Report?": "histo_report",
+          "Contributor": "contributor",
+          "K-number": "patient_id",
+          "k-number": "patient_id",
+          "DOB": "dob",
+          "Sex": "sex",
+          "Presentation Date": "presentation_date",
+          "Age at presentation": "age_at_presentation",
+          "Neutrophils (presentation)": "neutrophils",
+          "Lymphocytes (presentation)": "lymphocytes",
+          "First contrast MRI": "first_mri_date",
+          "Side": "tumour_side",
+          "Lobe": "tumour_lobe",
+          "Peri-ventricular": "periventricular",
+          "Multifocal": "multifocal",
+          "Resection": "resection_date",
+          "Post-op MRI Date": "postop_mri_date",
+          "5-ALA": "five_ala",
+          "Residual contrast enhancement": "residual_enhancement",
+          "Radiotherapy": "radiotherapy",
+          "TMZ": "tmz",
+          "First recurrence evidence": "first_recurrence_evidence",
+          "Recurrence side": "recurrence_side",
+          "Recurrence lobe": "recurrence_lobe",
+          "Local": "recurrence_local",
+          "DOD": "dod",
+          "Notes": "notes",
+          "QMC Local": "qmc_local_raw"
+        }
+      }
+    },
+    {
+      "id": "validate_patient_id",
+      "operation": "validate_required_columns",
+      "label": "Validate patient identifier",
+      "description": "Require a patient identifier column before transforming rows.",
+      "inputs": [
+        "patient_id"
+      ],
+      "params": {
+        "columns": [
+          "patient_id"
+        ]
+      }
+    },
+    {
+      "id": "remove_stub_rows",
+      "operation": "filter_rows",
+      "label": "Filter sparse rows",
+      "description": "Drop rows with no patient identifier or fewer than two populated fields.",
+      "inputs": [
+        "patient_id"
+      ],
+      "outputs": [
+        "working dataframe"
+      ],
+      "params": {
+        "action": "drop",
+        "match": "any",
+        "conditions": [
+          {
+            "field": "patient_id",
+            "operator": "is_missing"
+          }
+        ],
+        "minimum_populated_fields": 2,
+        "ignored_fields": [],
+        "counts_as": "stub_rows"
+      }
+    },
+    {
+      "id": "normalize_text",
+      "operation": "normalize_text",
+      "label": "Normalize text fields",
+      "description": "Trim identifiers, notes, and recurrence evidence text.",
+      "params": {
+        "fields": [
+          "patient_id",
+          "notes",
+          "first_recurrence_evidence"
+        ]
+      }
+    },
+    {
+      "id": "parse_dates",
+      "operation": "parse_date",
+      "label": "Parse date fields",
+      "description": "Parse source date fields to ISO strings and flag invalid DOB or presentation dates.",
+      "outputs": [
+        "canonical date fields"
+      ],
+      "params": {
+        "mappings": [
+          {
+            "source": "dob",
+            "target": "dob",
+            "invalid_flag": "invalid_dob"
+          },
+          {
+            "source": "presentation_date",
+            "target": "presentation_date",
+            "invalid_flag": "invalid_presentation_date"
+          },
+          {
+            "source": "first_mri_date",
+            "target": "first_mri_date"
+          },
+          {
+            "source": "",
+            "target": ""
+          },
+          {
+            "source": "postop_mri_date",
+            "target": "postop_mri_date"
+          },
+          {
+            "source": "first_recurrence_evidence",
+            "target": "recurrence_date"
+          },
+          {
+            "source": "dod",
+            "target": "dod"
+          }
+        ]
+      }
+    },
+    {
+      "id": "numbers",
+      "operation": "to_float",
+      "label": "Convert numeric fields",
+      "description": "Convert presentation neutrophils and lymphocytes to numbers.",
+      "params": {
+        "fields": [
+          "neutrophils",
+          "lymphocytes"
+        ]
+      }
+    },
+    {
+      "id": "categories",
+      "operation": "normalize_category",
+      "label": "Normalize categorical fields",
+      "description": "Normalize contributor, sex, side, and lobe labels.",
+      "params": {
+        "fields": [
+          "contributor",
+          "sex",
+          "tumour_side",
+          "tumour_lobe",
+          "recurrence_side",
+          "recurrence_lobe"
+        ]
+      }
+    },
+    {
+      "id": "booleans",
+      "operation": "normalize_boolean",
+      "label": "Normalize boolean fields",
+      "description": "Convert yes/no treatment, imaging, and recurrence indicators to booleans.",
+      "params": {
+        "fields": [
+          "periventricular",
+          "multifocal",
+          "five_ala",
+          "residual_enhancement",
+          "radiotherapy",
+          "tmz",
+          "recurrence_local"
+        ]
+      }
+    },
+    {
+      "id": "map_lobes",
+      "operation": "lookup_mapping",
+      "label": "Apply lobe mapping",
+      "description": "Map tumour and recurrence lobe values through the reference lobe mapping.",
+      "inputs": [
+        "tumour_lobe",
+        "recurrence_lobe",
+        "data/reference/lobe_mapping.json"
+      ],
+      "outputs": [
+        "canonical lobe labels"
+      ],
+      "params": {
+        "fields": [
+          "tumour_lobe",
+          "recurrence_lobe"
+        ],
+        "mapping_file": "data/reference/lobe_mapping.json"
+      }
+    },
+    {
+      "id": "histo_report",
+      "operation": "static_code",
+      "label": "Normalize histology report status",
+      "description": "Route histology report values through the GBM adapter's Python normalizer.",
+      "params": {
+        "function": "gbm_registry.normalize_histo_report",
+        "inputs": [
+          "histo_report"
+        ],
+        "outputs": [
+          "histo_report"
+        ]
+      }
+    },
+    {
+      "id": "split_qmc_local",
+      "operation": "static_code",
+      "label": "Split QMC local field",
+      "description": "Route QMC Local through adapter Python to produce qmc_local and referring_centre.",
+      "inputs": [
+        "qmc_local_raw"
+      ],
+      "outputs": [
+        "qmc_local",
+        "referring_centre"
+      ],
+      "params": {
+        "function": "gbm_registry.split_qmc_local",
+        "inputs": [
+          "qmc_local_raw"
+        ],
+        "outputs": [
+          "qmc_local",
+          "referring_centre"
+        ]
+      }
+    },
+    {
+      "id": "derive_age",
+      "operation": "derive_age",
+      "label": "Resolve age at presentation",
+      "description": "Use source age when present; otherwise compute age from DOB and presentation date.",
+      "inputs": [
+        "age_at_presentation",
+        "dob",
+        "presentation_date"
+      ],
+      "outputs": [
+        "age_at_presentation"
+      ],
+      "params": {
+        "source": "age_at_presentation",
+        "output": "age_at_presentation",
+        "dob": "dob",
+        "presentation_date": "presentation_date",
+        "missing_flag": "missing_age_at_presentation"
+      }
+    },
+    {
+      "id": "derive_nlr",
+      "operation": "math",
+      "label": "Compute NLR",
+      "description": "Compute neutrophil-to-lymphocyte ratio from presentation labs.",
+      "inputs": [
+        "neutrophils",
+        "lymphocytes"
+      ],
+      "outputs": [
+        "nlr"
+      ],
+      "params": {
+        "operator": "divide",
+        "left_field": "neutrophils",
+        "right_field": "lymphocytes",
+        "output": "nlr",
+        "precision": 3
+      }
+    },
+    {
+      "id": "derive_recurrence_type",
+      "operation": "static_code",
+      "label": "Derive recurrence type",
+      "description": "Derive recurrence type from the original recurrence evidence field.",
+      "inputs": [
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "recurrence_type"
+      ],
+      "params": {
+        "function": "gbm_registry.derive_recurrence_type",
+        "inputs": [
+          "first_recurrence_evidence"
+        ],
+        "outputs": [
+          "recurrence_type"
+        ]
+      }
+    },
+    {
+      "id": "derive_recurrence_type_copy_1779936920744",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "inputs": [
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "recurrence_type"
+      ],
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "resection_date",
+            "operator": "equals",
+            "value": "No Resection"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "derive_recurrence_type_copy_1779936920744_copy_1779936953719",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "inputs": [
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "recurrence_type"
+      ],
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "IDH1/2 mutated",
+            "operator": "equals",
+            "value": "yes"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "derive_recurrence_type_copy_1779936920744_copy_1779936953719_copy_1779936988236",
+      "operation": "filter_rows",
+      "label": "Filter Rows",
+      "description": "Keep or drop rows using reusable field conditions and populated-field thresholds.",
+      "inputs": [
+        "first_recurrence_evidence"
+      ],
+      "outputs": [
+        "recurrence_type"
+      ],
+      "params": {
+        "action": "drop",
+        "match": "all",
+        "conditions": [
+          {
+            "field": "IDH1/2 mutated",
+            "operator": "equals",
+            "value": "Not Reported"
+          }
+        ],
+        "minimum_populated_fields": "",
+        "ignored_fields": []
+      }
+    },
+    {
+      "id": "set_source",
+      "operation": "set_value",
+      "label": "Set source adapter",
+      "description": "Stamp each row with the source adapter identifier.",
+      "outputs": [
+        "source"
+      ],
+      "params": {
+        "field": "source",
+        "value": "gbm_registry"
+      }
+    },
+    {
+      "id": "quality_flags",
+      "operation": "attach_quality_flags",
+      "label": "Attach row quality flags",
+      "description": "Attach collected row-level quality flags to canonical records.",
+      "outputs": [
+        "data_quality_flags"
+      ]
+    },
+    {
+      "id": "finalize_output",
+      "operation": "finalize_output",
+      "label": "Finalize output",
+      "description": "Drop helper fields, add any missing canonical fields, and place canonical fields first while preserving joined fields.",
+      "outputs": [
+        "clean records"
+      ],
+      "params": {
+        "drop_fields": [
+          "qmc_local_raw"
+        ],
+        "canonical_fields_first": true,
+        "add_missing_canonical_fields": true
+      }
+    }
+  ]
+}

@@ -14,7 +14,13 @@ if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
 from gladr.analysis.profiling import build_dataset_profile
-from gladr.analysis.templates import build_cox_regression, build_univariate_auc_screen, list_analysis_templates
+from gladr.analysis.templates import (
+    build_cox_regression,
+    build_lasso_logistic_regression,
+    build_multivariable_logistic_regression,
+    build_univariate_auc_screen,
+    list_analysis_templates,
+)
 from gladr.core.paths import ProjectPaths
 from gladr.core.run_context import RunContext
 
@@ -31,8 +37,11 @@ class AnalysisTemplateTests(unittest.TestCase):
             self.assertEqual(profile["dataset"]["rows"], 4)
             variables = {variable["name"]: variable for variable in profile["variables"]}
             self.assertEqual(variables["recurrence"]["type"], "binary")
+            self.assertEqual(variables["residual_enhancement"]["type"], "binary")
             self.assertEqual(variables["age_at_presentation"]["type"], "numeric")
             self.assertEqual(variables["tumour_lobe"]["type"], "categorical")
+            self.assertEqual(variables["tumour_lobe"]["value_counts"][0], {"value": "Frontal", "count": 2})
+            self.assertFalse(variables["tumour_lobe"]["value_counts_truncated"])
 
     def test_univariate_auc_screen_builds_ranked_models(self) -> None:
         dataframe = pd.DataFrame(
@@ -60,12 +69,165 @@ class AnalysisTemplateTests(unittest.TestCase):
     def test_lists_cox_regression_template(self) -> None:
         templates = {template["template_id"]: template for template in list_analysis_templates()}
 
+        self.assertIn("lasso_logistic_regression", templates)
+        self.assertEqual(templates["lasso_logistic_regression"]["category"], "Model Selection")
+        self.assertIn("multivariable_logistic_regression", templates)
+        self.assertEqual(templates["multivariable_logistic_regression"]["category"], "Regression Modeling")
         self.assertIn("cox_regression", templates)
         self.assertEqual(templates["cox_regression"]["category"], "Survival Modeling")
         self.assertEqual(
             [parameter["name"] for parameter in templates["cox_regression"]["parameters"]],
             ["start_date", "event_date", "censor_date", "predictors"],
         )
+
+    def test_multivariable_logistic_regression_builds_model_auc_and_terms(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": False, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 5.2, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 5.6, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 6.0, "age": 65, "sex": "F"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "M"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "F"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_multivariable_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "multivariable_logistic_regression")
+        self.assertEqual(artifact["metadata"]["n"], 12)
+        self.assertEqual(artifact["metadata"]["predictor_count"], 3)
+        self.assertGreaterEqual(artifact["metadata"]["term_count"], 3)
+        self.assertGreaterEqual(artifact["metadata"]["auc"], 0.9)
+        self.assertIsNotNone(artifact["metadata"]["cv_auc"])
+        self.assertEqual(artifact["metadata"]["cv_folds"], 5)
+        self.assertTrue(artifact["data"]["roc_curves"])
+        self.assertTrue(all("odds_ratio" in row for row in artifact["data"]["rows"]))
+
+    def test_multivariable_logistic_regression_reports_cv_fallback(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42},
+                {"recurrence": False, "nlr": 1.4, "age": 44},
+                {"recurrence": True, "nlr": 5.2, "age": 60},
+                {"recurrence": True, "nlr": 5.6, "age": 63},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_multivariable_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age"]},
+        )
+
+        self.assertIsNone(artifact["metadata"]["cv_auc"])
+        self.assertEqual(artifact["metadata"]["cv_folds"], 0)
+        self.assertIn("Cross-validated AUC was not estimated", " ".join(artifact["data"]["warnings"]))
+
+    def test_multivariable_logistic_regression_encodes_yes_no_variants_as_one_binary_term(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "residual_enhancement": "No"},
+                {"recurrence": False, "residual_enhancement": "no"},
+                {"recurrence": False, "residual_enhancement": "No - none seen"},
+                {"recurrence": False, "residual_enhancement": "No"},
+                {"recurrence": True, "residual_enhancement": "Yes"},
+                {"recurrence": True, "residual_enhancement": "yes"},
+                {"recurrence": True, "residual_enhancement": "Yes - inferolateral margin"},
+                {"recurrence": True, "residual_enhancement": "Yes"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_multivariable_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["residual_enhancement"]},
+        )
+
+        self.assertEqual(artifact["metadata"]["term_count"], 1)
+        self.assertEqual(artifact["data"]["rows"][0]["term"], "residual_enhancement: yes")
+
+    def test_lasso_logistic_regression_selects_terms(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42, "sex": "F"},
+                {"recurrence": False, "nlr": 1.4, "age": 44, "sex": "M"},
+                {"recurrence": False, "nlr": 1.6, "age": 47, "sex": "F"},
+                {"recurrence": False, "nlr": 1.9, "age": 49, "sex": "M"},
+                {"recurrence": False, "nlr": 2.1, "age": 52, "sex": "F"},
+                {"recurrence": False, "nlr": 2.4, "age": 54, "sex": "M"},
+                {"recurrence": True, "nlr": 5.2, "age": 60, "sex": "F"},
+                {"recurrence": True, "nlr": 5.6, "age": 63, "sex": "M"},
+                {"recurrence": True, "nlr": 6.0, "age": 65, "sex": "F"},
+                {"recurrence": True, "nlr": 6.3, "age": 68, "sex": "M"},
+                {"recurrence": True, "nlr": 6.8, "age": 70, "sex": "F"},
+                {"recurrence": True, "nlr": 7.1, "age": 72, "sex": "M"},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_lasso_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age", "sex"]},
+        )
+
+        self.assertEqual(artifact["script_id"], "lasso_logistic_regression")
+        self.assertEqual(artifact["metadata"]["n"], 12)
+        self.assertEqual(artifact["metadata"]["predictor_count"], 3)
+        self.assertGreaterEqual(artifact["metadata"]["candidate_terms"], 3)
+        self.assertEqual(artifact["metadata"]["selection_method"], "cross_validation")
+        self.assertEqual(artifact["metadata"]["selection_rule"], "lambda_1se")
+        self.assertEqual(artifact["metadata"]["cv_folds"], 5)
+        self.assertIsNotNone(artifact["metadata"]["lambda_min"])
+        self.assertIsNotNone(artifact["metadata"]["lambda_1se"])
+        self.assertGreaterEqual(artifact["metadata"]["selected_terms"], 1)
+        self.assertGreaterEqual(artifact["metadata"]["auc"], 0.9)
+        self.assertTrue(artifact["data"]["cv_path"])
+        selected = [row for row in artifact["data"]["rows"] if row["selected"]]
+        self.assertTrue(selected)
+        self.assertTrue(all("odds_ratio" in row for row in artifact["data"]["rows"]))
+
+    def test_lasso_logistic_regression_uses_bic_fallback_when_cv_is_not_feasible(self) -> None:
+        dataframe = pd.DataFrame(
+            [
+                {"recurrence": False, "nlr": 1.1, "age": 42},
+                {"recurrence": False, "nlr": 1.4, "age": 44},
+                {"recurrence": True, "nlr": 5.2, "age": 60},
+                {"recurrence": True, "nlr": 5.6, "age": 63},
+            ]
+        )
+        run_context = RunContext(run_id="20260510_120000", run_datetime="2026-05-10T12:00:00-04:00")
+
+        artifact = build_lasso_logistic_regression(
+            dataframe,
+            run_context,
+            "manifest_1",
+            {"outcome": "recurrence", "predictors": ["nlr", "age"]},
+        )
+
+        self.assertEqual(artifact["metadata"]["selection_method"], "bic_fallback")
+        self.assertEqual(artifact["metadata"]["selection_rule"], "bic")
+        self.assertEqual(artifact["metadata"]["cv_folds"], 0)
+        self.assertIsNone(artifact["metadata"]["lambda_min"])
+        self.assertIn("Cross-validation was not feasible", artifact["data"]["warnings"][0])
 
     def test_cox_regression_builds_hazard_ratios(self) -> None:
         dataframe = pd.DataFrame(
@@ -107,9 +269,15 @@ def _write_latest_clean_dataset(paths: ProjectPaths) -> None:
     dataset = {
         "records": [
             {"patient_id": "A", "recurrence": True, "age_at_presentation": 61, "tumour_lobe": "Frontal"},
-            {"patient_id": "B", "recurrence": False, "age_at_presentation": 55, "tumour_lobe": "Temporal"},
-            {"patient_id": "C", "recurrence": True, "age_at_presentation": 70, "tumour_lobe": "Frontal"},
-            {"patient_id": "D", "recurrence": False, "age_at_presentation": None, "tumour_lobe": "Parietal"},
+            {
+                "patient_id": "B",
+                "recurrence": False,
+                "age_at_presentation": 55,
+                "tumour_lobe": "Temporal",
+                "residual_enhancement": "Yes - inferolateral margin",
+            },
+            {"patient_id": "C", "recurrence": True, "age_at_presentation": 70, "tumour_lobe": "Frontal", "residual_enhancement": "no"},
+            {"patient_id": "D", "recurrence": False, "age_at_presentation": None, "tumour_lobe": "Parietal", "residual_enhancement": "No"},
         ]
     }
     (paths.registry_datasets_outputs_dir / "clean_dataset_20260510_120000.json").write_text(

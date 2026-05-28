@@ -1,0 +1,293 @@
+{
+  "script_id": "lasso_logistic_regression",
+  "run_id": "20260527_225917",
+  "manifest_run_id": "20260527_225645",
+  "run_datetime": "2026-05-27T22:59:17-04:00",
+  "title": "LASSO logistic regression for recurrence_local",
+  "description": "L1-regularized logistic regression for binary-outcome predictor selection.",
+  "category": "Model Selection",
+  "priority": 8,
+  "metadata": {
+    "n": 25,
+    "template_id": "lasso_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "predictor_count": 3,
+    "candidate_terms": 3,
+    "selected_terms": 0,
+    "penalty": 0.24,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.6225,
+    "cv_se_loss": 0.0249,
+    "lambda_min": 0.12226,
+    "lambda_1se": 0.24,
+    "bic_penalty": 0.08157,
+    "bic": 32.2792,
+    "auc": 0.5,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Penalty strength selected by stratified 5-fold cross-validation using lambda_1se on log loss. AUC is apparent AUC on the fitting data."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "selected_rank",
+              "label": "Rank",
+              "format": "int"
+            },
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "standardized_coefficient",
+              "label": "Std coef",
+              "format": "float3"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "selected",
+              "label": "Selected",
+              "format": "string"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 25,
+    "events": 17,
+    "non_events": 8,
+    "candidate_terms": 3,
+    "selected_terms": 0,
+    "penalty": 0.24,
+    "selection_method": "cross_validation",
+    "selection_rule": "lambda_1se",
+    "cv_folds": 5,
+    "cv_metric": "log_loss",
+    "cv_mean_loss": 0.6225,
+    "cv_se_loss": 0.0249,
+    "lambda_min": 0.12226,
+    "lambda_1se": 0.24,
+    "lambda_min_cv_loss": 0.6088,
+    "lambda_1se_cv_loss": 0.6225,
+    "bic_penalty": 0.08157,
+    "bic": 32.2792,
+    "fallback_reason": null,
+    "cv_path": [
+      {
+        "penalty": 0.24,
+        "mean_log_loss": 0.6225,
+        "se_log_loss": 0.0249
+      },
+      {
+        "penalty": 0.209713,
+        "mean_log_loss": 0.6234,
+        "se_log_loss": 0.0277
+      },
+      {
+        "penalty": 0.183249,
+        "mean_log_loss": 0.6182,
+        "se_log_loss": 0.0339
+      },
+      {
+        "penalty": 0.160124,
+        "mean_log_loss": 0.6133,
+        "se_log_loss": 0.0416
+      },
+      {
+        "penalty": 0.139917,
+        "mean_log_loss": 0.6105,
+        "se_log_loss": 0.0508
+      },
+      {
+        "penalty": 0.12226,
+        "mean_log_loss": 0.6088,
+        "se_log_loss": 0.0611
+      },
+      {
+        "penalty": 0.106832,
+        "mean_log_loss": 0.6113,
+        "se_log_loss": 0.0725
+      },
+      {
+        "penalty": 0.09335,
+        "mean_log_loss": 0.617,
+        "se_log_loss": 0.0845
+      },
+      {
+        "penalty": 0.08157,
+        "mean_log_loss": 0.6251,
+        "se_log_loss": 0.0968
+      },
+      {
+        "penalty": 0.071276,
+        "mean_log_loss": 0.6344,
+        "se_log_loss": 0.1096
+      },
+      {
+        "penalty": 0.062282,
+        "mean_log_loss": 0.6432,
+        "se_log_loss": 0.1231
+      },
+      {
+        "penalty": 0.054422,
+        "mean_log_loss": 0.6511,
+        "se_log_loss": 0.1373
+      },
+      {
+        "penalty": 0.047554,
+        "mean_log_loss": 0.6594,
+        "se_log_loss": 0.151
+      },
+      {
+        "penalty": 0.041553,
+        "mean_log_loss": 0.6674,
+        "se_log_loss": 0.1638
+      },
+      {
+        "penalty": 0.036309,
+        "mean_log_loss": 0.6764,
+        "se_log_loss": 0.176
+      },
+      {
+        "penalty": 0.031727,
+        "mean_log_loss": 0.6863,
+        "se_log_loss": 0.1875
+      },
+      {
+        "penalty": 0.027724,
+        "mean_log_loss": 0.6966,
+        "se_log_loss": 0.1983
+      },
+      {
+        "penalty": 0.024225,
+        "mean_log_loss": 0.7072,
+        "se_log_loss": 0.2085
+      },
+      {
+        "penalty": 0.021168,
+        "mean_log_loss": 0.7174,
+        "se_log_loss": 0.2175
+      },
+      {
+        "penalty": 0.018497,
+        "mean_log_loss": 0.7266,
+        "se_log_loss": 0.225
+      },
+      {
+        "penalty": 0.016162,
+        "mean_log_loss": 0.7358,
+        "se_log_loss": 0.232
+      },
+      {
+        "penalty": 0.014123,
+        "mean_log_loss": 0.7449,
+        "se_log_loss": 0.2386
+      },
+      {
+        "penalty": 0.012341,
+        "mean_log_loss": 0.7538,
+        "se_log_loss": 0.2446
+      },
+      {
+        "penalty": 0.010783,
+        "mean_log_loss": 0.7624,
+        "se_log_loss": 0.2502
+      },
+      {
+        "penalty": 0.009423,
+        "mean_log_loss": 0.7708,
+        "se_log_loss": 0.2554
+      },
+      {
+        "penalty": 0.008233,
+        "mean_log_loss": 0.779,
+        "se_log_loss": 0.2601
+      },
+      {
+        "penalty": 0.007194,
+        "mean_log_loss": 0.7868,
+        "se_log_loss": 0.2645
+      },
+      {
+        "penalty": 0.006287,
+        "mean_log_loss": 0.7944,
+        "se_log_loss": 0.2686
+      },
+      {
+        "penalty": 0.005493,
+        "mean_log_loss": 0.8017,
+        "se_log_loss": 0.2724
+      },
+      {
+        "penalty": 0.0048,
+        "mean_log_loss": 0.8087,
+        "se_log_loss": 0.2759
+      }
+    ],
+    "auc": 0.5,
+    "rows": [
+      {
+        "term": "nlr",
+        "predictor": "nlr",
+        "kind": "numeric",
+        "reference_level": null,
+        "coefficient": -0.0,
+        "standardized_coefficient": -0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "residual_enhancement: True",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      }
+    ],
+    "warnings": [
+      "No candidate terms were selected at the automatically chosen penalty."
+    ],
+    "skipped": []
+  }
+}

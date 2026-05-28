@@ -30,6 +30,7 @@ gladr = [
     "ingestion/contracts/*.json",
     "ingestion/examples/*.csv",
     "ingestion/examples/*.json",
+    "ingestion/specs/*.json",
     "analysis/*.md",
     "analysis/*.yaml",
     "analysis/contracts/*.json",

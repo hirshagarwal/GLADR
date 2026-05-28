@@ -1,0 +1,130 @@
+{
+  "script_id": "lasso_logistic_regression",
+  "run_id": "20260526_232748",
+  "manifest_run_id": "20260510_210002",
+  "run_datetime": "2026-05-26T23:27:48-04:00",
+  "title": "LASSO logistic regression for recurrence_local",
+  "description": "L1-regularized logistic regression for binary-outcome predictor selection.",
+  "category": "Model Selection",
+  "priority": 8,
+  "metadata": {
+    "n": 78,
+    "template_id": "lasso_logistic_regression",
+    "outcome": "recurrence_local",
+    "event_level": true,
+    "reference_level": false,
+    "predictor_count": 2,
+    "candidate_terms": 4,
+    "selected_terms": 0,
+    "penalty": 0.089518,
+    "auc": 0.5,
+    "exclusions": "Rows require complete outcome and selected predictor values; categorical predictors are indicator encoded.",
+    "notes": "Penalty strength is selected automatically from a LASSO path using BIC on the complete-case model frame. AUC is apparent AUC on the fitting data."
+  },
+  "visualization": {
+    "type": "multi",
+    "library": "generic",
+    "panels": [
+      {
+        "type": "table",
+        "config": {
+          "columns": [
+            {
+              "field": "selected_rank",
+              "label": "Rank",
+              "format": "int"
+            },
+            {
+              "field": "term",
+              "label": "Term",
+              "format": "string"
+            },
+            {
+              "field": "standardized_coefficient",
+              "label": "Std coef",
+              "format": "float3"
+            },
+            {
+              "field": "odds_ratio",
+              "label": "OR",
+              "format": "float3"
+            },
+            {
+              "field": "selected",
+              "label": "Selected",
+              "format": "string"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "data": {
+    "outcome": "recurrence_local",
+    "outcome_levels": {
+      "reference": false,
+      "event": true
+    },
+    "n": 78,
+    "events": 54,
+    "non_events": 24,
+    "candidate_terms": 4,
+    "selected_terms": 0,
+    "penalty": 0.089518,
+    "auc": 0.5,
+    "rows": [
+      {
+        "term": "residual_enhancement: Yes",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "No",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "residual_enhancement: no",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "No",
+        "coefficient": -0.0,
+        "standardized_coefficient": -0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "residual_enhancement: yes",
+        "predictor": "residual_enhancement",
+        "kind": "indicator",
+        "reference_level": "No",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      },
+      {
+        "term": "tmz: True",
+        "predictor": "tmz",
+        "kind": "indicator",
+        "reference_level": "False",
+        "coefficient": 0.0,
+        "standardized_coefficient": 0.0,
+        "abs_standardized_coefficient": 0.0,
+        "odds_ratio": 1.0,
+        "selected": false,
+        "selected_rank": null
+      }
+    ],
+    "warnings": [
+      "No candidate terms were selected at the automatically chosen penalty."
+    ],
+    "skipped": []
+  }
+}

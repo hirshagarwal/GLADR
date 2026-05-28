@@ -51,7 +51,9 @@
       }
 
       button,
-      select {
+      input,
+      select,
+      textarea {
         font: inherit;
       }
 
@@ -62,9 +64,9 @@
       header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 24px;
+        gap: 16px;
         align-items: end;
-        padding: 28px clamp(18px, 4vw, 52px) 18px;
+        padding: 18px clamp(16px, 3vw, 38px) 12px;
         border-bottom: 1px solid rgba(219, 227, 239, 0.72);
         background: rgba(246, 248, 251, 0.88);
         backdrop-filter: blur(16px);
@@ -87,9 +89,9 @@
       .brand-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
         transition: margin 180ms ease;
       }
 
@@ -99,8 +101,8 @@
 
       .brand-mark {
         display: inline-grid;
-        width: 32px;
-        height: 32px;
+        width: 26px;
+        height: 26px;
         place-items: center;
         border-radius: var(--radius);
         background: var(--ink);
@@ -120,7 +122,7 @@
       }
 
       h1 {
-        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-size: clamp(1.7rem, 2.8vw, 2.8rem);
         font-weight: 760;
         letter-spacing: 0;
         line-height: 1;
@@ -133,10 +135,10 @@
 
       .lede {
         max-width: 760px;
-        margin-top: 10px;
+        margin-top: 5px;
         color: var(--muted);
-        font-size: 1rem;
-        line-height: 1.55;
+        font-size: 0.9rem;
+        line-height: 1.35;
         max-height: 4rem;
         overflow: hidden;
         transition:
@@ -170,8 +172,8 @@
 
       .tab,
       .icon-button {
-        min-height: 40px;
-        padding: 9px 12px;
+        min-height: 34px;
+        padding: 6px 10px;
         cursor: pointer;
         transition:
           border-color 160ms ease,
@@ -195,11 +197,12 @@
 
       main {
         display: grid;
-        gap: 18px;
-        padding: 22px clamp(18px, 4vw, 52px) 44px;
+        gap: 12px;
+        padding: 14px clamp(16px, 3vw, 38px) 32px;
       }
 
       .panel {
+        min-width: 0;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: rgba(255, 255, 255, 0.92);
@@ -207,72 +210,84 @@
       }
 
       .panel-pad {
-        padding: clamp(18px, 3vw, 28px);
+        padding: clamp(12px, 2vw, 18px);
       }
 
       .section-header {
         display: flex;
-        gap: 18px;
+        gap: 12px;
         align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 18px;
+        margin-bottom: 10px;
       }
 
       .section-title,
       .visual-title {
-        font-size: clamp(1.45rem, 3vw, 2.35rem);
+        font-size: clamp(1.08rem, 1.75vw, 1.55rem);
         font-weight: 760;
-        line-height: 1.08;
+        line-height: 1.12;
         letter-spacing: 0;
+      }
+
+      .compact-section-title {
+        font-size: 0.98rem;
       }
 
       .subtle {
         color: var(--muted);
+        font-size: 0.9rem;
         line-height: 1.45;
       }
 
       .summary-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .metric {
-        min-height: 108px;
-        padding: 16px;
+        min-height: 0;
+        padding: 10px 12px;
+      }
+
+      .metric-line {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        justify-content: space-between;
       }
 
       .metric-value {
-        margin-top: 10px;
-        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        margin-top: 0;
+        font-size: clamp(1.25rem, 2vw, 1.7rem);
         font-weight: 820;
         letter-spacing: 0;
       }
 
       .meta {
-        margin-top: 7px;
+        margin-top: 4px;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         line-height: 1.38;
       }
 
       .pipeline-hero {
         overflow: hidden;
-        padding: clamp(10px, 2vw, 18px) 0 4px;
+        padding: 6px 0 2px;
       }
 
       .pipeline-map {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .stage-button {
         position: relative;
         display: grid;
-        gap: 12px;
-        min-height: 172px;
-        padding: 16px;
+        gap: 9px;
+        min-height: 118px;
+        padding: 12px;
         text-align: left;
         cursor: pointer;
         transition:
@@ -299,21 +314,21 @@
       .stage-button.active,
       .stage-button:hover {
         border-color: var(--accent-2);
-        box-shadow: 0 18px 44px rgba(37, 99, 235, 0.12);
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
         transform: translateY(-1px);
       }
 
       .stage-top {
         display: flex;
-        gap: 12px;
+        gap: 8px;
         align-items: center;
         justify-content: space-between;
       }
 
       .stage-icon {
         display: inline-grid;
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         place-items: center;
         border-radius: 50%;
         font-weight: 900;
@@ -335,7 +350,7 @@
       }
 
       .stage-name {
-        font-size: 1.05rem;
+        font-size: 0.98rem;
         font-weight: 800;
       }
 
@@ -344,10 +359,10 @@
       .pill {
         display: inline-flex;
         align-items: center;
-        min-height: 24px;
-        padding: 3px 8px;
+        min-height: 20px;
+        padding: 2px 7px;
         border-radius: var(--radius);
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         font-weight: 850;
         letter-spacing: 0.05em;
         text-transform: uppercase;
@@ -374,27 +389,38 @@
       .stage-metrics {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
+        gap: 6px;
       }
 
       .mini-metric {
-        padding: 10px;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        justify-content: space-between;
+        min-width: 0;
+        padding: 7px 8px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
       }
 
+      .mini-metric .metric-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .mini-value {
-        margin-top: 5px;
-        font-size: 1.15rem;
+        margin-top: 0;
+        font-size: 1rem;
         font-weight: 820;
       }
 
       .stage-detail {
         display: grid;
         grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
-        gap: 18px;
-        margin-top: 18px;
+        gap: 12px;
+        margin-top: 12px;
         align-items: start;
       }
 
@@ -404,13 +430,13 @@
 
       .detail-summary {
         display: grid;
-        gap: 14px;
+        gap: 10px;
       }
 
       .flow-summary {
         display: grid;
         grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
@@ -423,15 +449,15 @@
 
       .output-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
       }
 
       .output-row {
         display: flex;
-        gap: 12px;
+        gap: 8px;
         align-items: flex-start;
         justify-content: space-between;
-        padding: 11px 12px;
+        padding: 8px 10px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
@@ -443,17 +469,21 @@
 
       .stage-flow {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr);
+        gap: 8px;
         align-items: stretch;
+        max-height: min(520px, 58vh);
+        overflow: hidden;
       }
 
       .flow-column {
         display: grid;
         align-content: start;
-        gap: 10px;
+        gap: 7px;
         min-width: 0;
-        padding: 14px;
+        max-height: min(520px, 58vh);
+        overflow: auto;
+        padding: 10px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
@@ -461,10 +491,10 @@
 
       .flow-heading {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 8px;
+        padding-bottom: 6px;
         border-bottom: 1px solid var(--line);
       }
 
@@ -478,12 +508,12 @@
         display: grid;
         place-items: center;
         color: var(--muted-2);
-        font-size: 1.4rem;
+        font-size: 1.05rem;
         font-weight: 900;
       }
 
       .flow-item {
-        padding: 10px;
+        padding: 8px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
@@ -495,6 +525,7 @@
         align-items: center;
         justify-content: space-between;
         overflow-wrap: anywhere;
+        font-size: 0.88rem;
         font-weight: 760;
       }
 
@@ -531,39 +562,66 @@
         gap: 7px;
       }
 
-      select {
+      input,
+      select,
+      textarea {
         width: 100%;
-        min-height: 42px;
         padding: 0 12px;
         color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      input,
+      select {
+        min-height: 36px;
       }
 
       select[multiple] {
+        min-height: 128px;
+        padding: 8px 10px;
+      }
+
+      textarea {
         min-height: 180px;
-        padding: 8px;
+        padding: 10px 12px;
+        resize: vertical;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.84rem;
+        line-height: 1.45;
       }
 
       .analysis-workbench {
         display: grid;
         grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
       .variable-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
         max-height: 720px;
         overflow: auto;
       }
 
       .variable-row {
         display: grid;
-        gap: 8px;
-        padding: 12px;
+        gap: 5px;
+        width: 100%;
+        padding: 8px 10px;
+        color: var(--ink);
+        text-align: left;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
+        cursor: pointer;
+      }
+
+      .variable-row.expanded {
+        border-color: rgba(15, 118, 110, 0.72);
+        box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
       }
 
       .variable-row-top {
@@ -578,58 +636,144 @@
         font-weight: 780;
       }
 
+      .analysis-variable-list {
+        gap: 5px;
+      }
+
+      .analysis-variable-row {
+        grid-template-columns: minmax(220px, 32%) minmax(260px, 1fr) 120px;
+        column-gap: 16px;
+        row-gap: 4px;
+        align-items: center;
+        min-height: 54px;
+        padding: 7px 12px;
+      }
+
+      .analysis-variable-row .badge {
+        justify-self: end;
+      }
+
+      .analysis-variable-row .variable-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .variable-summary-line {
+        margin-top: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .analysis-variable-samples {
+        grid-column: 1 / -1;
+        margin-top: 0;
+        overflow: hidden;
+        color: var(--muted-2);
+        font-size: 0.76rem;
+        line-height: 1.25;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .analysis-variable-row > .value-count-list {
+        grid-column: 1 / -1;
+        margin-top: 2px;
+      }
+
+      .value-count-list {
+        display: grid;
+        gap: 5px;
+        margin-top: 4px;
+      }
+
+      .value-count-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 5px 7px;
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .value-count-value {
+        overflow-wrap: anywhere;
+      }
+
       .template-panel {
         display: grid;
+        gap: 11px;
+      }
+
+      .template-header {
+        display: flex;
         gap: 16px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .template-header .pill {
+        margin-top: 3px;
+      }
+
+      .tool-library-controls {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(150px, 0.72fr);
+        gap: 10px;
       }
 
       .canned-tool-selector {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
+        max-height: 310px;
+        overflow: auto;
+        padding: 2px;
       }
 
       .template-card {
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
         width: 100%;
-        min-height: 122px;
-        padding: 14px;
+        min-height: 60px;
+        padding: 8px 10px;
         text-align: left;
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        background: var(--surface);
+        background: var(--surface-soft);
         cursor: pointer;
         transition:
+          background 160ms ease,
           border-color 160ms ease,
-          box-shadow 160ms ease,
-          transform 160ms ease;
+          box-shadow 160ms ease;
       }
 
       .template-card:hover,
       .template-card.active {
         border-color: rgba(15, 118, 110, 0.7);
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
-        transform: translateY(-1px);
+        background: var(--surface);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
       }
 
       .tool-icon {
         display: grid;
-        width: 52px;
-        height: 52px;
+        width: 38px;
+        height: 38px;
         place-items: center;
         border-radius: var(--radius);
         color: white;
         background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        font-size: 0.82rem;
+        font-size: 0.72rem;
         font-weight: 840;
         letter-spacing: 0;
       }
 
       .tool-card-body {
         display: grid;
-        gap: 7px;
+        gap: 3px;
         min-width: 0;
       }
 
@@ -639,14 +783,18 @@
 
       .tool-card-meta {
         color: var(--muted);
-        font-size: 0.84rem;
-        line-height: 1.4;
+        font-size: 0.78rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
       }
 
       .parameter-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .parameter-grid .wide {
@@ -658,9 +806,288 @@
         margin-bottom: 8px;
       }
 
+      .multi-choice-header {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .coverage-line {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        margin: 2px 0 8px;
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .multi-choice-list {
+        display: grid;
+        max-height: 220px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .variable-choice {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        min-height: 38px;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+      }
+
+      .variable-choice:last-child {
+        border-bottom: 0;
+      }
+
+      .variable-choice:hover {
+        background: var(--surface-soft);
+      }
+
+      .variable-choice input[type="checkbox"] {
+        width: 16px;
+        min-height: 16px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .variable-choice-name {
+        overflow-wrap: anywhere;
+      }
+
       .run-preview {
         display: grid;
         gap: 8px;
+      }
+
+      .ingestion-workbench {
+        display: grid;
+        grid-template-columns: minmax(460px, 1fr) minmax(320px, 0.58fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .step-chain,
+      .preview-table {
+        display: grid;
+        gap: 8px;
+        overflow: auto;
+      }
+
+      .step-chain {
+        max-height: 520px;
+      }
+
+      .preview-table {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        max-height: 320px;
+        box-sizing: border-box;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .operation-card,
+      .step-card {
+        display: grid;
+        gap: 5px;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .step-card {
+        cursor: grab;
+      }
+
+      .step-card.active {
+        border-color: rgba(15, 118, 110, 0.72);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+      }
+
+      .step-card.dragging {
+        opacity: 0.42;
+      }
+
+      .step-card.drop-target {
+        border-color: var(--accent-2);
+        box-shadow: inset 0 0 0 1px var(--accent-2);
+      }
+
+      .step-card.disabled {
+        opacity: 0.55;
+      }
+
+      .step-card.finalizer {
+        background: var(--surface-soft);
+        cursor: default;
+      }
+
+      .step-top,
+      .operation-top {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .step-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .step-title-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        min-width: 0;
+      }
+
+      .drag-handle {
+        color: var(--muted);
+        font-weight: 900;
+        line-height: 1;
+      }
+
+      .step-card-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .step-card-action {
+        min-width: 28px;
+        min-height: 28px;
+        padding: 4px 7px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        cursor: pointer;
+      }
+
+      .step-card-action:hover {
+        border-color: var(--ink);
+      }
+
+      .step-enabled {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 760;
+      }
+
+      .step-enabled input {
+        width: 16px;
+        min-height: 16px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .small-button {
+        min-height: 30px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        cursor: pointer;
+      }
+
+      .small-button:hover {
+        border-color: var(--ink);
+      }
+
+      .spec-editor {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+      }
+
+      .operation-picker {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mapping-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mapping-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr);
+        gap: 8px;
+      }
+
+      .field-check-list {
+        display: grid;
+        max-height: 220px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .selected-field-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        min-height: 24px;
+      }
+
+      .selected-field-list .badge {
+        max-width: 260px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-transform: none;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .data-table {
+        width: max-content;
+        min-width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+        table-layout: fixed;
+      }
+
+      .data-table th,
+      .data-table td {
+        width: 160px;
+        min-width: 160px;
+        max-width: 160px;
+        padding: 8px 9px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        overflow-wrap: anywhere;
+        vertical-align: top;
       }
 
       .action-row {
@@ -673,21 +1100,21 @@
       .analysis-layout {
         display: grid;
         grid-template-columns: 340px minmax(0, 1fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
       .artifact-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
         max-height: 680px;
         overflow: auto;
-        padding: 8px;
+        padding: 6px;
       }
 
       .artifact-button {
         width: 100%;
-        padding: 13px;
+        padding: 9px 10px;
         text-align: left;
         color: var(--ink);
         cursor: pointer;
@@ -709,7 +1136,7 @@
 
       .visual-shell {
         display: grid;
-        gap: 18px;
+        gap: 12px;
         min-width: 0;
       }
 
@@ -723,19 +1150,19 @@
       .cards {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .card {
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
-        padding: 14px;
+        padding: 10px 12px;
       }
 
       .card-value {
-        margin-top: 8px;
-        font-size: clamp(1.65rem, 3vw, 2.5rem);
+        margin-top: 4px;
+        font-size: clamp(1.25rem, 2vw, 1.7rem);
         font-weight: 820;
         letter-spacing: 0;
       }
@@ -1077,6 +1504,7 @@
         .stage-detail,
         .flow-summary,
         .analysis-workbench,
+        .ingestion-workbench,
         .auc-comparison,
         .canned-tool-selector,
         .parameter-grid,
@@ -1104,8 +1532,30 @@
         .summary-grid,
         .pipeline-map,
         .controls,
+        .tool-library-controls,
         .cards {
           grid-template-columns: 1fr;
+        }
+
+        .template-header {
+          display: grid;
+        }
+
+        .template-card {
+          grid-template-columns: 38px minmax(0, 1fr);
+        }
+
+        .template-card .badge {
+          grid-column: 2;
+          justify-self: start;
+        }
+
+        .analysis-variable-row {
+          grid-template-columns: minmax(0, 1fr) auto;
+        }
+
+        .variable-summary-line {
+          grid-column: 1 / -1;
         }
 
         header {
@@ -1130,13 +1580,9 @@
           <span class="eyebrow">Pipeline Console</span>
         </div>
         <h1>GLADR Dashboard</h1>
-        <p class="lede">Pipeline status, data quality, analysis outputs, and visualization artifacts for the current GLADR workspace.</p>
+        <p class="lede">Pipeline stages, data quality, analysis setup, and visualization artifacts for the current GLADR workspace.</p>
       </div>
-      <nav class="toolbar" aria-label="Dashboard sections">
-        <button class="tab active" data-tab="overview" type="button">Overview</button>
-        <button class="tab" data-tab="analysis" type="button">Analysis</button>
-        <button class="tab" data-tab="results" type="button">Results</button>
-        <button class="tab" data-tab="runs" type="button">Runs</button>
+      <nav class="toolbar" aria-label="Dashboard actions">
         <button class="tab" id="refresh" type="button">Refresh</button>
       </nav>
     </header>
@@ -1146,8 +1592,8 @@
         <div class="section-header">
           <div>
             <div class="eyebrow">Latest Pipeline</div>
-            <h2 class="section-title">Stage Health</h2>
-            <p class="subtle">Click a stage to inspect its latest output and browse previous versions.</p>
+            <h2 class="section-title">Pipeline Flow</h2>
+            <p class="subtle">Latest stage status and runtime artifacts.</p>
           </div>
           <span class="pill" id="stage-generated">Loading</span>
         </div>
@@ -1166,16 +1612,29 @@
               <p class="subtle" id="dataset-summary">Loading dataset profile.</p>
             </div>
           </div>
-          <div class="variable-list" id="variable-list"></div>
+          <div class="variable-list analysis-variable-list" id="variable-list"></div>
         </section>
 
         <section class="panel panel-pad template-panel">
-          <div>
-            <div class="eyebrow">Canned Tools</div>
-            <h2 class="section-title" id="template-title">Analysis Workbench</h2>
-            <p class="meta" id="template-description"></p>
+          <div class="template-header">
+            <div>
+              <div class="eyebrow">Canned Tools</div>
+              <h2 class="section-title" id="template-title">Analysis Workbench</h2>
+              <p class="meta" id="template-description"></p>
+            </div>
+            <span class="pill" id="template-count">0 tools</span>
           </div>
           <select class="hidden" id="template-select" aria-hidden="true"></select>
+          <div class="tool-library-controls" aria-label="Canned tool filters">
+            <div class="control">
+              <label for="template-search">Find tool</label>
+              <input id="template-search" type="search" placeholder="Search tools" autocomplete="off" />
+            </div>
+            <div class="control">
+              <label for="template-category-filter">Category</label>
+              <select id="template-category-filter"></select>
+            </div>
+          </div>
           <div class="canned-tool-selector" id="template-selector" aria-label="Canned analysis tools"></div>
           <div class="parameter-grid" id="parameter-controls" aria-label="Analysis setup"></div>
           <div class="run-preview" id="analysis-preview"></div>
@@ -1197,7 +1656,7 @@
             <select id="category-filter"></select>
           </div>
           <div class="control">
-            <label for="run-filter">Stats run</label>
+            <label for="run-filter">Analysis run</label>
             <select id="run-filter"></select>
           </div>
         </div>
@@ -1207,17 +1666,6 @@
         <aside class="panel artifact-list" id="artifact-list"></aside>
         <section class="panel panel-pad visual-shell" id="visual-output"></section>
       </section>
-
-      <section class="panel panel-pad hidden" id="pipeline-view">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow">Versioned Runs</div>
-            <h2 class="section-title">Pipeline Lanes</h2>
-          </div>
-          <span class="pill" id="pipeline-count"></span>
-        </div>
-        <div class="pipeline" id="pipeline"></div>
-      </section>
     </main>
 
     <script>
@@ -1225,11 +1673,20 @@
         payload: null,
         filtered: [],
         selectedFilename: null,
-        selectedStage: "ingestion",
+        selectedStage: null,
         stageHistoryIndex: 0,
         selectedTemplateId: null,
+        templateSearch: "",
+        templateCategory: "all",
         parametersByTemplate: {},
-        tab: "overview",
+        ingestionAdapterId: null,
+        ingestionSourceFile: null,
+        ingestionSpecsByAdapter: {},
+        selectedIngestionStepIndex: 0,
+        ingestionPreview: null,
+        expandedAnalysisVariables: {},
+        expandedPreviewVariables: {},
+        ingestionStatus: "",
       };
 
       const els = {
@@ -1242,10 +1699,12 @@
         analysisView: document.getElementById("analysis-view"),
         resultsView: document.getElementById("results-view"),
         resultsBrowser: document.getElementById("results-browser"),
-        pipelineView: document.getElementById("pipeline-view"),
         datasetSummary: document.getElementById("dataset-summary"),
         variableList: document.getElementById("variable-list"),
         templateSelect: document.getElementById("template-select"),
+        templateSearch: document.getElementById("template-search"),
+        templateCategoryFilter: document.getElementById("template-category-filter"),
+        templateCount: document.getElementById("template-count"),
         templateTitle: document.getElementById("template-title"),
         templateSelector: document.getElementById("template-selector"),
         templateDescription: document.getElementById("template-description"),
@@ -1258,10 +1717,7 @@
         runFilter: document.getElementById("run-filter"),
         artifactList: document.getElementById("artifact-list"),
         visualOutput: document.getElementById("visual-output"),
-        pipeline: document.getElementById("pipeline"),
-        pipelineCount: document.getElementById("pipeline-count"),
         refresh: document.getElementById("refresh"),
-        tabs: Array.from(document.querySelectorAll(".tab[data-tab]")),
       };
 
       function escapeHtml(value) {
@@ -1271,6 +1727,10 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
+      }
+
+      function cloneJson(value) {
+        return JSON.parse(JSON.stringify(value ?? null));
       }
 
       function formatDate(value) {
@@ -1303,13 +1763,13 @@
           const response = await fetch("/api/dashboard-data", { cache: "no-store" });
           if (!response.ok) throw new Error(`Dashboard API returned ${response.status}`);
           state.payload = await response.json();
-          if (!currentStage()) state.selectedStage = state.payload?.stage_summaries?.[0]?.id ?? "ingestion";
+          ensureIngestionState();
+          if (state.selectedStage && !currentStage()) state.selectedStage = null;
           populateFilters();
           applyFilters();
           renderSummary();
           renderStageOverview();
           renderAnalysisSetup();
-          renderPipeline();
         } catch (error) {
           renderApiError(error);
         }
@@ -1325,6 +1785,12 @@
       }
 
       function renderApiError(error) {
+        state.selectedStage = null;
+        els.summary.classList.remove("hidden");
+        els.stageDetail.classList.remove("hidden", "flow-detail");
+        els.analysisView.classList.add("hidden");
+        els.resultsView.classList.add("hidden");
+        els.resultsBrowser.classList.add("hidden");
         els.summary.innerHTML = "";
         els.stageMap.innerHTML = "";
         els.stageDetail.innerHTML = `
@@ -1343,18 +1809,20 @@
         const runIds = uniqueValues(analyses.map((item) => item.run_id).filter(Boolean));
 
         els.categoryFilter.innerHTML = option("all", "All categories") + categories.map((value) => option(value, value)).join("");
-        els.runFilter.innerHTML = option("all", "All stats runs") + runIds.map((value) => option(value, value)).join("");
+        els.runFilter.innerHTML = option("all", "All analysis runs") + runIds.map((value) => option(value, value)).join("");
       }
 
       function applyFilters() {
-        const analyses = state.payload?.analyses ?? [];
+        const analyses = state.selectedStage === "visualization"
+          ? (state.payload?.analyses ?? []).filter((analysis) => analysis.visualization)
+          : state.payload?.analyses ?? [];
         const category = els.categoryFilter.value;
         const runId = els.runFilter.value;
         state.filtered = analyses.filter((analysis) => {
           const categoryMatches = category === "all" || (analysis.category || "Uncategorized") === category;
           const runMatches = runId === "all" || analysis.run_id === runId;
           return categoryMatches && runMatches;
-        });
+        }).sort(compareArtifactsByRuntime);
 
         if (!state.filtered.some((analysis) => analysis.filename === state.selectedFilename)) {
           state.selectedFilename = state.filtered[0]?.filename ?? null;
@@ -1368,12 +1836,19 @@
         renderSelectedAnalysis();
       }
 
+      function compareArtifactsByRuntime(left, right) {
+        const leftRuntime = String(left.run_datetime || left.run_id || "");
+        const rightRuntime = String(right.run_datetime || right.run_id || "");
+        if (leftRuntime !== rightRuntime) return rightRuntime.localeCompare(leftRuntime);
+        return String(left.title || left.filename || "").localeCompare(String(right.title || right.filename || ""));
+      }
+
       function renderSummary() {
         const summary = state.payload?.summary ?? {};
         const latestIngestion = (state.payload?.ingestion_runs ?? []).find((run) => run.is_latest);
         els.summary.innerHTML = [
           metricCard("Ingestion runs", summary.ingestion_runs ?? 0, "Versioned clean-stage manifests"),
-          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Stats outputs discovered"),
+          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Analysis outputs discovered"),
           metricCard("Visualizations", summary.visualizations ?? 0, "Renderable chart contracts"),
           metricCard("Latest cohort", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
         ].join("");
@@ -1389,26 +1864,46 @@
         }
 
         els.stageMap.innerHTML = stages.map(renderStageButton).join("");
-        renderStageDetail();
+        renderSelectedStageView();
+      }
+
+      function renderSelectedStageView() {
+        const showOverview = !state.selectedStage;
+        const showAnalysis = state.selectedStage === "analysis";
+        const showVisualization = state.selectedStage === "visualization";
+        const showStageDetail = Boolean(state.selectedStage && !showAnalysis && !showVisualization);
+
+        els.summary.classList.toggle("hidden", !showOverview);
+        els.analysisView.classList.toggle("hidden", !showAnalysis);
+        els.resultsView.classList.toggle("hidden", !showVisualization);
+        els.resultsBrowser.classList.toggle("hidden", !showVisualization);
+        els.stageDetail.classList.toggle("hidden", !showStageDetail);
+
+        if (showStageDetail) {
+          renderStageDetail();
+          return;
+        }
+
+        els.stageDetail.classList.remove("flow-detail");
+        els.stageDetail.innerHTML = "";
       }
 
       function renderStageButton(stage) {
         const current = stage.current;
         const metrics = current?.metrics ?? [];
         return `
-          <button class="stage-button ${stage.id === state.selectedStage ? "active" : ""}" type="button" data-stage-id="${escapeHtml(stage.id)}">
+          <button class="stage-button ${stage.id === state.selectedStage ? "active" : ""}" type="button" data-stage-id="${escapeHtml(stage.id)}" title="${escapeHtml(current?.title ?? stage.label)}">
             <div class="stage-top">
               <span class="stage-icon ${escapeHtml(stage.status)}">${stageIcon(stage.status)}</span>
               <span class="status-pill ${escapeHtml(stage.status)}">${escapeHtml(stage.status)}</span>
             </div>
             <div>
               <div class="stage-name">${escapeHtml(stage.label)}</div>
-              <div class="meta">${escapeHtml(current?.title ?? "No output yet")}</div>
             </div>
             <div class="stage-metrics">
               ${metrics.slice(0, 3).map((metric) => `
-                <div class="mini-metric">
-                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                  <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                   <div class="mini-value">${escapeHtml(metric.value)}</div>
                 </div>
               `).join("")}
@@ -1420,7 +1915,8 @@
       function renderStageDetail() {
         const stage = currentStage();
         if (!stage) {
-          els.stageDetail.innerHTML = '<div class="empty">Select a pipeline stage.</div>';
+          els.stageDetail.classList.remove("flow-detail");
+          els.stageDetail.innerHTML = "";
           return;
         }
 
@@ -1436,11 +1932,12 @@
               </div>
             </div>
             <div class="empty">Status: ${escapeHtml(stage.status)}</div>
+            ${stage.id === "ingestion" ? renderIngestionWorkbench() : ""}
           `;
           return;
         }
 
-        const versionLabel = history.length ? `${state.stageHistoryIndex + 1} of ${history.length}` : "Latest";
+        const versionLabel = history.length ? `${state.stageHistoryIndex + 1}/${history.length}` : "Latest";
         els.stageDetail.classList.toggle("flow-detail", Boolean(selected.flow));
         if (selected.flow) {
           els.stageDetail.innerHTML = `
@@ -1448,13 +1945,13 @@
               <div class="detail-summary">
                 <div>
                   <div class="eyebrow">${escapeHtml(stage.label)} Detail</div>
-                  <h3 class="section-title">${escapeHtml(selected.title)}</h3>
+                  <h3 class="section-title" title="${escapeHtml(selected.title)}">${escapeHtml(stage.label)}</h3>
                   <p class="meta">${escapeHtml(selected.description ?? "")}</p>
                 </div>
                 <div class="stage-metrics">
                   ${(selected.metrics ?? []).map((metric) => `
-                    <div class="mini-metric">
-                      <div class="metric-label">${escapeHtml(metric.label)}</div>
+                    <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                      <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                       <div class="mini-value">${escapeHtml(metric.value)}</div>
                     </div>
                   `).join("")}
@@ -1462,8 +1959,8 @@
               </div>
               <div class="detail-summary">
                 <div class="detail-actions">
-                  <button class="icon-button" type="button" data-history-step="previous">Previous version</button>
-                  <button class="icon-button" type="button" data-history-step="next">Next version</button>
+                  <button class="icon-button" type="button" data-history-step="previous" title="Previous version">Prev</button>
+                  <button class="icon-button" type="button" data-history-step="next" title="Next version">Next</button>
                   <span class="pill">${escapeHtml(versionLabel)}</span>
                   ${selected.is_latest ? '<span class="badge">latest</span>' : ""}
                 </div>
@@ -1476,11 +1973,12 @@
               <div class="section-header">
                 <div>
                   <div class="eyebrow">Run Flow</div>
-                  <h3 class="section-title">Input Files → Processing → Result Files</h3>
+                  <h3 class="section-title compact-section-title">Input → Process → Results</h3>
                 </div>
               </div>
-              ${renderStageFlow(selected.flow)}
+              ${renderStageFlow(selected.flow, { summarizeSteps: stage.id === "ingestion" })}
             </div>
+            ${stage.id === "ingestion" ? renderIngestionWorkbench() : ""}
           `;
           return;
         }
@@ -1490,20 +1988,20 @@
           <div class="panel panel-pad detail-summary">
             <div>
               <div class="eyebrow">${escapeHtml(stage.label)} Detail</div>
-              <h3 class="section-title">${escapeHtml(selected.title)}</h3>
+              <h3 class="section-title" title="${escapeHtml(selected.title)}">${escapeHtml(stage.label)}</h3>
               <p class="meta">${escapeHtml(selected.description ?? "")}</p>
             </div>
             <div class="stage-metrics">
               ${(selected.metrics ?? []).map((metric) => `
-                <div class="mini-metric">
-                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                  <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                   <div class="mini-value">${escapeHtml(metric.value)}</div>
                 </div>
               `).join("")}
             </div>
             <div class="detail-actions">
-              <button class="icon-button" type="button" data-history-step="previous">Previous version</button>
-              <button class="icon-button" type="button" data-history-step="next">Next version</button>
+              <button class="icon-button" type="button" data-history-step="previous" title="Previous version">Prev</button>
+              <button class="icon-button" type="button" data-history-step="next" title="Next version">Next</button>
               <span class="pill">${escapeHtml(versionLabel)}</span>
               ${selected.is_latest ? '<span class="badge">latest</span>' : ""}
             </div>
@@ -1523,16 +2021,30 @@
         `;
       }
 
-      function renderStageFlow(flow) {
+      function renderStageFlow(flow, options = {}) {
+        const steps = options.summarizeSteps
+          ? [{ label: `${flow.steps?.length ?? 0} steps run` }]
+          : (flow.steps ?? []);
         return `
           <div class="stage-flow">
             ${renderFlowColumn("Input files", flow.inputs ?? [])}
             <div class="flow-arrow" aria-hidden="true">→</div>
-            ${renderFlowColumn("What happened", flow.steps ?? [])}
+            ${renderFlowColumn("What happened", steps)}
             <div class="flow-arrow" aria-hidden="true">→</div>
             ${renderFlowColumn("Result files", flow.results ?? [])}
           </div>
         `;
+      }
+
+      function compactMetricLabel(label) {
+        const normalized = String(label ?? "").toLowerCase();
+        const labels = {
+          "flagged records": "Flagged",
+          "cohort n": "Cohort",
+          "source count": "Sources",
+          "total rows": "Rows",
+        };
+        return labels[normalized] ?? label;
       }
 
       function renderFlowColumn(title, items) {
@@ -1554,7 +2066,6 @@
               <span>${escapeHtml(item.label)}</span>
               ${item.execution_mode ? `<span class="mode-badge ${escapeHtml(item.execution_mode)}">${escapeHtml(formatExecutionMode(item.execution_mode))}</span>` : ""}
             </div>
-            <div class="meta">${escapeHtml(item.detail ?? "")}</div>
           </div>
         `;
       }
@@ -1584,6 +2095,765 @@
           </div>
         `);
         return `<div class="output-list">${outputRows.concat(fileRows).join("")}</div>`;
+      }
+
+      function ensureIngestionState() {
+        const adapters = state.payload?.ingestion_workbench?.adapters ?? [];
+        if (!adapters.length) return;
+        if (!adapters.some((adapter) => adapter.adapter_id === state.ingestionAdapterId)) {
+          state.ingestionAdapterId = adapters[0].adapter_id;
+        }
+        const adapter = currentIngestionAdapter();
+        if (!adapter) return;
+        const files = adapter.source_files ?? [];
+        if (!files.some((file) => file.path === state.ingestionSourceFile)) {
+          state.ingestionSourceFile = files[0]?.path ?? null;
+        }
+        if (!state.ingestionSpecsByAdapter[adapter.adapter_id]) {
+          state.ingestionSpecsByAdapter[adapter.adapter_id] = cloneJson(adapter.default_spec);
+        }
+        const spec = currentIngestionSpec();
+        normalizeFinalizeStep(spec, adapter);
+        if (spec?.steps?.length && state.selectedIngestionStepIndex >= spec.steps.length) {
+          state.selectedIngestionStepIndex = spec.steps.length - 1;
+        }
+      }
+
+      function currentIngestionAdapter() {
+        return (state.payload?.ingestion_workbench?.adapters ?? [])
+          .find((adapter) => adapter.adapter_id === state.ingestionAdapterId) ?? null;
+      }
+
+      function currentIngestionSpec() {
+        const adapter = currentIngestionAdapter();
+        if (!adapter) return null;
+        state.ingestionSpecsByAdapter[adapter.adapter_id] = state.ingestionSpecsByAdapter[adapter.adapter_id] ?? cloneJson(adapter.default_spec);
+        const spec = state.ingestionSpecsByAdapter[adapter.adapter_id];
+        normalizeFinalizeStep(spec, adapter);
+        return spec;
+      }
+
+      function normalizeFinalizeStep(spec, adapter) {
+        if (!spec) return;
+        spec.steps = Array.isArray(spec.steps) ? spec.steps : [];
+        const finalizers = spec.steps.filter(isFinalizeStep);
+        spec.steps = spec.steps.filter((step) => !isFinalizeStep(step));
+        spec.steps.push(finalizers[0] ?? {
+          id: "finalize_output",
+          operation: "finalize_output",
+          label: "Finalize output",
+          description: "Clean up output fields before writing the dataset.",
+          params: defaultParamsForOperation("finalize_output", adapter),
+        });
+      }
+
+      function isFinalizeStep(step) {
+        return step?.operation === "finalize_output";
+      }
+
+      function renderIngestionWorkbench() {
+        ensureIngestionState();
+        const adapter = currentIngestionAdapter();
+        const spec = currentIngestionSpec();
+        if (!adapter || !spec) return '<div class="panel panel-pad"><div class="empty">No ingestion adapters are available.</div></div>';
+        const adapters = state.payload?.ingestion_workbench?.adapters ?? [];
+        const files = adapter.source_files ?? [];
+        const steps = spec.steps ?? [];
+        const selectedStep = steps[state.selectedIngestionStepIndex] ?? steps[0] ?? null;
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Ingestion Workbench</div>
+                <h3 class="section-title">Transform Builder</h3>
+                <p class="meta">Edits here are used for preview and run; a successful run saves this step chain as the default.</p>
+              </div>
+              <span class="pill">${escapeHtml(spec.label ?? "Transient spec")}</span>
+            </div>
+            <div class="ingestion-workbench">
+              <div class="spec-editor">
+                <div class="controls">
+                  <div class="control">
+                    <label for="ingestion-adapter">Adapter</label>
+                    <select id="ingestion-adapter" data-ingestion-control="adapter">
+                      ${adapters.map((item) => selectedOption(item.adapter_id, item.adapter_id, item.adapter_id === state.ingestionAdapterId)).join("")}
+                    </select>
+                  </div>
+                  <div class="control">
+                    <label for="ingestion-source-file">Source file</label>
+                    <select id="ingestion-source-file" data-ingestion-control="source">
+                      ${files.length ? files.map((file) => selectedOption(file.path, `${file.name} (${file.rows ?? "?"} rows)`, file.path === state.ingestionSourceFile)).join("") : option("", "No matched files")}
+                    </select>
+                  </div>
+                </div>
+                <div class="operation-picker">
+                  <div class="control">
+                    <label for="ingestion-add-operation">Operation</label>
+                    <select id="ingestion-add-operation" data-step-field="operation" ${selectedStep && !isFinalizeStep(selectedStep) ? "" : "disabled"}>
+                      ${adapter.operations.map((operation) => selectedOption(operation.operation, `${operation.category}: ${operation.label}`, operation.operation === selectedStep?.operation)).join("")}
+                    </select>
+                  </div>
+                </div>
+                <div class="action-row">
+                  <button class="icon-button" type="button" data-ingestion-action="preview">Preview</button>
+                  <button class="icon-button" type="button" data-ingestion-action="run">Run ingestion</button>
+                  <button class="icon-button" type="button" data-ingestion-action="reset">Reset spec</button>
+                  <span class="meta" id="ingestion-status">${escapeHtml(state.ingestionStatus)}</span>
+                </div>
+                ${renderIngestionFieldDatalists()}
+                ${renderIngestionStepEditor(selectedStep, adapter)}
+              </div>
+              <aside class="spec-editor">
+                <div class="panel panel-pad">
+                  <div class="section-header">
+                    <div>
+                      <div class="eyebrow">Step Chain</div>
+                      <h3 class="section-title">${escapeHtml(steps.length)} steps</h3>
+                    </div>
+                  </div>
+                  <div class="step-chain">
+                    ${steps.length ? steps.map(renderIngestionStepCard).join("") : '<div class="empty">No steps in this spec.</div>'}
+                  </div>
+                  <div class="action-row">
+                    <button class="icon-button" type="button" data-ingestion-action="add-selected-operation">Add step</button>
+                  </div>
+                </div>
+              </aside>
+            </div>
+            ${renderIngestionPreview()}
+          </div>
+        `;
+      }
+
+      function renderIngestionStepCard(step, index) {
+        const finalizer = isFinalizeStep(step);
+        return `
+          <div class="step-card ${finalizer ? "finalizer" : ""} ${index === state.selectedIngestionStepIndex ? "active" : ""} ${step.enabled === false ? "disabled" : ""}" draggable="${finalizer ? "false" : "true"}" data-ingestion-step="${escapeHtml(index)}">
+            <span class="step-top">
+              <span class="step-title-row">
+                <span class="drag-handle" aria-hidden="true">${finalizer ? "==" : "::"}</span>
+                <strong>${escapeHtml(step.label ?? step.id ?? step.operation)}</strong>
+              </span>
+              <span class="badge">${escapeHtml(step.operation)}</span>
+            </span>
+            ${finalizer ? '<div class="meta">Fixed final cleanup step</div>' : `<span class="step-top">
+              <label class="step-enabled">
+                <input type="checkbox" ${step.enabled === false ? "" : "checked"} data-step-enabled-index="${escapeHtml(index)}" />
+                Enabled
+              </label>
+              <span class="step-card-actions">
+                <button class="step-card-action" type="button" data-ingestion-action="duplicate-step" data-ingestion-step-action-index="${escapeHtml(index)}" title="Duplicate step">Copy</button>
+                <button class="step-card-action" type="button" data-ingestion-action="delete-step" data-ingestion-step-action-index="${escapeHtml(index)}" title="Delete step">Delete</button>
+              </span>
+            </span>`}
+          </div>
+        `;
+      }
+
+      function renderIngestionFieldDatalists() {
+        const fields = ingestionFieldOptions();
+        const sourceFields = ingestionSourceFieldOptions();
+        return `
+          <datalist id="ingestion-field-options">
+            ${fields.map((field) => option(field, field)).join("")}
+          </datalist>
+          <datalist id="ingestion-source-field-options">
+            ${sourceFields.map((field) => option(field, field)).join("")}
+          </datalist>
+        `;
+      }
+
+      function ingestionFieldOptions() {
+        const adapter = currentIngestionAdapter();
+        const spec = currentIngestionSpec();
+        const previewFields = [
+          ...(state.ingestionPreview?.source_profile?.variables ?? []),
+          ...(state.ingestionPreview?.transformed_profile?.variables ?? []),
+        ].map((variable) => variable.name);
+        const canonical = (state.payload?.ingestion_workbench?.canonical_fields ?? []).map((field) => field.name);
+        return uniqueValues([
+          ...(adapter?.field_options ?? []),
+          ...ingestionSourceFieldOptions(),
+          ...joinedFieldOptions(spec),
+          ...fieldsFromSpec(spec),
+          ...previewFields,
+          ...canonical,
+        ].filter(Boolean));
+      }
+
+      function ingestionSourceFieldOptions() {
+        const adapter = currentIngestionAdapter();
+        const source = (adapter?.source_files ?? []).find((file) => file.path === state.ingestionSourceFile);
+        return uniqueValues(source?.columns ?? []);
+      }
+
+      function ingestionDataFileFieldOptions(filePath) {
+        const files = state.payload?.ingestion_workbench?.data_files ?? [];
+        const selected = files.find((file) => file.path === filePath) ?? files[0];
+        return uniqueValues(selected?.columns ?? []);
+      }
+
+      function joinedFieldOptions(spec) {
+        const steps = spec?.steps ?? [];
+        return uniqueValues(steps.flatMap((step) => {
+          if (step?.enabled === false || step?.operation !== "join_data_file") return [];
+          return joinedFieldsForStep(step);
+        }));
+      }
+
+      function joinedFieldsForStep(step) {
+        const params = step.params ?? {};
+        const files = state.payload?.ingestion_workbench?.data_files ?? [];
+        const file = files.find((item) => item.path === params.file);
+        if (!file) return [];
+
+        const leftKey = params.left_key ?? "";
+        const rightKey = params.right_key ?? "";
+        const rightPrefix = params.right_prefix ?? "";
+        const pivot = params.pivot ?? {};
+        if (pivot.index && pivot.columns && pivot.values) {
+          const values = file.column_values?.[pivot.columns] ?? [];
+          const pivotPrefix = pivot.prefix ?? "";
+          const pivoted = values.map((value) => `${rightPrefix}${pivotPrefix}${value}`);
+          return rightKey && rightKey !== leftKey ? [rightKey, ...pivoted] : pivoted;
+        }
+
+        const selected = Array.isArray(params.columns) && params.columns.length ? params.columns : (file.columns ?? []);
+        const joined = selected
+          .filter((field) => field && field !== rightKey)
+          .map((field) => `${rightPrefix}${field}`);
+        return rightKey && rightKey !== leftKey ? [rightKey, ...joined] : joined;
+      }
+
+      function ingestionFieldsBeforeStep(stepIndex) {
+        const spec = currentIngestionSpec();
+        const fields = new Set(ingestionSourceFieldOptions());
+        for (const step of (spec?.steps ?? []).slice(0, Math.max(0, stepIndex))) {
+          if (!step || step.enabled === false) continue;
+          applyStepFieldEffect(fields, step);
+        }
+        return uniqueValues(Array.from(fields));
+      }
+
+      function applyStepFieldEffect(fields, step) {
+        const params = step.params ?? {};
+        if (step.operation === "map_columns") {
+          for (const [source, target] of Object.entries(params.columns ?? {})) {
+            if (!source || !target) continue;
+            fields.delete(source);
+            fields.add(target);
+          }
+          return;
+        }
+        if (step.operation === "parse_date") {
+          (params.mappings ?? []).forEach((mapping) => {
+            if (mapping?.target) fields.add(mapping.target);
+          });
+          return;
+        }
+        if (step.operation === "derive_age" && params.output) fields.add(params.output);
+        if (step.operation === "compute_ratio" && params.output) fields.add(params.output);
+        if (step.operation === "math" && params.output) fields.add(params.output);
+        if (step.operation === "set_value" && params.field) fields.add(params.field);
+        if (step.operation === "join_data_file") joinedFieldsForStep(step).forEach((field) => fields.add(field));
+        if (step.operation === "static_code") (params.outputs ?? []).forEach((field) => fields.add(field));
+        if (step.operation === "attach_quality_flags") fields.add("data_quality_flags");
+        if (step.operation === "finalize_output") (params.drop_fields ?? []).forEach((field) => fields.delete(field));
+      }
+
+      function fieldsFromSpec(value, parentKey = "") {
+        const fieldKeys = new Set([
+          "field", "fields", "columns", "source", "target", "output", "inputs", "outputs", "id_column",
+          "left_key", "right_key", "left_field", "right_field", "numerator", "denominator", "dob", "presentation_date",
+        ]);
+        if (Array.isArray(value)) return value.flatMap((item) => fieldsFromSpec(item, parentKey));
+        if (value && typeof value === "object") {
+          return Object.entries(value).flatMap(([key, item]) => {
+            const direct = fieldKeys.has(key) ? fieldValueOptions(item) : [];
+            return [...direct, ...fieldsFromSpec(item, key)];
+          });
+        }
+        return [];
+      }
+
+      function fieldValueOptions(value) {
+        if (Array.isArray(value)) return value.flatMap(fieldValueOptions);
+        if (value && typeof value === "object") return Object.entries(value).flatMap(([key, item]) => [key, item].filter(Boolean));
+        return value ? [String(value)] : [];
+      }
+
+      function renderIngestionStepEditor(step, adapter) {
+        if (!step) return '<div class="panel panel-pad"><div class="empty">Select or add a transform step.</div></div>';
+        const operation = adapter.operations.find((item) => item.operation === step.operation);
+        const schema = operation?.schema ?? {};
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Selected Step</div>
+                <h3 class="section-title">${escapeHtml(step.label ?? step.operation)}</h3>
+              </div>
+              <span class="badge">${escapeHtml(state.selectedIngestionStepIndex + 1)}</span>
+            </div>
+            <div class="preview-grid">
+              <div class="node">
+                <div class="eyebrow">Expects</div>
+                <div class="meta">${escapeHtml((schema.expects ?? []).join(", ") || "Working dataset")}</div>
+              </div>
+              <div class="node">
+                <div class="eyebrow">Produces</div>
+                <div class="meta">${escapeHtml((schema.produces ?? []).join(", ") || "Updated working dataset")}</div>
+              </div>
+            </div>
+            <div class="parameter-grid">
+              ${renderOperationParams(step, adapter)}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderOperationParams(step, adapter) {
+        const params = step.params ?? {};
+        if (step.operation === "map_columns") {
+          const rows = Object.entries(params.columns ?? {}).slice(0, 18);
+          return `
+            <div class="control wide">
+              <label>Column mappings</label>
+              <div class="mapping-grid">
+                ${rows.map(([source, target], index) => `
+                  <div class="mapping-row">
+                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "source" }, source, ingestionSourceFieldOptions())}
+                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "target" }, target, ingestionFieldOptions())}
+                    <span class="meta">source → output</span>
+                  </div>
+                `).join("")}
+              </div>
+              <div class="meta">${escapeHtml(Object.keys(params.columns ?? {}).length)} mappings in this step.</div>
+            </div>
+          `;
+        }
+
+        if (step.operation === "parse_date") {
+          const mappings = Array.isArray(params.mappings) ? params.mappings : [];
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          return `
+            <div class="control wide">
+              <label>Date mappings</label>
+              <div class="mapping-grid">
+                ${mappings.map((mapping, index) => `
+                  <div class="mapping-row">
+                    ${renderFieldSelect({ "data-step-param": "mappings", "data-param-index": index, "data-param-key": "source" }, mapping.source ?? "", currentFields)}
+                    ${renderFieldSelect({ "data-step-param": "mappings", "data-param-index": index, "data-param-key": "target" }, mapping.target ?? "", currentFields)}
+                    <input data-step-param="mappings" data-param-index="${escapeHtml(index)}" data-param-key="invalid_flag" value="${escapeHtml(mapping.invalid_flag ?? "")}" placeholder="optional flag" />
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (["normalize_text", "normalize_category", "normalize_boolean", "to_float", "validate_required_columns"].includes(step.operation)) {
+          const key = step.operation === "validate_required_columns" ? "columns" : "fields";
+          return renderFieldListParam(key, key === "columns" ? "Columns" : "Fields", params[key], ingestionFieldsBeforeStep(state.selectedIngestionStepIndex));
+        }
+
+        if (step.operation === "remove_stub_rows") {
+          return renderTextParam("id_column", "Identifier column", params.id_column ?? "patient_id");
+        }
+
+        if (step.operation === "filter_rows") {
+          const conditions = Array.isArray(params.conditions) ? params.conditions : [];
+          return `
+            <div class="control">
+              <label>Action</label>
+              <select data-step-param="action">
+                ${["keep", "drop"].map((value) => selectedOption(value, value, value === (params.action ?? "keep"))).join("")}
+              </select>
+            </div>
+            <div class="control">
+              <label>Match</label>
+              <select data-step-param="match">
+                ${["all", "any"].map((value) => selectedOption(value, value, value === (params.match ?? "all"))).join("")}
+              </select>
+            </div>
+            <div class="control wide">
+              <label>Conditions</label>
+              <div class="mapping-grid">
+                ${conditions.map((condition, index) => `
+                  <div class="mapping-row">
+                    ${renderFieldSelect({ "data-step-param": "conditions", "data-param-index": index, "data-param-key": "field" }, condition.field ?? "", ingestionFieldsBeforeStep(state.selectedIngestionStepIndex))}
+                    <select data-step-param="conditions" data-param-index="${escapeHtml(index)}" data-param-key="operator">
+                      ${["equals", "not_equals", "is_missing", "is_not_missing", "contains", "not_contains", "gt", "gte", "lt", "lte", "in", "not_in"].map((value) => selectedOption(value, value, value === (condition.operator ?? "equals"))).join("")}
+                    </select>
+                    <input data-step-param="conditions" data-param-index="${escapeHtml(index)}" data-param-key="value" value="${escapeHtml(condition.value ?? "")}" />
+                  </div>
+                `).join("") || '<div class="empty">No field conditions configured.</div>'}
+              </div>
+            </div>
+            ${renderTextParam("minimum_populated_fields", "Minimum populated fields", params.minimum_populated_fields ?? "")}
+            ${renderFieldListParam("ignored_fields", "Ignored fields", params.ignored_fields, ingestionFieldsBeforeStep(state.selectedIngestionStepIndex))}
+          `;
+        }
+
+        if (step.operation === "lookup_mapping") {
+          return `
+            ${renderFieldListParam("fields", "Fields", params.fields, ingestionFieldsBeforeStep(state.selectedIngestionStepIndex))}
+            ${renderTextParam("mapping_file", "Mapping file", params.mapping_file ?? "")}
+          `;
+        }
+
+        if (step.operation === "join_data_file") {
+          const rightFields = ingestionDataFileFieldOptions(params.file);
+          return `
+            <div class="control wide">
+              <label>Data file</label>
+              <select data-step-param="file">
+                ${renderDataFileOptions(params.file)}
+              </select>
+            </div>
+            ${renderTextParam("left_key", "Left key", params.left_key ?? "patient_id")}
+            ${renderFieldSelectParam("right_key", "Right key", params.right_key ?? "k_number", rightFields)}
+            <div class="control">
+              <label>Join type</label>
+              <select data-step-param="join_type">
+                ${["left", "inner", "outer"].map((value) => selectedOption(value, value, value === (params.join_type ?? "left"))).join("")}
+              </select>
+            </div>
+            ${renderFieldListParam("columns", "Columns to join", params.columns, rightFields)}
+            ${renderTextParam("right_prefix", "Output prefix", params.right_prefix ?? "")}
+            <div class="control">
+              <label>Pivot index</label>
+              ${renderFieldSelect({ "data-step-param": "pivot", "data-param-key": "index" }, params.pivot?.index ?? "", rightFields)}
+            </div>
+            <div class="control">
+              <label>Pivot columns</label>
+              ${renderFieldSelect({ "data-step-param": "pivot", "data-param-key": "columns" }, params.pivot?.columns ?? "", rightFields)}
+            </div>
+            <div class="control">
+              <label>Pivot values</label>
+              ${renderFieldSelect({ "data-step-param": "pivot", "data-param-key": "values" }, params.pivot?.values ?? "", rightFields)}
+            </div>
+            <div class="control">
+              <label>Pivot prefix</label>
+              <input data-step-param="pivot" data-param-key="prefix" value="${escapeHtml(params.pivot?.prefix ?? "")}" />
+            </div>
+          `;
+        }
+
+        if (step.operation === "derive_age") {
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          return `
+            ${renderFieldSelectParam("source", "Source age", params.source ?? "", currentFields)}
+            ${renderFieldSelectParam("dob", "Date of birth", params.dob ?? "", currentFields)}
+            ${renderFieldSelectParam("presentation_date", "Presentation date", params.presentation_date ?? "", currentFields)}
+            ${renderTextParam("output", "Output", params.output ?? "")}
+            ${renderTextParam("missing_flag", "Missing flag", params.missing_flag ?? "")}
+          `;
+        }
+
+        if (step.operation === "compute_ratio") {
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          return `
+            ${renderFieldSelectParam("numerator", "Numerator", params.numerator ?? "", currentFields)}
+            ${renderFieldSelectParam("denominator", "Denominator", params.denominator ?? "", currentFields)}
+            ${renderTextParam("output", "Output", params.output ?? "")}
+          `;
+        }
+
+        if (step.operation === "math") {
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          return `
+            <div class="control">
+              <label>Operator</label>
+              <select data-step-param="operator">
+                ${["add", "subtract", "multiply", "divide"].map((value) => selectedOption(value, value, value === (params.operator ?? "divide"))).join("")}
+              </select>
+            </div>
+            ${renderFieldSelectParam("left_field", "Left field", params.left_field ?? "", currentFields)}
+            ${renderTextParam("left_value", "Left value", params.left_value ?? "")}
+            ${renderFieldSelectParam("right_field", "Right field", params.right_field ?? "", currentFields)}
+            ${renderTextParam("right_value", "Right value", params.right_value ?? "")}
+            ${renderTextParam("output", "Output", params.output ?? "")}
+            ${renderTextParam("precision", "Precision", params.precision ?? "")}
+          `;
+        }
+
+        if (step.operation === "set_value") {
+          return `
+            ${renderTextParam("field", "Field", params.field ?? "")}
+            ${renderTextParam("value", "Value", params.value ?? "")}
+          `;
+        }
+
+        if (step.operation === "finalize_output") {
+          return `
+            ${renderFieldListParam("drop_fields", "Drop fields", params.drop_fields, ingestionFieldsBeforeStep(state.selectedIngestionStepIndex))}
+            ${renderBooleanParam("canonical_fields_first", "Canonical fields first", params.canonical_fields_first ?? true)}
+            ${renderBooleanParam("add_missing_canonical_fields", "Add missing canonical fields", params.add_missing_canonical_fields ?? true)}
+          `;
+        }
+
+        if (step.operation === "select_canonical_fields") {
+          return '<div class="empty wide">Legacy strict canonical output mode. Use Finalize Output for configurable field cleanup.</div>';
+        }
+
+        if (step.operation === "static_code") {
+          const functions = (adapter.operations.find((operation) => operation.operation === "static_code")?.functions ?? []);
+          return `
+            <div class="control wide">
+              <label for="ingestion-step-function">Static code function</label>
+              <select id="ingestion-step-function" data-step-field="custom-function">
+                ${functions.map((fn) => selectedOption(fn.function, fn.label, fn.function === params.function)).join("")}
+              </select>
+            </div>
+            ${renderCsvParam("inputs", "Inputs", params.inputs)}
+            ${renderCsvParam("outputs", "Outputs", params.outputs)}
+          `;
+        }
+
+        return '<div class="empty wide">This step has no configurable fields.</div>';
+      }
+
+      function renderCsvParam(key, label, value) {
+        if (isFieldLikeParam(key, label)) {
+          return renderFieldListParam(key, label, value, ingestionFieldOptions());
+        }
+        const text = Array.isArray(value) ? value.join(", ") : (value ?? "");
+        return `
+          <div class="control wide">
+            <label>${escapeHtml(label)}</label>
+            <input data-step-param="${escapeHtml(key)}" data-param-kind="csv" value="${escapeHtml(text)}" />
+          </div>
+        `;
+      }
+
+      function renderTextParam(key, label, value) {
+        if (isFieldLikeParam(key, label)) {
+          return renderFieldSelectParam(key, label, value, ingestionFieldOptions());
+        }
+        return `
+          <div class="control">
+            <label>${escapeHtml(label)}</label>
+            <input data-step-param="${escapeHtml(key)}" value="${escapeHtml(value)}" />
+          </div>
+        `;
+      }
+
+      function renderBooleanParam(key, label, value) {
+        return `
+          <label class="step-enabled">
+            <input type="checkbox" data-step-param="${escapeHtml(key)}" data-param-kind="boolean" ${value ? "checked" : ""} />
+            ${escapeHtml(label)}
+          </label>
+        `;
+      }
+
+      function renderFieldSelectParam(key, label, value, options) {
+        return `
+          <div class="control">
+            <label>${escapeHtml(label)}</label>
+            ${renderFieldSelect({ "data-step-param": key }, value, options)}
+          </div>
+        `;
+      }
+
+      function renderFieldListParam(key, label, value, options) {
+        const selected = new Set(Array.isArray(value) ? value : String(value ?? "").split(",").map((item) => item.trim()).filter(Boolean));
+        const merged = uniqueValues([...options, ...selected].filter(Boolean));
+        const selectedItems = Array.from(selected).filter(Boolean);
+        return `
+          <div class="control wide">
+            <label>${escapeHtml(label)}</label>
+            <div class="field-check-list">
+              ${merged.map((field) => `
+                <label class="variable-choice">
+                  <input type="checkbox" data-step-param="${escapeHtml(key)}" data-param-kind="csv" value="${escapeHtml(field)}" ${selected.has(field) ? "checked" : ""} />
+                  <span class="variable-choice-name">${escapeHtml(field)}</span>
+                  ${selected.has(field) ? '<span class="badge gold">selected</span>' : ""}
+                </label>
+              `).join("") || '<div class="empty">No fields available.</div>'}
+            </div>
+            <div class="selected-field-list">
+              ${selectedItems.length ? selectedItems.map((field) => `<span class="badge" title="${escapeHtml(field)}">${escapeHtml(field)}</span>`).join("") : '<span class="meta">No fields selected.</span>'}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderFieldSelect(attributes, value, options) {
+        const attrs = Object.entries(attributes)
+          .map(([key, item]) => `${escapeHtml(key)}="${escapeHtml(item)}"`)
+          .join(" ");
+        const merged = uniqueValues([value, ...options].filter(Boolean));
+        return `
+          <select ${attrs}>
+            ${selectedOption("", "Select field", !value)}
+            ${merged.map((field) => selectedOption(field, field, field === value)).join("")}
+          </select>
+        `;
+      }
+
+      function isFieldLikeParam(key, label) {
+        const text = `${key} ${label}`.toLowerCase();
+        if (["mapping_file", "minimum_populated_fields", "missing_flag", "right_prefix", "value", "left_value", "right_value", "precision"].includes(key)) return false;
+        if (text.includes("mapping file")) return false;
+        return ["field", "column", "key", "input", "source age", "date of birth", "presentation date", "numerator", "denominator", "output"].some((token) => text.includes(token));
+      }
+
+      function renderDataFileOptions(selectedPath) {
+        const files = state.payload?.ingestion_workbench?.data_files ?? [];
+        if (!files.length) return option("", "No data files found");
+        return files.map((file) => {
+          const latest = file.is_latest ? " latest" : "";
+          const rows = file.rows === null || file.rows === undefined ? "?" : file.rows;
+          return selectedOption(file.path, `${file.label}: ${file.name}${latest} (${rows} rows)`, file.path === selectedPath);
+        }).join("");
+      }
+
+      function renderIngestionPreview() {
+        const preview = state.ingestionPreview;
+        if (!preview) {
+          return `
+            <div class="panel panel-pad">
+              <div class="section-header">
+                <div>
+                  <div class="eyebrow">Preview</div>
+                  <h3 class="section-title">No preview yet</h3>
+                </div>
+              </div>
+              <div class="empty">Run preview to inspect transformed variables, row flags, and sample output before writing artifacts.</div>
+            </div>
+          `;
+        }
+        const transformed = preview.transformed_profile?.variables ?? [];
+        const source = preview.source_profile?.variables ?? [];
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Preview</div>
+                <h3 class="section-title">${escapeHtml(preview.summary?.rows_ingested ?? 0)} transformed rows</h3>
+                <p class="meta">${escapeHtml(preview.source_file)} | ${escapeHtml(preview.summary?.rows_stub ?? 0)} stub rows skipped</p>
+              </div>
+              <span class="pill">${escapeHtml(preview.steps?.length ?? 0)} steps</span>
+            </div>
+            <div class="preview-grid">
+              <div class="variable-list">
+                <div class="eyebrow">Source Variables</div>
+                ${source.map((variable) => renderCompactVariable(variable, "source")).join("")}
+              </div>
+              <div class="variable-list">
+                <div class="eyebrow">Transformed Variables</div>
+                ${transformed.map((variable) => renderCompactVariable(variable, "transformed")).join("")}
+              </div>
+            </div>
+            <div class="preview-table">${renderDataTable(preview.rows ?? [])}</div>
+          </div>
+        `;
+      }
+
+      function renderCompactVariable(variable, scope = "dataset") {
+        const key = previewVariableKey(scope, variable.name);
+        const expanded = Boolean(state.expandedPreviewVariables[key]);
+        const counts = variable.value_counts ?? variable.top_values ?? [];
+        return `
+          <button class="variable-row ${expanded ? "expanded" : ""}" type="button" data-preview-variable="${escapeHtml(key)}">
+            <div class="variable-row-top">
+              <div class="variable-name">${escapeHtml(variable.name)}</div>
+              <span class="badge">${escapeHtml(variable.type)}</span>
+            </div>
+            <div class="meta">${escapeHtml(variable.non_null)} present | ${escapeHtml(variable.missing_pct)}% missing | ${escapeHtml(variable.unique_count)} unique</div>
+            ${expanded ? renderValueCounts(counts, variable.value_counts_truncated) : ""}
+          </button>
+        `;
+      }
+
+      function previewVariableKey(scope, name) {
+        return `${scope}:${name}`;
+      }
+
+      function renderValueCounts(counts, truncated) {
+        if (!counts.length) {
+          return '<div class="value-count-list"><div class="empty preview-value-empty">No non-missing values in preview.</div></div>';
+        }
+        return `
+          <div class="value-count-list">
+            ${counts.map((item) => `
+              <div class="value-count-row">
+                <span class="value-count-value">${escapeHtml(formatCellValue(item.value))}</span>
+                <span class="badge">${escapeHtml(item.count)}</span>
+              </div>
+            `).join("")}
+            ${truncated ? '<div class="meta">Showing first 100 values by frequency.</div>' : ""}
+          </div>
+        `;
+      }
+
+      function findPreviewVariable(key) {
+        if (!state.ingestionPreview || !key) return null;
+        const separatorIndex = key.indexOf(":");
+        if (separatorIndex === -1) return null;
+        const scope = key.slice(0, separatorIndex);
+        const name = key.slice(separatorIndex + 1);
+        const variables = scope === "source"
+          ? state.ingestionPreview.source_profile?.variables
+          : state.ingestionPreview.transformed_profile?.variables;
+        return variables?.find((variable) => variable.name === name) ?? null;
+      }
+
+      function togglePreviewVariableCard(card) {
+        const key = card.dataset.previewVariable;
+        const variable = findPreviewVariable(key);
+        if (!variable) return;
+        const expanded = !state.expandedPreviewVariables[key];
+        state.expandedPreviewVariables[key] = expanded;
+        card.classList.toggle("expanded", expanded);
+        card.querySelector(":scope > .value-count-list")?.remove();
+        if (!expanded) return;
+        const counts = variable.value_counts ?? variable.top_values ?? [];
+        card.insertAdjacentHTML("beforeend", renderValueCounts(counts, variable.value_counts_truncated));
+      }
+
+      function findAnalysisVariable(key) {
+        if (!key) return null;
+        const separatorIndex = key.indexOf(":");
+        const name = separatorIndex === -1 ? key : key.slice(separatorIndex + 1);
+        const variables = state.payload?.dataset_profile?.variables ?? [];
+        return variables.find((variable) => variable.name === name) ?? null;
+      }
+
+      function toggleAnalysisVariableRow(row) {
+        const key = row.dataset.analysisVariable;
+        const variable = findAnalysisVariable(key);
+        if (!variable) return;
+        const expanded = !state.expandedAnalysisVariables[key];
+        state.expandedAnalysisVariables[key] = expanded;
+        row.classList.toggle("expanded", expanded);
+        row.querySelector(":scope > .value-count-list")?.remove();
+        if (!expanded) return;
+        const counts = variable.value_counts ?? variable.top_values ?? [];
+        row.insertAdjacentHTML("beforeend", renderValueCounts(counts, variable.value_counts_truncated));
+      }
+
+      function renderDataTable(rows) {
+        if (!rows.length) return '<div class="empty">No preview rows.</div>';
+        const columns = Object.keys(rows[0]);
+        return `
+          <table class="data-table">
+            <thead><tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map((row) => `
+                <tr>${columns.map((column) => `<td>${escapeHtml(formatCellValue(row[column]))}</td>`).join("")}</tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function formatCellValue(value) {
+        if (Array.isArray(value)) return value.join(", ");
+        if (value && typeof value === "object") return JSON.stringify(value);
+        return value ?? "";
       }
 
       function currentStage() {
@@ -1646,18 +2916,34 @@
       }
 
       function renderTemplateSelector(templates) {
-        els.templateSelector.innerHTML = templates.length
-          ? templates.map((template) => `
+        const categories = uniqueValues(templates.map((template) => template.category).filter(Boolean));
+        if (state.templateCategory !== "all" && !categories.includes(state.templateCategory)) state.templateCategory = "all";
+        const query = state.templateSearch.trim().toLowerCase();
+        const visibleTemplates = templates.filter((template) => {
+          const matchesCategory = state.templateCategory === "all" || template.category === state.templateCategory;
+          const searchable = [template.title, template.description, template.output, template.category]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          return matchesCategory && (!query || searchable.includes(query));
+        });
+
+        els.templateSearch.value = state.templateSearch;
+        els.templateCategoryFilter.innerHTML = option("all", "All categories") + categories.map((category) => option(category, category)).join("");
+        els.templateCategoryFilter.value = categories.includes(state.templateCategory) ? state.templateCategory : "all";
+        els.templateCount.textContent = `${visibleTemplates.length}/${templates.length} tools`;
+        els.templateSelector.innerHTML = visibleTemplates.length
+          ? visibleTemplates.map((template) => `
             <button class="template-card ${template.template_id === state.selectedTemplateId ? "active" : ""}" type="button" data-template-id="${escapeHtml(template.template_id)}">
               <span class="tool-icon">${escapeHtml(template.icon ?? "GL")}</span>
               <span class="tool-card-body">
                 <span class="tool-card-title">${escapeHtml(template.title)}</span>
                 <span class="tool-card-meta">${escapeHtml(template.output)}</span>
-                <span class="badge">${escapeHtml(template.category ?? "Analysis")}</span>
               </span>
+              <span class="badge">${escapeHtml(template.category ?? "Analysis")}</span>
             </button>
           `).join("")
-          : '<div class="empty">No canned tools are available.</div>';
+          : '<div class="empty">No canned tools match the current filters.</div>';
       }
 
       function ensureTemplateParameters(template, variables) {
@@ -1717,16 +3003,38 @@
         if (parameter.kind === "multi_variable") {
           const selected = new Set(Array.isArray(values[parameter.name]) ? values[parameter.name] : []);
           const filter = values[`${parameter.name}__filter`] ?? "all";
+          const coverage = completeCaseCoverage(parameter, variables);
           const filterOptions = ["all", ...(parameter.accepted_types ?? [])]
             .map((type) => `<option value="${escapeHtml(type)}" ${type === filter ? "selected" : ""}>${escapeHtml(type === "all" ? "All modelable" : type)}</option>`)
             .join("");
+          const choices = candidates.length
+            ? candidates.map((variable) => `
+                <label class="variable-choice">
+                  <input
+                    type="checkbox"
+                    data-param-choice="${escapeHtml(parameter.name)}"
+                    value="${escapeHtml(variable.name)}"
+                    ${selected.has(variable.name) ? "checked" : ""}
+                  />
+                  <span class="variable-choice-name">${escapeHtml(variable.name)}</span>
+                  <span class="badge">${escapeHtml(variable.type)}</span>
+                </label>
+              `).join("")
+            : '<div class="empty">No variables match this filter.</div>';
           return `
             <div class="control wide">
-              <label for="analysis-param-${escapeHtml(parameter.name)}">${escapeHtml(parameter.label)}${requiredLabel}</label>
+              <div class="multi-choice-header">
+                <label for="analysis-param-${escapeHtml(parameter.name)}">${escapeHtml(parameter.label)}${requiredLabel}</label>
+                <span class="badge gold">${escapeHtml(selected.size)} selected</span>
+              </div>
+              <div class="coverage-line">
+                <span class="meta">Complete data</span>
+                <span class="badge">${escapeHtml(coverage.label)}</span>
+              </div>
               <select class="type-filter" data-param-filter="${escapeHtml(parameter.name)}">${filterOptions}</select>
-              <select id="analysis-param-${escapeHtml(parameter.name)}" data-param-name="${escapeHtml(parameter.name)}" data-param-kind="multi_variable" multiple>
-                ${candidates.map((variable) => `<option value="${escapeHtml(variable.name)}" ${selected.has(variable.name) ? "selected" : ""}>${escapeHtml(variable.name)} (${escapeHtml(variable.type)})</option>`).join("")}
-              </select>
+              <div class="multi-choice-list" id="analysis-param-${escapeHtml(parameter.name)}">
+                ${choices}
+              </div>
             </div>
           `;
         }
@@ -1743,25 +3051,54 @@
         `;
       }
 
+      function completeCaseCoverage(parameter, variables) {
+        const datasetRows = Number(state.payload?.dataset_profile?.dataset?.rows ?? 0);
+        const values = currentParameters();
+        const variableByName = new Map(variables.map((variable) => [variable.name, variable]));
+        const selectedNames = new Set(Array.isArray(values[parameter.name]) ? values[parameter.name] : []);
+        for (const item of currentTemplate()?.parameters ?? []) {
+          if (item.kind !== "single_variable") continue;
+          const value = values[item.name];
+          if (value) selectedNames.add(value);
+        }
+        const selectedVariables = Array.from(selectedNames)
+          .map((name) => variableByName.get(name))
+          .filter(Boolean);
+        if (!datasetRows || !selectedVariables.length) return { count: 0, pct: 0, label: "Select variables" };
+
+        let completeRows = null;
+        for (const variable of selectedVariables) {
+          const presentRows = new Set(variable.present_rows ?? []);
+          completeRows = completeRows === null
+            ? presentRows
+            : new Set([...completeRows].filter((row) => presentRows.has(row)));
+        }
+        const count = completeRows?.size ?? 0;
+        const pct = datasetRows ? (count / datasetRows) * 100 : 0;
+        return { count, pct, label: `${count}/${datasetRows} (${pct.toFixed(1)}%)` };
+      }
+
       function renderVariableRow(variable) {
         const numeric = variable.numeric_summary
           ? `min ${formatValue(variable.numeric_summary.min, "float1")} | median ${formatValue(variable.numeric_summary.median, "float1")} | max ${formatValue(variable.numeric_summary.max, "float1")}`
           : "";
         const topValues = (variable.top_values ?? [])
           .slice(0, 3)
-          .map((item) => `${item.value}: ${item.count}`)
+          .map((item) => `${formatCellValue(item.value)}: ${item.count}`)
           .join(" | ");
+        const key = previewVariableKey("analysis", variable.name);
+        const expanded = Boolean(state.expandedAnalysisVariables[key]);
+        const counts = variable.value_counts ?? variable.top_values ?? [];
         return `
-          <div class="variable-row">
-            <div class="variable-row-top">
-              <div class="variable-name">${escapeHtml(variable.name)}</div>
-              <span class="badge">${escapeHtml(variable.type)}</span>
-            </div>
-            <div class="meta">
+          <button class="variable-row analysis-variable-row ${expanded ? "expanded" : ""}" type="button" data-analysis-variable="${escapeHtml(key)}">
+            <div class="variable-name" title="${escapeHtml(variable.name)}">${escapeHtml(variable.name)}</div>
+            <div class="meta variable-summary-line">
               ${escapeHtml(variable.non_null)} present | ${escapeHtml(variable.missing_pct)}% missing | ${escapeHtml(variable.unique_count)} unique
             </div>
-            <div class="meta">${escapeHtml(numeric || topValues || "No summary available")}</div>
-          </div>
+            <span class="badge">${escapeHtml(variable.type)}</span>
+            <div class="meta analysis-variable-samples">${escapeHtml(numeric || topValues || "No summary available")}</div>
+            ${expanded ? renderValueCounts(counts, variable.value_counts_truncated) : ""}
+          </button>
         `;
       }
 
@@ -1777,6 +3114,38 @@
         }
 
         els.runAnalysis.disabled = false;
+        if (template.template_id === "multivariable_logistic_regression") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} multivariable logistic model</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} predictors</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and reports odds ratios, apparent AUC, and stratified CV AUC when feasible.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "lasso_logistic_regression") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} LASSO selection</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} candidates</span>
+              </div>
+              <div class="meta">
+                Fits a multivariable L1-regularized logistic model, selects lambda by stratified cross-validation when feasible, and stores coefficient rankings for Results.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
         if (template.template_id === "cox_regression") {
           const predictors = parameters.predictors ?? [];
           els.analysisPreview.innerHTML = `
@@ -1842,11 +3211,10 @@
           els.categoryFilter.value = "all";
           els.runFilter.value = "all";
           applyFilters();
+          state.selectedStage = "visualization";
           renderSummary();
           renderStageOverview();
           renderAnalysisSetup();
-          renderPipeline();
-          setTab("results");
         } catch (error) {
           els.analysisRunStatus.textContent = error.message;
           els.runAnalysis.disabled = false;
@@ -1891,7 +3259,7 @@
             <div>${analysis.is_latest ? '<span class="badge">latest</span>' : ""}</div>
           </div>
           <div class="meta">
-            Stats run ${escapeHtml(analysis.run_id)} | Ingestion run ${escapeHtml(analysis.manifest_run_id)} |
+            Analysis run ${escapeHtml(analysis.run_id)} | Ingestion run ${escapeHtml(analysis.manifest_run_id)} |
             n=${escapeHtml(analysis.metadata?.n ?? "NA")} | ${escapeHtml(formatDate(analysis.run_datetime))}
           </div>
           ${renderVisualization(analysis)}
@@ -1901,8 +3269,14 @@
 
       function renderVisualization(analysis) {
         const visualization = analysis.visualization ?? {};
+        if (analysis.script_id === "multivariable_logistic_regression") {
+          return renderMultivariableLogisticRegression(analysis.data ?? {});
+        }
         if (analysis.script_id === "univariate_auc_screen" || analysis.data?.roc_curves) {
           return renderAucComparison(analysis.data ?? {});
+        }
+        if (analysis.script_id === "lasso_logistic_regression") {
+          return renderLassoRegression(analysis.data ?? {});
         }
         if (analysis.script_id === "cox_regression" || analysis.data?.rows?.some((row) => row.hazard_ratio !== undefined)) {
           return renderCoxRegression(analysis.data ?? {});
@@ -2136,6 +3510,117 @@
         `;
       }
 
+      function renderMultivariableLogisticRegression(data) {
+        const rows = data.rows ?? [];
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">CV AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.cv_auc, "float3"))}</div>
+              <div class="meta">${escapeHtml(data.cv_folds ?? 0)} folds | SE ${escapeHtml(formatValue(data.cv_auc_se, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderRocOverlay(data.roc_curves ?? [], [{ predictor: "Multivariable model" }], false)}
+          ${renderLogisticTerms(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderLogisticTerms(rows) {
+        if (!rows.length) return '<div class="empty">No logistic model terms available.</div>';
+        const columns = [
+          { field: "term", label: "Term", format: "string" },
+          { field: "odds_ratio", label: "OR", format: "float3" },
+          { field: "ci_low", label: "95% CI low", format: "float3" },
+          { field: "ci_high", label: "95% CI high", format: "float3" },
+          { field: "p_value", label: "P", format: "pvalue" },
+        ];
+        return renderTable(columns, rows);
+      }
+
+      function renderLassoRegression(data) {
+        const rows = data.rows ?? [];
+        const method = data.selection_method === "cross_validation" ? "CV lambda" : "BIC fallback";
+        const methodDetail = data.selection_method === "cross_validation"
+          ? `${escapeHtml(data.selection_rule ?? "lambda_1se")} | ${escapeHtml(data.cv_folds ?? "NA")}-fold ${escapeHtml(data.cv_metric ?? "log_loss")}`
+          : "CV not feasible";
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Selected terms</div>
+              <div class="card-value">${escapeHtml(data.selected_terms ?? "NA")}</div>
+              <div class="meta">of ${escapeHtml(data.candidate_terms ?? "NA")} candidates</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">${escapeHtml(method)}</div>
+              <div class="card-value">${escapeHtml(formatValue(data.penalty, "float3"))}</div>
+              <div class="meta">${methodDetail}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">CV loss</div>
+              <div class="card-value">${escapeHtml(formatValue(data.cv_mean_loss, "float3"))}</div>
+              <div class="meta">SE ${escapeHtml(formatValue(data.cv_se_loss, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Lambda min / 1SE</div>
+              <div class="card-value">${escapeHtml(formatValue(data.lambda_min, "float3"))}</div>
+              <div class="meta">1SE ${escapeHtml(formatValue(data.lambda_1se, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">BIC fallback lambda</div>
+              <div class="card-value">${escapeHtml(formatValue(data.bic_penalty, "float3"))}</div>
+              <div class="meta">BIC ${escapeHtml(formatValue(data.bic, "float3"))}</div>
+            </div>
+          </div>
+          ${renderLassoTerms(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderLassoTerms(rows) {
+        const selected = rows.filter((row) => row.selected);
+        if (!selected.length) return '<div class="empty">No terms were selected at the chosen LASSO penalty.</div>';
+        const maxValue = Math.max(...selected.map((row) => Number(row.abs_standardized_coefficient) || 0), 1);
+        return `
+          <div class="auc-ranking">
+            ${selected.slice(0, 16).map((row, index) => {
+              const magnitude = Number(row.abs_standardized_coefficient) || 0;
+              const width = `${Math.max((magnitude / maxValue) * 100, 2)}%`;
+              const color = Number(row.standardized_coefficient) < 0 ? "#b42318" : "#0f766e";
+              return `
+                <div class="auc-rank-row" style="--rank-color:${color}">
+                  <div class="rank-number">${escapeHtml(row.selected_rank ?? index + 1)}</div>
+                  <div class="rank-main">
+                    <div class="rank-title" title="${escapeHtml(row.term)}">${escapeHtml(row.term)}</div>
+                    <div class="rank-track"><div class="rank-fill" style="--value:${width}"></div></div>
+                  </div>
+                  <div class="rank-auc">${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  <div class="rank-detail">
+                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | coefficient=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
       function renderCoxRegression(data) {
         const summary = data.survival_summary ?? {};
         return `
@@ -2203,77 +3688,29 @@
         return `<div class="empty">${notes.map(escapeHtml).join("<br />")}</div>`;
       }
 
-      function renderPipeline() {
-        const pipeline = state.payload?.pipeline ?? [];
-        els.pipelineCount.textContent = `${pipeline.length} ingestion lane${pipeline.length === 1 ? "" : "s"}`;
-        if (!pipeline.length) {
-          els.pipeline.innerHTML = '<div class="empty">No pipeline runs discovered yet.</div>';
-          return;
-        }
-        els.pipeline.innerHTML = pipeline
-          .map((lane) => `
-            <div class="pipeline-row">
-              <div class="pipeline-column">
-                <div class="eyebrow">Ingestion</div>
-                ${lane.ingestion ? renderPipelineNode(lane.ingestion, ["total_rows", "source_count"]) : '<div class="node">Missing ingestion manifest</div>'}
-              </div>
-              <div class="pipeline-arrow">→</div>
-              <div class="pipeline-column">
-                <div class="eyebrow">Stats Runs</div>
-                ${lane.stats_runs.length ? lane.stats_runs.map((node) => renderPipelineNode(node, ["script_id", "n"])).join("") : '<div class="node">No stats artifacts</div>'}
-              </div>
-              <div class="pipeline-arrow">→</div>
-              <div class="pipeline-column">
-                <div class="eyebrow">Visualizations</div>
-                ${lane.visualizations.length ? lane.visualizations.map((node) => renderPipelineNode(node, ["type", "script_id"])).join("") : '<div class="node">No visualizations generated</div>'}
-              </div>
-            </div>
-          `)
-          .join("");
-      }
-
-      function renderPipelineNode(node, fields) {
-        const details = fields
-          .map((field) => node[field] !== null && node[field] !== undefined ? `${field.replaceAll("_", " ")}: ${node[field]}` : null)
-          .filter(Boolean)
-          .join(" | ");
-        return `
-          <div class="node ${node.is_latest ? "latest" : ""}">
-            <div class="artifact-title">
-              <span>${escapeHtml(node.label)}</span>
-              ${node.is_latest ? '<span class="badge gold">latest</span>' : ""}
-            </div>
-            <div class="meta">${escapeHtml(formatDate(node.run_datetime))}${details ? ` | ${escapeHtml(details)}` : ""}</div>
-          </div>
-        `;
-      }
-
-      function setTab(tab) {
-        state.tab = tab;
-        els.tabs.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-        els.overviewView.classList.toggle("hidden", tab !== "overview");
-        els.analysisView.classList.toggle("hidden", tab !== "analysis");
-        els.resultsView.classList.toggle("hidden", tab !== "results");
-        els.resultsBrowser.classList.toggle("hidden", tab !== "results");
-        els.pipelineView.classList.toggle("hidden", tab !== "runs");
-      }
-
       function metricCard(label, value, detail) {
         return `
           <section class="panel metric">
-            <div class="metric-label">${escapeHtml(label)}</div>
-            <div class="metric-value">${escapeHtml(value)}</div>
+            <div class="metric-line">
+              <div class="metric-label">${escapeHtml(label)}</div>
+              <div class="metric-value">${escapeHtml(value)}</div>
+            </div>
             <div class="meta">${escapeHtml(detail)}</div>
           </section>
         `;
       }
 
       function uniqueValues(values) {
-        return Array.from(new Set(values)).sort((a, b) => String(a).localeCompare(String(b)));
+        return Array.from(new Set(values.map((value) => String(value ?? "").trim()).filter(Boolean)))
+          .sort((a, b) => a.localeCompare(b));
       }
 
       function option(value, label) {
         return `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
+      }
+
+      function selectedOption(value, label, selected) {
+        return `<option value="${escapeHtml(value)}" ${selected ? "selected" : ""}>${escapeHtml(label)}</option>`;
       }
 
       function syncParameterControl(target) {
@@ -2284,11 +3721,22 @@
           renderAnalysisPreview();
           return;
         }
+        if (target.dataset.paramChoice) {
+          const name = target.dataset.paramChoice;
+          const selected = new Set(Array.isArray(values[name]) ? values[name] : []);
+          if (target.checked) {
+            selected.add(target.value);
+          } else {
+            selected.delete(target.value);
+          }
+          values[name] = Array.from(selected).sort((a, b) => String(a).localeCompare(String(b)));
+          renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+          renderAnalysisPreview();
+          return;
+        }
         const name = target.dataset.paramName;
         if (!name) return;
-        values[name] = target.dataset.paramKind === "multi_variable"
-          ? Array.from(target.selectedOptions ?? []).map((item) => item.value)
-          : target.value;
+        values[name] = target.value;
         renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
         renderAnalysisPreview();
       }
@@ -2302,6 +3750,341 @@
         return result;
       }
 
+      function syncIngestionControl(target) {
+        const control = target.dataset.ingestionControl;
+        if (!control) return;
+        if (control === "adapter") {
+          state.ingestionAdapterId = target.value;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "";
+          state.selectedIngestionStepIndex = 0;
+          ensureIngestionState();
+          renderStageDetail();
+          return;
+        }
+        if (control === "source") {
+          state.ingestionSourceFile = target.value || null;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "";
+          renderStageDetail();
+          return;
+        }
+      }
+
+      function syncIngestionStepField(target) {
+        const field = target.dataset.stepField;
+        const param = target.dataset.stepParam;
+        const step = selectedIngestionStep();
+        if (!step) return;
+
+        if (param) {
+          updateStepParam(step, target);
+          renderStageDetail();
+          return;
+        }
+
+        if (!field) return;
+        if (field === "operation" && isFinalizeStep(step)) {
+          renderStageDetail();
+          return;
+        }
+        if (field === "custom-function") {
+          const adapter = currentIngestionAdapter();
+          const custom = (adapter?.operations ?? [])
+            .find((operation) => operation.operation === "static_code")
+            ?.functions
+            ?.find((fn) => fn.function === target.value);
+          step.params = {
+            ...(step.params ?? {}),
+            function: target.value,
+            inputs: custom?.inputs ?? step.params?.inputs ?? [],
+            outputs: custom?.outputs ?? step.params?.outputs ?? [],
+          };
+          renderStageDetail();
+          return;
+        }
+        step[field] = target.value;
+        if (field === "operation") {
+          const operation = currentIngestionAdapter()?.operations?.find((item) => item.operation === target.value);
+          step.label = operation?.label ?? target.value;
+          step.description = operation?.description ?? "";
+        }
+        if (field === "operation" && target.value === "static_code" && !step.params?.function) {
+          const custom = currentIngestionAdapter()?.operations
+            ?.find((operation) => operation.operation === "static_code")
+            ?.functions?.[0];
+          step.params = {
+            function: custom?.function ?? "",
+            inputs: custom?.inputs ?? [],
+            outputs: custom?.outputs ?? [],
+          };
+        } else if (field === "operation") {
+          step.params = defaultParamsForOperation(target.value, currentIngestionAdapter());
+        }
+        renderStageDetail();
+      }
+
+      function updateStepParam(step, target) {
+        step.params = step.params ?? {};
+        const key = target.dataset.stepParam;
+        if (target.dataset.paramKind === "csv" && target.type === "checkbox") {
+          const selected = new Set(Array.isArray(step.params[key]) ? step.params[key] : []);
+          if (target.checked) {
+            selected.add(target.value);
+          } else {
+            selected.delete(target.value);
+          }
+          step.params[key] = Array.from(selected).sort((a, b) => String(a).localeCompare(String(b)));
+          return;
+        }
+        if (target.dataset.paramKind === "boolean") {
+          step.params[key] = target.checked;
+          return;
+        }
+        if (key === "columns") {
+          const entries = Object.entries(step.params.columns ?? {});
+          const index = Number(target.dataset.paramIndex);
+          const current = entries[index] ?? ["", ""];
+          const source = target.dataset.paramSide === "source" ? target.value : current[0];
+          const output = target.dataset.paramSide === "target" ? target.value : current[1];
+          entries[index] = [source, output];
+          step.params.columns = Object.fromEntries(entries.filter(([itemSource]) => itemSource));
+          return;
+        }
+        if (key === "mappings") {
+          const index = Number(target.dataset.paramIndex);
+          const paramKey = target.dataset.paramKey;
+          const mappings = Array.isArray(step.params.mappings) ? step.params.mappings : [];
+          mappings[index] = { ...(mappings[index] ?? {}), [paramKey]: target.value };
+          step.params.mappings = mappings;
+          return;
+        }
+        if (key === "conditions") {
+          const index = Number(target.dataset.paramIndex);
+          const paramKey = target.dataset.paramKey;
+          const conditions = Array.isArray(step.params.conditions) ? step.params.conditions : [];
+          conditions[index] = { ...(conditions[index] ?? {}), [paramKey]: target.value };
+          step.params.conditions = conditions;
+          return;
+        }
+        if (key === "pivot") {
+          step.params.pivot = { ...(step.params.pivot ?? {}), [target.dataset.paramKey]: target.value };
+          return;
+        }
+        if (target.dataset.paramKind === "csv") {
+          step.params[key] = target.multiple
+            ? Array.from(target.selectedOptions ?? []).map((option) => option.value)
+            : target.value.split(",").map((value) => value.trim()).filter(Boolean);
+          return;
+        }
+        step.params[key] = target.value;
+      }
+
+      function defaultParamsForOperation(operationId, adapter) {
+        if (["normalize_text", "normalize_category", "normalize_boolean", "to_float"].includes(operationId)) return { fields: [] };
+        if (operationId === "validate_required_columns") return { columns: [] };
+        if (operationId === "remove_stub_rows") return { id_column: "patient_id" };
+        if (operationId === "filter_rows") return { action: "keep", match: "all", conditions: [{ field: "", operator: "equals", value: "" }], minimum_populated_fields: "", ignored_fields: [] };
+        if (operationId === "lookup_mapping") return { fields: [], mapping_file: "" };
+        if (operationId === "derive_age") return { source: "", dob: "", presentation_date: "", output: "", missing_flag: "" };
+        if (operationId === "compute_ratio") return { numerator: "", denominator: "", output: "" };
+        if (operationId === "math") return { operator: "divide", left_field: "", left_value: "", right_field: "", right_value: "", output: "", precision: "" };
+        if (operationId === "join_data_file") {
+          const file = state.payload?.ingestion_workbench?.data_files?.find((item) => item.kind === "histology_dataset" && item.is_latest)
+            ?? state.payload?.ingestion_workbench?.data_files?.[0];
+          return {
+            file: file?.path ?? "",
+            left_key: "patient_id",
+            right_key: "k_number",
+            join_type: "left",
+            columns: [],
+            right_prefix: "",
+            pivot: { index: "k_number", columns: "marker", values: "value", prefix: "histology__" },
+          };
+        }
+        if (operationId === "set_value") return { field: "", value: "" };
+        if (operationId === "finalize_output") return { drop_fields: [], canonical_fields_first: true, add_missing_canonical_fields: true };
+        if (operationId === "parse_date") return { mappings: [] };
+        if (operationId === "map_columns") return { columns: {} };
+        if (operationId === "static_code") {
+          const custom = adapter?.operations?.find((operation) => operation.operation === "static_code")?.functions?.[0];
+          return { function: custom?.function ?? "", inputs: custom?.inputs ?? [], outputs: custom?.outputs ?? [] };
+        }
+        return {};
+      }
+
+      function selectedIngestionStep() {
+        const spec = currentIngestionSpec();
+        return spec?.steps?.[state.selectedIngestionStepIndex] ?? null;
+      }
+
+      function addIngestionStep(operationId) {
+        const adapter = currentIngestionAdapter();
+        const spec = currentIngestionSpec();
+        const operation = adapter?.operations?.find((item) => item.operation === operationId);
+        if (!spec || !operation) return;
+        const custom = operation.operation === "static_code" ? operation.functions?.[0] : null;
+        const step = {
+          id: `${operation.operation}_${Date.now()}`,
+          operation: operation.operation,
+          label: operation.label,
+          description: operation.description,
+          params: custom ? { function: custom.function, inputs: custom.inputs ?? [], outputs: custom.outputs ?? [] } : defaultParamsForOperation(operation.operation, adapter),
+        };
+        const finalizerIndex = spec.steps.findIndex(isFinalizeStep);
+        if (finalizerIndex >= 0) {
+          spec.steps.splice(finalizerIndex, 0, step);
+          state.selectedIngestionStepIndex = finalizerIndex;
+        } else {
+          spec.steps = [...(spec.steps ?? []), step];
+          state.selectedIngestionStepIndex = spec.steps.length - 1;
+        }
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      function handleIngestionAction(action, actionIndex = null) {
+        const spec = currentIngestionSpec();
+        if (!spec) return;
+        if (action === "add-selected-operation") {
+          addIngestionStep(currentIngestionAdapter()?.operations?.[0]?.operation);
+          return;
+        }
+        if (action === "preview") {
+          launchIngestionPreview();
+          return;
+        }
+        if (action === "run") {
+          launchIngestionRun();
+          return;
+        }
+        if (action === "reset") {
+          const adapter = currentIngestionAdapter();
+          if (!adapter) return;
+          state.ingestionSpecsByAdapter[adapter.adapter_id] = cloneJson(adapter.default_spec);
+          state.selectedIngestionStepIndex = 0;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "Spec reset to default.";
+          renderStageDetail();
+          return;
+        }
+
+        const steps = spec.steps ?? [];
+        const index = actionIndex === null || Number.isNaN(actionIndex) ? state.selectedIngestionStepIndex : actionIndex;
+        const step = steps[index];
+        if (!step) return;
+        if (isFinalizeStep(step)) return;
+        if (action === "toggle-step") step.enabled = step.enabled === false;
+        if (action === "move-step-up" && index > 0) {
+          [steps[index - 1], steps[index]] = [steps[index], steps[index - 1]];
+          state.selectedIngestionStepIndex = index - 1;
+        }
+        if (action === "move-step-down" && index < steps.length - 1) {
+          [steps[index + 1], steps[index]] = [steps[index], steps[index + 1]];
+          state.selectedIngestionStepIndex = index + 1;
+        }
+        if (action === "duplicate-step") {
+          steps.splice(index + 1, 0, { ...cloneJson(step), id: `${step.id ?? step.operation}_copy_${Date.now()}` });
+          state.selectedIngestionStepIndex = index + 1;
+        }
+        if (action === "delete-step") {
+          steps.splice(index, 1);
+          state.selectedIngestionStepIndex = Math.max(0, Math.min(index, steps.length - 1));
+        }
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      function moveIngestionStep(fromIndex, toIndex) {
+        const spec = currentIngestionSpec();
+        const steps = spec?.steps ?? [];
+        if (fromIndex === toIndex || fromIndex < 0 || toIndex < 0 || fromIndex >= steps.length || toIndex >= steps.length) return;
+        if (isFinalizeStep(steps[fromIndex])) return;
+        const finalizerIndex = steps.findIndex(isFinalizeStep);
+        const boundedToIndex = finalizerIndex >= 0 ? Math.min(toIndex, finalizerIndex - 1) : toIndex;
+        const [step] = steps.splice(fromIndex, 1);
+        steps.splice(boundedToIndex, 0, step);
+        normalizeFinalizeStep(spec, currentIngestionAdapter());
+        state.selectedIngestionStepIndex = boundedToIndex;
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      function setIngestionStepEnabled(index, enabled) {
+        const spec = currentIngestionSpec();
+        const step = spec?.steps?.[index];
+        if (!step || isFinalizeStep(step)) return;
+        step.enabled = enabled;
+        state.selectedIngestionStepIndex = index;
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      async function launchIngestionPreview() {
+        const spec = currentIngestionSpec();
+        if (!state.ingestionAdapterId || !spec) return;
+        state.ingestionStatus = "Previewing...";
+        renderStageDetail();
+        try {
+          const response = await fetch("/api/ingestion-preview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adapter_id: state.ingestionAdapterId,
+              source_file: state.ingestionSourceFile,
+              spec,
+            }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Ingestion preview returned ${response.status}`);
+          state.ingestionPreview = payload;
+          state.ingestionStatus = "Preview ready.";
+        } catch (error) {
+          state.ingestionStatus = error.message;
+        }
+        renderStageDetail();
+      }
+
+      async function launchIngestionRun() {
+        const spec = currentIngestionSpec();
+        if (!state.ingestionAdapterId || !spec) return;
+        state.ingestionStatus = "Running ingestion...";
+        renderStageDetail();
+        try {
+          const response = await fetch("/api/ingestion-runs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adapter_id: state.ingestionAdapterId,
+              source_file: state.ingestionSourceFile,
+              spec,
+            }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Ingestion API returned ${response.status}`);
+          state.payload = payload.dashboard;
+          const updatedAdapter = state.payload?.ingestion_workbench?.adapters?.find(
+            (adapter) => adapter.adapter_id === state.ingestionAdapterId
+          );
+          if (updatedAdapter?.default_spec) {
+            state.ingestionSpecsByAdapter[state.ingestionAdapterId] = cloneJson(updatedAdapter.default_spec);
+          }
+          ensureIngestionState();
+          state.ingestionPreview = null;
+          state.ingestionStatus = `Created ${payload.artifacts?.clean_dataset ?? "clean dataset"}.`;
+          state.selectedStage = "ingestion";
+          state.stageHistoryIndex = 0;
+          populateFilters();
+          applyFilters();
+          renderSummary();
+          renderStageOverview();
+          renderAnalysisSetup();
+        } catch (error) {
+          state.ingestionStatus = error.message;
+          renderStageDetail();
+        }
+      }
+
       function updateHeaderDensity() {
         els.header.classList.toggle("compact", window.scrollY > 18);
       }
@@ -2311,6 +4094,14 @@
       els.templateSelect.addEventListener("change", () => {
         state.selectedTemplateId = els.templateSelect.value;
         renderAnalysisSetup();
+      });
+      els.templateSearch.addEventListener("input", () => {
+        state.templateSearch = els.templateSearch.value;
+        renderTemplateSelector(state.payload?.analysis_templates ?? []);
+      });
+      els.templateCategoryFilter.addEventListener("change", () => {
+        state.templateCategory = els.templateCategoryFilter.value;
+        renderTemplateSelector(state.payload?.analysis_templates ?? []);
       });
       els.templateSelector.addEventListener("click", (event) => {
         const button = event.target.closest("[data-template-id]");
@@ -2322,6 +4113,11 @@
       });
       els.parameterControls.addEventListener("change", (event) => syncParameterControl(event.target));
       els.runAnalysis.addEventListener("click", launchAnalysisRun);
+      els.variableList.addEventListener("click", (event) => {
+        const variableRow = event.target.closest("[data-analysis-variable]");
+        if (!variableRow) return;
+        toggleAnalysisVariableRow(variableRow);
+      });
       els.analysisSelect.addEventListener("change", () => {
         state.selectedFilename = els.analysisSelect.value;
         renderArtifactList();
@@ -2338,17 +4134,81 @@
       els.stageMap.addEventListener("click", (event) => {
         const button = event.target.closest("[data-stage-id]");
         if (!button) return;
-        state.selectedStage = button.dataset.stageId;
+        state.selectedStage = state.selectedStage === button.dataset.stageId ? null : button.dataset.stageId;
         state.stageHistoryIndex = 0;
+        applyFilters();
         renderStageOverview();
       });
       els.stageDetail.addEventListener("click", (event) => {
+        const previewVariable = event.target.closest("[data-preview-variable]");
+        if (previewVariable) {
+          togglePreviewVariableCard(previewVariable);
+          return;
+        }
+        if (event.target.closest("[data-step-enabled-index]")) return;
+        const action = event.target.closest("[data-ingestion-action]");
+        if (action) {
+          const actionIndex = action.dataset.ingestionStepActionIndex === undefined
+            ? null
+            : Number(action.dataset.ingestionStepActionIndex);
+          handleIngestionAction(action.dataset.ingestionAction, actionIndex);
+          return;
+        }
+        const stepButton = event.target.closest("[data-ingestion-step]");
+        if (stepButton) {
+          state.selectedIngestionStepIndex = Number(stepButton.dataset.ingestionStep);
+          renderStageDetail();
+          return;
+        }
         const button = event.target.closest("[data-history-step]");
         if (!button) return;
         moveStageHistory(button.dataset.historyStep);
       });
+      els.stageDetail.addEventListener("change", (event) => {
+        if (event.target.dataset.stepEnabledIndex !== undefined) {
+          setIngestionStepEnabled(Number(event.target.dataset.stepEnabledIndex), event.target.checked);
+          return;
+        }
+        syncIngestionControl(event.target);
+        syncIngestionStepField(event.target);
+      });
+      els.stageDetail.addEventListener("dragstart", (event) => {
+        const card = event.target.closest("[data-ingestion-step]");
+        if (!card) return;
+        const spec = currentIngestionSpec();
+        if (isFinalizeStep(spec?.steps?.[Number(card.dataset.ingestionStep)])) {
+          event.preventDefault();
+          return;
+        }
+        event.dataTransfer.setData("text/plain", card.dataset.ingestionStep);
+        event.dataTransfer.effectAllowed = "move";
+        card.classList.add("dragging");
+      });
+      els.stageDetail.addEventListener("dragover", (event) => {
+        const card = event.target.closest("[data-ingestion-step]");
+        if (!card) return;
+        const spec = currentIngestionSpec();
+        if (isFinalizeStep(spec?.steps?.[Number(card.dataset.ingestionStep)])) return;
+        event.preventDefault();
+        card.classList.add("drop-target");
+      });
+      els.stageDetail.addEventListener("dragleave", (event) => {
+        event.target.closest("[data-ingestion-step]")?.classList.remove("drop-target");
+      });
+      els.stageDetail.addEventListener("drop", (event) => {
+        const card = event.target.closest("[data-ingestion-step]");
+        if (!card) return;
+        const spec = currentIngestionSpec();
+        if (isFinalizeStep(spec?.steps?.[Number(card.dataset.ingestionStep)])) return;
+        event.preventDefault();
+        const fromIndex = Number(event.dataTransfer.getData("text/plain"));
+        const toIndex = Number(card.dataset.ingestionStep);
+        moveIngestionStep(fromIndex, toIndex);
+      });
+      els.stageDetail.addEventListener("dragend", () => {
+        els.stageDetail.querySelectorAll(".dragging, .drop-target").forEach((item) => item.classList.remove("dragging", "drop-target"));
+      });
       els.refresh.addEventListener("click", loadDashboard);
-      els.tabs.forEach((button) => button.addEventListener("click", () => setTab(button.dataset.tab)));
       window.addEventListener("scroll", updateHeaderDensity, { passive: true });
 
       updateHeaderDensity();

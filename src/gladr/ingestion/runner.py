@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import copy
 import json
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -18,9 +20,14 @@ from gladr.ingestion.adapters.base_adapter import BaseAdapter, IngestionStep
 PIPELINE_VERSION = "0.1.0"
 
 
-def run_ingestion(adapter_id: str | None = None, source_file: str | None = None) -> dict[str, Path]:
-    paths = ProjectPaths.discover()
-    paths.ensure_runtime_dirs()
+def run_ingestion(
+    adapter_id: str | None = None,
+    source_file: str | None = None,
+    spec: dict[str, Any] | None = None,
+    paths: ProjectPaths | None = None,
+) -> dict[str, Path]:
+    project_paths = paths or ProjectPaths.discover()
+    project_paths.ensure_runtime_dirs()
     run_context = RunContext.now()
 
     adapters = instantiate_discovered("gladr.ingestion.adapters", BaseAdapter)
@@ -33,27 +40,31 @@ def run_ingestion(adapter_id: str | None = None, source_file: str | None = None)
     source_summaries: list[dict[str, object]] = []
     ingestion_report: list[dict[str, object]] = []
     adapter_steps: list[dict[str, object]] = []
+    executed_specs: list[dict[str, Any]] = []
 
     for adapter in adapters:
-        matched_files = [Path(source_file)] if source_file else adapter.match_files(paths.root)
+        adapter_spec = _spec_for_adapter(adapter, spec)
+        matched_files = [Path(source_file)] if source_file else adapter.match_files(project_paths.root)
         if not matched_files:
             continue
 
         for matched_file in matched_files:
             raw_df = adapter.load_raw(matched_file)
-            result = adapter.transform(raw_df, matched_file)
+            result = adapter.transform(raw_df, matched_file, spec=adapter_spec, paths=project_paths)
             collected_frames.append(result.dataframe)
             source_summaries.append(result.source_summary)
             ingestion_report.extend(result.ingestion_report)
             adapter_steps.extend(_normalize_steps(result.steps))
+            if adapter_spec:
+                executed_specs.append(_spec_snapshot(adapter.adapter_id, matched_file.name, adapter_spec))
 
     if not collected_frames:
         raise FileNotFoundError("No source files were found for the selected ingestion adapters")
 
     clean_df = pd.concat(collected_frames, ignore_index=True)
-    clean_path = paths.registry_datasets_outputs_dir / f"clean_dataset_{run_context.run_id}.json"
-    manifest_path = paths.registry_manifests_outputs_dir / f"manifest_{run_context.run_id}.json"
-    report_path = paths.registry_reports_outputs_dir / f"quality_report_{run_context.run_id}.json"
+    clean_path = project_paths.registry_datasets_outputs_dir / f"clean_dataset_{run_context.run_id}.json"
+    manifest_path = project_paths.registry_manifests_outputs_dir / f"manifest_{run_context.run_id}.json"
+    report_path = project_paths.registry_reports_outputs_dir / f"quality_report_{run_context.run_id}.json"
 
     clean_payload = {
         "run_id": run_context.run_id,
@@ -77,6 +88,7 @@ def run_ingestion(adapter_id: str | None = None, source_file: str | None = None)
             quality_report_filename=report_path.name,
             adapter_steps=adapter_steps,
         ),
+        "specs": executed_specs,
         "total_rows": int(len(clean_df)),
         "canonical_schema_version": clean_payload["canonical_schema_version"],
         "notes": ""
@@ -86,11 +98,11 @@ def run_ingestion(adapter_id: str | None = None, source_file: str | None = None)
     _write_json(manifest_path, manifest)
     _write_json(report_path, ingestion_report)
     write_latest_pointer(
-        paths.registry_ingestion_outputs_dir / "latest.json",
+        project_paths.registry_ingestion_outputs_dir / "latest.json",
         {
-            "clean_dataset": clean_path.relative_to(paths.registry_ingestion_outputs_dir).as_posix(),
-            "manifest": manifest_path.relative_to(paths.registry_ingestion_outputs_dir).as_posix(),
-            "quality_report": report_path.relative_to(paths.registry_ingestion_outputs_dir).as_posix(),
+            "clean_dataset": clean_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
+            "manifest": manifest_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
+            "quality_report": report_path.relative_to(project_paths.registry_ingestion_outputs_dir).as_posix(),
         },
     )
 
@@ -98,6 +110,28 @@ def run_ingestion(adapter_id: str | None = None, source_file: str | None = None)
         "clean_dataset": clean_path,
         "manifest": manifest_path,
         "quality_report": report_path,
+    }
+
+
+def _spec_for_adapter(adapter: BaseAdapter, spec: dict[str, Any] | None) -> dict[str, Any] | None:
+    if spec is None:
+        return adapter.default_spec()
+    spec_adapter = spec.get("adapter_id")
+    if spec_adapter and spec_adapter != adapter.adapter_id:
+        raise ValueError(f"Spec adapter_id {spec_adapter} does not match selected adapter {adapter.adapter_id}.")
+    return spec
+
+
+def _spec_snapshot(adapter_id: str, source_file: str, spec: dict[str, Any]) -> dict[str, Any]:
+    snapshot = copy.deepcopy(spec)
+    return {
+        "adapter_id": adapter_id,
+        "source_file": source_file,
+        "spec_id": snapshot.get("spec_id"),
+        "version": snapshot.get("version"),
+        "label": snapshot.get("label"),
+        "transient": bool(snapshot.get("transient", False)),
+        "spec": snapshot,
     }
 
 

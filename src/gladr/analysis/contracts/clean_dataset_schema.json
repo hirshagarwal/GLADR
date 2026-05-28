@@ -20,7 +20,7 @@
     {"name": "resection_type", "type": "string", "nullable": true, "description": "Derived resection type"},
     {"name": "postop_mri_date", "type": "date", "nullable": true, "description": "Post-operative MRI date"},
     {"name": "five_ala", "type": "boolean", "nullable": true, "description": "5-ALA usage"},
-    {"name": "residual_enhancement", "type": "string", "nullable": true, "description": "Residual contrast enhancement"},
+    {"name": "residual_enhancement", "type": "boolean", "nullable": true, "description": "Residual contrast enhancement"},
     {"name": "radiotherapy", "type": "boolean", "nullable": true, "description": "Radiotherapy status"},
     {"name": "tmz", "type": "boolean", "nullable": true, "description": "TMZ treatment status"},
     {"name": "recurrence_date", "type": "date", "nullable": true, "description": "Date of first recurrence evidence"},

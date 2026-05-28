@@ -221,7 +221,7 @@ The current dashboard has:
 - renderers for scalar cards, tables, bars, histograms, and multi-panel outputs
 - a runs view showing versioned ingestion lanes and downstream artifacts
 
-The dashboard should remain a reader over artifacts. It should not become the source of truth for pipeline state or execute pipeline logic.
+The dashboard should remain a reader over artifacts and a thin control surface for server-owned runners. It should not become the source of truth for pipeline state or contain ingestion, analysis, or visualization logic in browser code.
 
 ## Shared Runtime
 

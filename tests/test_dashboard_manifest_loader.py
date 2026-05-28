@@ -55,11 +55,11 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             )
             _write_json(
                 paths.analysis_artifacts_outputs_dir / "cohort_summary_20260419_100500.json",
-                _analysis_payload("cohort_summary", "Cohort", "20260419_100500", "20260419_100000"),
+                _analysis_payload("cohort_summary", "Cohort", "20260419_100500", "20260419_100000", "2026-04-19T10:05:00-04:00"),
             )
             _write_json(
                 paths.analysis_artifacts_outputs_dir / "age_distribution_20260419_100600.json",
-                _analysis_payload("age_distribution", "Age", "20260419_100600", "20260419_100000"),
+                _analysis_payload("age_distribution", "Age", "20260419_100600", "20260419_100000", "2026-04-19T10:06:00-04:00"),
             )
 
             payload = load_dashboard_payload(paths)
@@ -68,10 +68,11 @@ class DashboardManifestLoaderTests(unittest.TestCase):
             self.assertEqual(payload["summary"]["analysis_artifacts"], 2)
             self.assertEqual(payload["summary"]["visualizations"], 2)
             self.assertEqual({item["script_id"] for item in payload["analyses"]}, {"cohort_summary", "age_distribution"})
+            self.assertEqual([item["script_id"] for item in payload["analyses"]], ["age_distribution", "cohort_summary"])
             self.assertEqual(len(payload["pipeline"]), 1)
             self.assertEqual(len(payload["pipeline"][0]["stats_runs"]), 2)
             self.assertEqual(len(payload["pipeline"][0]["visualizations"]), 2)
-            self.assertEqual([stage["id"] for stage in payload["stage_summaries"]], ["ingestion", "stats", "visualization"])
+            self.assertEqual([stage["id"] for stage in payload["stage_summaries"]], ["ingestion", "analysis", "visualization"])
             self.assertEqual(payload["stage_summaries"][0]["status"], "completed")
             ingestion_flow = payload["stage_summaries"][0]["current"]["flow"]
             self.assertEqual(ingestion_flow["steps"][0]["label"], "Demo manifest step")
@@ -85,12 +86,12 @@ def _project_paths(root: Path) -> ProjectPaths:
     return ProjectPaths.from_root(root)
 
 
-def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: str) -> dict[str, object]:
+def _analysis_payload(script_id: str, title: str, run_id: str, manifest_run_id: str, run_datetime: str) -> dict[str, object]:
     return {
         "script_id": script_id,
         "run_id": run_id,
         "manifest_run_id": manifest_run_id,
-        "run_datetime": "2026-04-19T10:05:00-04:00",
+        "run_datetime": run_datetime,
         "title": title,
         "description": "Demo analysis",
         "category": "Demo",

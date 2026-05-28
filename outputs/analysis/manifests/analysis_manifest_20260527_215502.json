@@ -1,0 +1,18 @@
+{
+  "run_id": "20260527_215502",
+  "run_datetime": "2026-05-27T21:55:02-04:00",
+  "manifest_run_id": "20260527_215440",
+  "template_id": "univariate_auc_screen",
+  "parameters": {
+    "outcome": "recurrence_local",
+    "predictors": [
+      "histology__MGMT promoter methylation status"
+    ]
+  },
+  "scripts": [
+    "univariate_auc_screen"
+  ],
+  "artifacts": {
+    "univariate_auc_screen": "artifacts/univariate_auc_screen_20260527_215502.json"
+  }
+}

@@ -51,7 +51,9 @@
       }
 
       button,
-      select {
+      input,
+      select,
+      textarea {
         font: inherit;
       }
 
@@ -62,9 +64,9 @@
       header {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
-        gap: 24px;
+        gap: 16px;
         align-items: end;
-        padding: 28px clamp(18px, 4vw, 52px) 18px;
+        padding: 18px clamp(16px, 3vw, 38px) 12px;
         border-bottom: 1px solid rgba(219, 227, 239, 0.72);
         background: rgba(246, 248, 251, 0.88);
         backdrop-filter: blur(16px);
@@ -87,9 +89,9 @@
       .brand-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
         transition: margin 180ms ease;
       }
 
@@ -99,8 +101,8 @@
 
       .brand-mark {
         display: inline-grid;
-        width: 32px;
-        height: 32px;
+        width: 26px;
+        height: 26px;
         place-items: center;
         border-radius: var(--radius);
         background: var(--ink);
@@ -120,7 +122,7 @@
       }
 
       h1 {
-        font-size: clamp(2rem, 4vw, 3.8rem);
+        font-size: clamp(1.7rem, 2.8vw, 2.8rem);
         font-weight: 760;
         letter-spacing: 0;
         line-height: 1;
@@ -133,10 +135,10 @@
 
       .lede {
         max-width: 760px;
-        margin-top: 10px;
+        margin-top: 5px;
         color: var(--muted);
-        font-size: 1rem;
-        line-height: 1.55;
+        font-size: 0.9rem;
+        line-height: 1.35;
         max-height: 4rem;
         overflow: hidden;
         transition:
@@ -170,8 +172,8 @@
 
       .tab,
       .icon-button {
-        min-height: 40px;
-        padding: 9px 12px;
+        min-height: 34px;
+        padding: 6px 10px;
         cursor: pointer;
         transition:
           border-color 160ms ease,
@@ -195,8 +197,8 @@
 
       main {
         display: grid;
-        gap: 18px;
-        padding: 22px clamp(18px, 4vw, 52px) 44px;
+        gap: 12px;
+        padding: 14px clamp(16px, 3vw, 38px) 32px;
       }
 
       .panel {
@@ -207,72 +209,84 @@
       }
 
       .panel-pad {
-        padding: clamp(18px, 3vw, 28px);
+        padding: clamp(12px, 2vw, 18px);
       }
 
       .section-header {
         display: flex;
-        gap: 18px;
+        gap: 12px;
         align-items: flex-start;
         justify-content: space-between;
-        margin-bottom: 18px;
+        margin-bottom: 10px;
       }
 
       .section-title,
       .visual-title {
-        font-size: clamp(1.45rem, 3vw, 2.35rem);
+        font-size: clamp(1.08rem, 1.75vw, 1.55rem);
         font-weight: 760;
-        line-height: 1.08;
+        line-height: 1.12;
         letter-spacing: 0;
+      }
+
+      .compact-section-title {
+        font-size: 0.98rem;
       }
 
       .subtle {
         color: var(--muted);
+        font-size: 0.9rem;
         line-height: 1.45;
       }
 
       .summary-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .metric {
-        min-height: 108px;
-        padding: 16px;
+        min-height: 0;
+        padding: 10px 12px;
+      }
+
+      .metric-line {
+        display: flex;
+        gap: 10px;
+        align-items: baseline;
+        justify-content: space-between;
       }
 
       .metric-value {
-        margin-top: 10px;
-        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        margin-top: 0;
+        font-size: clamp(1.25rem, 2vw, 1.7rem);
         font-weight: 820;
         letter-spacing: 0;
       }
 
       .meta {
-        margin-top: 7px;
+        margin-top: 4px;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.82rem;
         line-height: 1.38;
       }
 
       .pipeline-hero {
         overflow: hidden;
-        padding: clamp(10px, 2vw, 18px) 0 4px;
+        padding: 6px 0 2px;
       }
 
       .pipeline-map {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .stage-button {
         position: relative;
         display: grid;
-        gap: 12px;
-        min-height: 172px;
-        padding: 16px;
+        gap: 9px;
+        min-height: 118px;
+        padding: 12px;
         text-align: left;
         cursor: pointer;
         transition:
@@ -299,21 +313,21 @@
       .stage-button.active,
       .stage-button:hover {
         border-color: var(--accent-2);
-        box-shadow: 0 18px 44px rgba(37, 99, 235, 0.12);
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
         transform: translateY(-1px);
       }
 
       .stage-top {
         display: flex;
-        gap: 12px;
+        gap: 8px;
         align-items: center;
         justify-content: space-between;
       }
 
       .stage-icon {
         display: inline-grid;
-        width: 34px;
-        height: 34px;
+        width: 28px;
+        height: 28px;
         place-items: center;
         border-radius: 50%;
         font-weight: 900;
@@ -335,7 +349,7 @@
       }
 
       .stage-name {
-        font-size: 1.05rem;
+        font-size: 0.98rem;
         font-weight: 800;
       }
 
@@ -344,10 +358,10 @@
       .pill {
         display: inline-flex;
         align-items: center;
-        min-height: 24px;
-        padding: 3px 8px;
+        min-height: 20px;
+        padding: 2px 7px;
         border-radius: var(--radius);
-        font-size: 0.72rem;
+        font-size: 0.68rem;
         font-weight: 850;
         letter-spacing: 0.05em;
         text-transform: uppercase;
@@ -374,27 +388,38 @@
       .stage-metrics {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 8px;
+        gap: 6px;
       }
 
       .mini-metric {
-        padding: 10px;
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        justify-content: space-between;
+        min-width: 0;
+        padding: 7px 8px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
       }
 
+      .mini-metric .metric-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
       .mini-value {
-        margin-top: 5px;
-        font-size: 1.15rem;
+        margin-top: 0;
+        font-size: 1rem;
         font-weight: 820;
       }
 
       .stage-detail {
         display: grid;
         grid-template-columns: minmax(0, 0.9fr) minmax(340px, 1.1fr);
-        gap: 18px;
-        margin-top: 18px;
+        gap: 12px;
+        margin-top: 12px;
         align-items: start;
       }
 
@@ -404,13 +429,13 @@
 
       .detail-summary {
         display: grid;
-        gap: 14px;
+        gap: 10px;
       }
 
       .flow-summary {
         display: grid;
         grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
@@ -423,15 +448,15 @@
 
       .output-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
       }
 
       .output-row {
         display: flex;
-        gap: 12px;
+        gap: 8px;
         align-items: flex-start;
         justify-content: space-between;
-        padding: 11px 12px;
+        padding: 8px 10px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
@@ -443,17 +468,21 @@
 
       .stage-flow {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr) 34px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1fr) 24px minmax(0, 1fr);
+        gap: 8px;
         align-items: stretch;
+        max-height: min(520px, 58vh);
+        overflow: hidden;
       }
 
       .flow-column {
         display: grid;
         align-content: start;
-        gap: 10px;
+        gap: 7px;
         min-width: 0;
-        padding: 14px;
+        max-height: min(520px, 58vh);
+        overflow: auto;
+        padding: 10px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
@@ -461,10 +490,10 @@
 
       .flow-heading {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
         justify-content: space-between;
-        padding-bottom: 8px;
+        padding-bottom: 6px;
         border-bottom: 1px solid var(--line);
       }
 
@@ -478,12 +507,12 @@
         display: grid;
         place-items: center;
         color: var(--muted-2);
-        font-size: 1.4rem;
+        font-size: 1.05rem;
         font-weight: 900;
       }
 
       .flow-item {
-        padding: 10px;
+        padding: 8px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
@@ -495,6 +524,7 @@
         align-items: center;
         justify-content: space-between;
         overflow-wrap: anywhere;
+        font-size: 0.88rem;
         font-weight: 760;
       }
 
@@ -531,36 +561,49 @@
         gap: 7px;
       }
 
-      select {
+      input,
+      select,
+      textarea {
         width: 100%;
-        min-height: 42px;
         padding: 0 12px;
         color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
       }
 
-      select[multiple] {
+      input,
+      select {
+        min-height: 36px;
+      }
+
+      textarea {
         min-height: 180px;
-        padding: 8px;
+        padding: 10px 12px;
+        resize: vertical;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.84rem;
+        line-height: 1.45;
       }
 
       .analysis-workbench {
         display: grid;
         grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
       .variable-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
         max-height: 720px;
         overflow: auto;
       }
 
       .variable-row {
         display: grid;
-        gap: 8px;
-        padding: 12px;
+        gap: 5px;
+        padding: 8px 10px;
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface);
@@ -580,56 +623,76 @@
 
       .template-panel {
         display: grid;
+        gap: 11px;
+      }
+
+      .template-header {
+        display: flex;
         gap: 16px;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+
+      .template-header .pill {
+        margin-top: 3px;
+      }
+
+      .tool-library-controls {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(150px, 0.72fr);
+        gap: 10px;
       }
 
       .canned-tool-selector {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
+        max-height: 310px;
+        overflow: auto;
+        padding: 2px;
       }
 
       .template-card {
         display: grid;
-        grid-template-columns: 52px minmax(0, 1fr);
-        gap: 12px;
+        grid-template-columns: 38px minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
         width: 100%;
-        min-height: 122px;
-        padding: 14px;
+        min-height: 60px;
+        padding: 8px 10px;
         text-align: left;
         border: 1px solid var(--line);
         border-radius: var(--radius);
-        background: var(--surface);
+        background: var(--surface-soft);
         cursor: pointer;
         transition:
+          background 160ms ease,
           border-color 160ms ease,
-          box-shadow 160ms ease,
-          transform 160ms ease;
+          box-shadow 160ms ease;
       }
 
       .template-card:hover,
       .template-card.active {
         border-color: rgba(15, 118, 110, 0.7);
-        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
-        transform: translateY(-1px);
+        background: var(--surface);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
       }
 
       .tool-icon {
         display: grid;
-        width: 52px;
-        height: 52px;
+        width: 38px;
+        height: 38px;
         place-items: center;
         border-radius: var(--radius);
         color: white;
         background: linear-gradient(135deg, var(--accent), var(--accent-2));
-        font-size: 0.82rem;
+        font-size: 0.72rem;
         font-weight: 840;
         letter-spacing: 0;
       }
 
       .tool-card-body {
         display: grid;
-        gap: 7px;
+        gap: 3px;
         min-width: 0;
       }
 
@@ -639,14 +702,18 @@
 
       .tool-card-meta {
         color: var(--muted);
-        font-size: 0.84rem;
-        line-height: 1.4;
+        font-size: 0.78rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
       }
 
       .parameter-grid {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .parameter-grid .wide {
@@ -658,9 +725,177 @@
         margin-bottom: 8px;
       }
 
+      .multi-choice-header {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .multi-choice-list {
+        display: grid;
+        max-height: 220px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .variable-choice {
+        display: grid;
+        grid-template-columns: 18px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        min-height: 38px;
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+      }
+
+      .variable-choice:last-child {
+        border-bottom: 0;
+      }
+
+      .variable-choice:hover {
+        background: var(--surface-soft);
+      }
+
+      .variable-choice input[type="checkbox"] {
+        width: 16px;
+        min-height: 16px;
+        margin: 0;
+        padding: 0;
+      }
+
+      .variable-choice-name {
+        overflow-wrap: anywhere;
+      }
+
       .run-preview {
         display: grid;
         gap: 8px;
+      }
+
+      .ingestion-workbench {
+        display: grid;
+        grid-template-columns: minmax(460px, 1fr) minmax(320px, 0.58fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .step-chain,
+      .preview-table {
+        display: grid;
+        gap: 8px;
+        overflow: auto;
+      }
+
+      .step-chain {
+        max-height: 520px;
+      }
+
+      .preview-table {
+        max-height: 320px;
+      }
+
+      .operation-card,
+      .step-card {
+        display: grid;
+        gap: 5px;
+        padding: 8px 10px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .step-card {
+        cursor: pointer;
+      }
+
+      .step-card.active {
+        border-color: rgba(15, 118, 110, 0.72);
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+      }
+
+      .step-card.disabled {
+        opacity: 0.55;
+      }
+
+      .step-top,
+      .operation-top {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .step-tools {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+      }
+
+      .small-button {
+        min-height: 30px;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        cursor: pointer;
+      }
+
+      .small-button:hover {
+        border-color: var(--ink);
+      }
+
+      .spec-editor {
+        display: grid;
+        gap: 12px;
+      }
+
+      .operation-picker {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .field-grid {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mapping-grid {
+        display: grid;
+        gap: 8px;
+      }
+
+      .mapping-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.8fr);
+        gap: 8px;
+      }
+
+      .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.82rem;
+      }
+
+      .data-table th,
+      .data-table td {
+        max-width: 220px;
+        padding: 8px 9px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+        overflow-wrap: anywhere;
+        vertical-align: top;
       }
 
       .action-row {
@@ -673,21 +908,21 @@
       .analysis-layout {
         display: grid;
         grid-template-columns: 340px minmax(0, 1fr);
-        gap: 18px;
+        gap: 12px;
         align-items: start;
       }
 
       .artifact-list {
         display: grid;
-        gap: 9px;
+        gap: 6px;
         max-height: 680px;
         overflow: auto;
-        padding: 8px;
+        padding: 6px;
       }
 
       .artifact-button {
         width: 100%;
-        padding: 13px;
+        padding: 9px 10px;
         text-align: left;
         color: var(--ink);
         cursor: pointer;
@@ -709,7 +944,7 @@
 
       .visual-shell {
         display: grid;
-        gap: 18px;
+        gap: 12px;
         min-width: 0;
       }
 
@@ -723,19 +958,19 @@
       .cards {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
+        gap: 8px;
       }
 
       .card {
         border: 1px solid var(--line);
         border-radius: var(--radius);
         background: var(--surface-soft);
-        padding: 14px;
+        padding: 10px 12px;
       }
 
       .card-value {
-        margin-top: 8px;
-        font-size: clamp(1.65rem, 3vw, 2.5rem);
+        margin-top: 4px;
+        font-size: clamp(1.25rem, 2vw, 1.7rem);
         font-weight: 820;
         letter-spacing: 0;
       }
@@ -1077,6 +1312,7 @@
         .stage-detail,
         .flow-summary,
         .analysis-workbench,
+        .ingestion-workbench,
         .auc-comparison,
         .canned-tool-selector,
         .parameter-grid,
@@ -1104,8 +1340,22 @@
         .summary-grid,
         .pipeline-map,
         .controls,
+        .tool-library-controls,
         .cards {
           grid-template-columns: 1fr;
+        }
+
+        .template-header {
+          display: grid;
+        }
+
+        .template-card {
+          grid-template-columns: 38px minmax(0, 1fr);
+        }
+
+        .template-card .badge {
+          grid-column: 2;
+          justify-self: start;
         }
 
         header {
@@ -1130,13 +1380,9 @@
           <span class="eyebrow">Pipeline Console</span>
         </div>
         <h1>GLADR Dashboard</h1>
-        <p class="lede">Pipeline status, data quality, analysis outputs, and visualization artifacts for the current GLADR workspace.</p>
+        <p class="lede">Pipeline stages, data quality, analysis setup, and visualization artifacts for the current GLADR workspace.</p>
       </div>
-      <nav class="toolbar" aria-label="Dashboard sections">
-        <button class="tab active" data-tab="overview" type="button">Overview</button>
-        <button class="tab" data-tab="analysis" type="button">Analysis</button>
-        <button class="tab" data-tab="results" type="button">Results</button>
-        <button class="tab" data-tab="runs" type="button">Runs</button>
+      <nav class="toolbar" aria-label="Dashboard actions">
         <button class="tab" id="refresh" type="button">Refresh</button>
       </nav>
     </header>
@@ -1146,8 +1392,8 @@
         <div class="section-header">
           <div>
             <div class="eyebrow">Latest Pipeline</div>
-            <h2 class="section-title">Stage Health</h2>
-            <p class="subtle">Click a stage to inspect its latest output and browse previous versions.</p>
+            <h2 class="section-title">Pipeline Flow</h2>
+            <p class="subtle">Latest stage status and runtime artifacts.</p>
           </div>
           <span class="pill" id="stage-generated">Loading</span>
         </div>
@@ -1170,12 +1416,25 @@
         </section>
 
         <section class="panel panel-pad template-panel">
-          <div>
-            <div class="eyebrow">Canned Tools</div>
-            <h2 class="section-title" id="template-title">Analysis Workbench</h2>
-            <p class="meta" id="template-description"></p>
+          <div class="template-header">
+            <div>
+              <div class="eyebrow">Canned Tools</div>
+              <h2 class="section-title" id="template-title">Analysis Workbench</h2>
+              <p class="meta" id="template-description"></p>
+            </div>
+            <span class="pill" id="template-count">0 tools</span>
           </div>
           <select class="hidden" id="template-select" aria-hidden="true"></select>
+          <div class="tool-library-controls" aria-label="Canned tool filters">
+            <div class="control">
+              <label for="template-search">Find tool</label>
+              <input id="template-search" type="search" placeholder="Search tools" autocomplete="off" />
+            </div>
+            <div class="control">
+              <label for="template-category-filter">Category</label>
+              <select id="template-category-filter"></select>
+            </div>
+          </div>
           <div class="canned-tool-selector" id="template-selector" aria-label="Canned analysis tools"></div>
           <div class="parameter-grid" id="parameter-controls" aria-label="Analysis setup"></div>
           <div class="run-preview" id="analysis-preview"></div>
@@ -1197,7 +1456,7 @@
             <select id="category-filter"></select>
           </div>
           <div class="control">
-            <label for="run-filter">Stats run</label>
+            <label for="run-filter">Analysis run</label>
             <select id="run-filter"></select>
           </div>
         </div>
@@ -1207,17 +1466,6 @@
         <aside class="panel artifact-list" id="artifact-list"></aside>
         <section class="panel panel-pad visual-shell" id="visual-output"></section>
       </section>
-
-      <section class="panel panel-pad hidden" id="pipeline-view">
-        <div class="section-header">
-          <div>
-            <div class="eyebrow">Versioned Runs</div>
-            <h2 class="section-title">Pipeline Lanes</h2>
-          </div>
-          <span class="pill" id="pipeline-count"></span>
-        </div>
-        <div class="pipeline" id="pipeline"></div>
-      </section>
     </main>
 
     <script>
@@ -1225,11 +1473,18 @@
         payload: null,
         filtered: [],
         selectedFilename: null,
-        selectedStage: "ingestion",
+        selectedStage: null,
         stageHistoryIndex: 0,
         selectedTemplateId: null,
+        templateSearch: "",
+        templateCategory: "all",
         parametersByTemplate: {},
-        tab: "overview",
+        ingestionAdapterId: null,
+        ingestionSourceFile: null,
+        ingestionSpecsByAdapter: {},
+        selectedIngestionStepIndex: 0,
+        ingestionPreview: null,
+        ingestionStatus: "",
       };
 
       const els = {
@@ -1242,10 +1497,12 @@
         analysisView: document.getElementById("analysis-view"),
         resultsView: document.getElementById("results-view"),
         resultsBrowser: document.getElementById("results-browser"),
-        pipelineView: document.getElementById("pipeline-view"),
         datasetSummary: document.getElementById("dataset-summary"),
         variableList: document.getElementById("variable-list"),
         templateSelect: document.getElementById("template-select"),
+        templateSearch: document.getElementById("template-search"),
+        templateCategoryFilter: document.getElementById("template-category-filter"),
+        templateCount: document.getElementById("template-count"),
         templateTitle: document.getElementById("template-title"),
         templateSelector: document.getElementById("template-selector"),
         templateDescription: document.getElementById("template-description"),
@@ -1258,10 +1515,7 @@
         runFilter: document.getElementById("run-filter"),
         artifactList: document.getElementById("artifact-list"),
         visualOutput: document.getElementById("visual-output"),
-        pipeline: document.getElementById("pipeline"),
-        pipelineCount: document.getElementById("pipeline-count"),
         refresh: document.getElementById("refresh"),
-        tabs: Array.from(document.querySelectorAll(".tab[data-tab]")),
       };
 
       function escapeHtml(value) {
@@ -1271,6 +1525,10 @@
           .replaceAll(">", "&gt;")
           .replaceAll('"', "&quot;")
           .replaceAll("'", "&#039;");
+      }
+
+      function cloneJson(value) {
+        return JSON.parse(JSON.stringify(value ?? null));
       }
 
       function formatDate(value) {
@@ -1303,13 +1561,13 @@
           const response = await fetch("/api/dashboard-data", { cache: "no-store" });
           if (!response.ok) throw new Error(`Dashboard API returned ${response.status}`);
           state.payload = await response.json();
-          if (!currentStage()) state.selectedStage = state.payload?.stage_summaries?.[0]?.id ?? "ingestion";
+          ensureIngestionState();
+          if (state.selectedStage && !currentStage()) state.selectedStage = null;
           populateFilters();
           applyFilters();
           renderSummary();
           renderStageOverview();
           renderAnalysisSetup();
-          renderPipeline();
         } catch (error) {
           renderApiError(error);
         }
@@ -1325,6 +1583,12 @@
       }
 
       function renderApiError(error) {
+        state.selectedStage = null;
+        els.summary.classList.remove("hidden");
+        els.stageDetail.classList.remove("hidden", "flow-detail");
+        els.analysisView.classList.add("hidden");
+        els.resultsView.classList.add("hidden");
+        els.resultsBrowser.classList.add("hidden");
         els.summary.innerHTML = "";
         els.stageMap.innerHTML = "";
         els.stageDetail.innerHTML = `
@@ -1343,7 +1607,7 @@
         const runIds = uniqueValues(analyses.map((item) => item.run_id).filter(Boolean));
 
         els.categoryFilter.innerHTML = option("all", "All categories") + categories.map((value) => option(value, value)).join("");
-        els.runFilter.innerHTML = option("all", "All stats runs") + runIds.map((value) => option(value, value)).join("");
+        els.runFilter.innerHTML = option("all", "All analysis runs") + runIds.map((value) => option(value, value)).join("");
       }
 
       function applyFilters() {
@@ -1373,7 +1637,7 @@
         const latestIngestion = (state.payload?.ingestion_runs ?? []).find((run) => run.is_latest);
         els.summary.innerHTML = [
           metricCard("Ingestion runs", summary.ingestion_runs ?? 0, "Versioned clean-stage manifests"),
-          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Stats outputs discovered"),
+          metricCard("Analysis artifacts", summary.analysis_artifacts ?? 0, "Analysis outputs discovered"),
           metricCard("Visualizations", summary.visualizations ?? 0, "Renderable chart contracts"),
           metricCard("Latest cohort", latestIngestion?.total_rows ?? "NA", latestIngestion ? formatDate(latestIngestion.run_datetime) : "No ingestion run"),
         ].join("");
@@ -1389,26 +1653,46 @@
         }
 
         els.stageMap.innerHTML = stages.map(renderStageButton).join("");
-        renderStageDetail();
+        renderSelectedStageView();
+      }
+
+      function renderSelectedStageView() {
+        const showOverview = !state.selectedStage;
+        const showAnalysis = state.selectedStage === "analysis";
+        const showVisualization = state.selectedStage === "visualization";
+        const showStageDetail = Boolean(state.selectedStage && !showAnalysis && !showVisualization);
+
+        els.summary.classList.toggle("hidden", !showOverview);
+        els.analysisView.classList.toggle("hidden", !showAnalysis);
+        els.resultsView.classList.toggle("hidden", !showVisualization);
+        els.resultsBrowser.classList.toggle("hidden", !showVisualization);
+        els.stageDetail.classList.toggle("hidden", !showStageDetail);
+
+        if (showStageDetail) {
+          renderStageDetail();
+          return;
+        }
+
+        els.stageDetail.classList.remove("flow-detail");
+        els.stageDetail.innerHTML = "";
       }
 
       function renderStageButton(stage) {
         const current = stage.current;
         const metrics = current?.metrics ?? [];
         return `
-          <button class="stage-button ${stage.id === state.selectedStage ? "active" : ""}" type="button" data-stage-id="${escapeHtml(stage.id)}">
+          <button class="stage-button ${stage.id === state.selectedStage ? "active" : ""}" type="button" data-stage-id="${escapeHtml(stage.id)}" title="${escapeHtml(current?.title ?? stage.label)}">
             <div class="stage-top">
               <span class="stage-icon ${escapeHtml(stage.status)}">${stageIcon(stage.status)}</span>
               <span class="status-pill ${escapeHtml(stage.status)}">${escapeHtml(stage.status)}</span>
             </div>
             <div>
               <div class="stage-name">${escapeHtml(stage.label)}</div>
-              <div class="meta">${escapeHtml(current?.title ?? "No output yet")}</div>
             </div>
             <div class="stage-metrics">
               ${metrics.slice(0, 3).map((metric) => `
-                <div class="mini-metric">
-                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                  <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                   <div class="mini-value">${escapeHtml(metric.value)}</div>
                 </div>
               `).join("")}
@@ -1420,7 +1704,8 @@
       function renderStageDetail() {
         const stage = currentStage();
         if (!stage) {
-          els.stageDetail.innerHTML = '<div class="empty">Select a pipeline stage.</div>';
+          els.stageDetail.classList.remove("flow-detail");
+          els.stageDetail.innerHTML = "";
           return;
         }
 
@@ -1436,11 +1721,12 @@
               </div>
             </div>
             <div class="empty">Status: ${escapeHtml(stage.status)}</div>
+            ${stage.id === "ingestion" ? renderIngestionWorkbench() : ""}
           `;
           return;
         }
 
-        const versionLabel = history.length ? `${state.stageHistoryIndex + 1} of ${history.length}` : "Latest";
+        const versionLabel = history.length ? `${state.stageHistoryIndex + 1}/${history.length}` : "Latest";
         els.stageDetail.classList.toggle("flow-detail", Boolean(selected.flow));
         if (selected.flow) {
           els.stageDetail.innerHTML = `
@@ -1448,13 +1734,13 @@
               <div class="detail-summary">
                 <div>
                   <div class="eyebrow">${escapeHtml(stage.label)} Detail</div>
-                  <h3 class="section-title">${escapeHtml(selected.title)}</h3>
+                  <h3 class="section-title" title="${escapeHtml(selected.title)}">${escapeHtml(stage.label)}</h3>
                   <p class="meta">${escapeHtml(selected.description ?? "")}</p>
                 </div>
                 <div class="stage-metrics">
                   ${(selected.metrics ?? []).map((metric) => `
-                    <div class="mini-metric">
-                      <div class="metric-label">${escapeHtml(metric.label)}</div>
+                    <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                      <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                       <div class="mini-value">${escapeHtml(metric.value)}</div>
                     </div>
                   `).join("")}
@@ -1462,8 +1748,8 @@
               </div>
               <div class="detail-summary">
                 <div class="detail-actions">
-                  <button class="icon-button" type="button" data-history-step="previous">Previous version</button>
-                  <button class="icon-button" type="button" data-history-step="next">Next version</button>
+                  <button class="icon-button" type="button" data-history-step="previous" title="Previous version">Prev</button>
+                  <button class="icon-button" type="button" data-history-step="next" title="Next version">Next</button>
                   <span class="pill">${escapeHtml(versionLabel)}</span>
                   ${selected.is_latest ? '<span class="badge">latest</span>' : ""}
                 </div>
@@ -1476,11 +1762,12 @@
               <div class="section-header">
                 <div>
                   <div class="eyebrow">Run Flow</div>
-                  <h3 class="section-title">Input Files → Processing → Result Files</h3>
+                  <h3 class="section-title compact-section-title">Input → Process → Results</h3>
                 </div>
               </div>
               ${renderStageFlow(selected.flow)}
             </div>
+            ${stage.id === "ingestion" ? renderIngestionWorkbench() : ""}
           `;
           return;
         }
@@ -1490,20 +1777,20 @@
           <div class="panel panel-pad detail-summary">
             <div>
               <div class="eyebrow">${escapeHtml(stage.label)} Detail</div>
-              <h3 class="section-title">${escapeHtml(selected.title)}</h3>
+              <h3 class="section-title" title="${escapeHtml(selected.title)}">${escapeHtml(stage.label)}</h3>
               <p class="meta">${escapeHtml(selected.description ?? "")}</p>
             </div>
             <div class="stage-metrics">
               ${(selected.metrics ?? []).map((metric) => `
-                <div class="mini-metric">
-                  <div class="metric-label">${escapeHtml(metric.label)}</div>
+                <div class="mini-metric" title="${escapeHtml(metric.label)}: ${escapeHtml(metric.value)}">
+                  <div class="metric-label">${escapeHtml(compactMetricLabel(metric.label))}</div>
                   <div class="mini-value">${escapeHtml(metric.value)}</div>
                 </div>
               `).join("")}
             </div>
             <div class="detail-actions">
-              <button class="icon-button" type="button" data-history-step="previous">Previous version</button>
-              <button class="icon-button" type="button" data-history-step="next">Next version</button>
+              <button class="icon-button" type="button" data-history-step="previous" title="Previous version">Prev</button>
+              <button class="icon-button" type="button" data-history-step="next" title="Next version">Next</button>
               <span class="pill">${escapeHtml(versionLabel)}</span>
               ${selected.is_latest ? '<span class="badge">latest</span>' : ""}
             </div>
@@ -1535,6 +1822,17 @@
         `;
       }
 
+      function compactMetricLabel(label) {
+        const normalized = String(label ?? "").toLowerCase();
+        const labels = {
+          "flagged records": "Flagged",
+          "cohort n": "Cohort",
+          "source count": "Sources",
+          "total rows": "Rows",
+        };
+        return labels[normalized] ?? label;
+      }
+
       function renderFlowColumn(title, items) {
         return `
           <div class="flow-column">
@@ -1554,7 +1852,6 @@
               <span>${escapeHtml(item.label)}</span>
               ${item.execution_mode ? `<span class="mode-badge ${escapeHtml(item.execution_mode)}">${escapeHtml(formatExecutionMode(item.execution_mode))}</span>` : ""}
             </div>
-            <div class="meta">${escapeHtml(item.detail ?? "")}</div>
           </div>
         `;
       }
@@ -1584,6 +1881,415 @@
           </div>
         `);
         return `<div class="output-list">${outputRows.concat(fileRows).join("")}</div>`;
+      }
+
+      function ensureIngestionState() {
+        const adapters = state.payload?.ingestion_workbench?.adapters ?? [];
+        if (!adapters.length) return;
+        if (!adapters.some((adapter) => adapter.adapter_id === state.ingestionAdapterId)) {
+          state.ingestionAdapterId = adapters[0].adapter_id;
+        }
+        const adapter = currentIngestionAdapter();
+        if (!adapter) return;
+        const files = adapter.source_files ?? [];
+        if (!files.some((file) => file.path === state.ingestionSourceFile)) {
+          state.ingestionSourceFile = files[0]?.path ?? null;
+        }
+        if (!state.ingestionSpecsByAdapter[adapter.adapter_id]) {
+          state.ingestionSpecsByAdapter[adapter.adapter_id] = cloneJson(adapter.default_spec);
+        }
+        const spec = currentIngestionSpec();
+        if (spec?.steps?.length && state.selectedIngestionStepIndex >= spec.steps.length) {
+          state.selectedIngestionStepIndex = spec.steps.length - 1;
+        }
+      }
+
+      function currentIngestionAdapter() {
+        return (state.payload?.ingestion_workbench?.adapters ?? [])
+          .find((adapter) => adapter.adapter_id === state.ingestionAdapterId) ?? null;
+      }
+
+      function currentIngestionSpec() {
+        const adapter = currentIngestionAdapter();
+        if (!adapter) return null;
+        state.ingestionSpecsByAdapter[adapter.adapter_id] = state.ingestionSpecsByAdapter[adapter.adapter_id] ?? cloneJson(adapter.default_spec);
+        return state.ingestionSpecsByAdapter[adapter.adapter_id];
+      }
+
+      function renderIngestionWorkbench() {
+        ensureIngestionState();
+        const adapter = currentIngestionAdapter();
+        const spec = currentIngestionSpec();
+        if (!adapter || !spec) return '<div class="panel panel-pad"><div class="empty">No ingestion adapters are available.</div></div>';
+        const adapters = state.payload?.ingestion_workbench?.adapters ?? [];
+        const files = adapter.source_files ?? [];
+        const steps = spec.steps ?? [];
+        const selectedStep = steps[state.selectedIngestionStepIndex] ?? steps[0] ?? null;
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Ingestion Workbench</div>
+                <h3 class="section-title">Transform Builder</h3>
+                <p class="meta">Edits here are transient for preview and run; the packaged default spec is not overwritten.</p>
+              </div>
+              <span class="pill">${escapeHtml(spec.label ?? "Transient spec")}</span>
+            </div>
+            <div class="ingestion-workbench">
+              <div class="spec-editor">
+                <div class="controls">
+                  <div class="control">
+                    <label for="ingestion-adapter">Adapter</label>
+                    <select id="ingestion-adapter" data-ingestion-control="adapter">
+                      ${adapters.map((item) => selectedOption(item.adapter_id, item.adapter_id, item.adapter_id === state.ingestionAdapterId)).join("")}
+                    </select>
+                  </div>
+                  <div class="control">
+                    <label for="ingestion-source-file">Source file</label>
+                    <select id="ingestion-source-file" data-ingestion-control="source">
+                      ${files.length ? files.map((file) => selectedOption(file.path, `${file.name} (${file.rows ?? "?"} rows)`, file.path === state.ingestionSourceFile)).join("") : option("", "No matched files")}
+                    </select>
+                  </div>
+                </div>
+                <div class="operation-picker">
+                  <div class="control">
+                    <label for="ingestion-add-operation">Add operation</label>
+                    <select id="ingestion-add-operation" data-ingestion-control="add-operation">
+                      ${adapter.operations.map((operation) => option(operation.operation, `${operation.category}: ${operation.label}`)).join("")}
+                    </select>
+                  </div>
+                  <button class="icon-button" type="button" data-ingestion-action="add-selected-operation">Add step</button>
+                </div>
+                <div class="action-row">
+                  <button class="icon-button" type="button" data-ingestion-action="preview">Preview</button>
+                  <button class="icon-button" type="button" data-ingestion-action="run">Run ingestion</button>
+                  <button class="icon-button" type="button" data-ingestion-action="reset">Reset spec</button>
+                  <span class="meta" id="ingestion-status">${escapeHtml(state.ingestionStatus)}</span>
+                </div>
+                ${renderIngestionStepEditor(selectedStep, adapter)}
+                ${renderIngestionPreview()}
+              </div>
+              <aside class="spec-editor">
+                <div class="panel panel-pad">
+                  <div class="section-header">
+                    <div>
+                      <div class="eyebrow">Step Chain</div>
+                      <h3 class="section-title">${escapeHtml(steps.length)} steps</h3>
+                    </div>
+                  </div>
+                  <div class="step-chain">
+                    ${steps.length ? steps.map(renderIngestionStepCard).join("") : '<div class="empty">No steps in this spec.</div>'}
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderIngestionStepCard(step, index) {
+        return `
+          <button class="step-card ${index === state.selectedIngestionStepIndex ? "active" : ""} ${step.enabled === false ? "disabled" : ""}" type="button" data-ingestion-step="${escapeHtml(index)}">
+            <span class="step-top">
+              <strong>${escapeHtml(step.label ?? step.id ?? step.operation)}</strong>
+              <span class="badge">${escapeHtml(step.operation)}</span>
+            </span>
+          </button>
+        `;
+      }
+
+      function renderIngestionStepEditor(step, adapter) {
+        if (!step) return '<div class="panel panel-pad"><div class="empty">Select or add a transform step.</div></div>';
+        const operation = adapter.operations.find((item) => item.operation === step.operation);
+        const schema = operation?.schema ?? {};
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Selected Step</div>
+                <h3 class="section-title">${escapeHtml(step.label ?? step.operation)}</h3>
+              </div>
+              <span class="badge">${escapeHtml(state.selectedIngestionStepIndex + 1)}</span>
+            </div>
+            <div class="preview-grid">
+              <div class="node">
+                <div class="eyebrow">Expects</div>
+                <div class="meta">${escapeHtml((schema.expects ?? []).join(", ") || "Working dataset")}</div>
+              </div>
+              <div class="node">
+                <div class="eyebrow">Produces</div>
+                <div class="meta">${escapeHtml((schema.produces ?? []).join(", ") || "Updated working dataset")}</div>
+              </div>
+              <div class="node">
+                <div class="eyebrow">Config</div>
+                <div class="meta">${escapeHtml((schema.config ?? []).map((item) => item.label).join(", ") || "No options")}</div>
+              </div>
+            </div>
+            <div class="parameter-grid">
+              <div class="control">
+                <label for="ingestion-step-operation">Operation</label>
+                <select id="ingestion-step-operation" data-step-field="operation">
+                  ${adapter.operations.map((operation) => selectedOption(operation.operation, operation.label, operation.operation === step.operation)).join("")}
+                </select>
+              </div>
+              ${renderOperationParams(step, adapter)}
+            </div>
+            <div class="action-row">
+              <button class="small-button" type="button" data-ingestion-action="toggle-step">${step.enabled === false ? "Enable" : "Disable"}</button>
+              <button class="small-button" type="button" data-ingestion-action="move-step-up">Move up</button>
+              <button class="small-button" type="button" data-ingestion-action="move-step-down">Move down</button>
+              <button class="small-button" type="button" data-ingestion-action="duplicate-step">Duplicate</button>
+              <button class="small-button" type="button" data-ingestion-action="delete-step">Delete</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderOperationParams(step, adapter) {
+        const params = step.params ?? {};
+        if (step.operation === "map_columns") {
+          const rows = Object.entries(params.columns ?? {}).slice(0, 18);
+          return `
+            <div class="control wide">
+              <label>Column mappings</label>
+              <div class="mapping-grid">
+                ${rows.map(([source, target], index) => `
+                  <div class="mapping-row">
+                    <input data-step-param="columns" data-param-index="${escapeHtml(index)}" data-param-side="source" value="${escapeHtml(source)}" />
+                    <input data-step-param="columns" data-param-index="${escapeHtml(index)}" data-param-side="target" value="${escapeHtml(target)}" />
+                    <span class="meta">source → output</span>
+                  </div>
+                `).join("")}
+              </div>
+              <div class="meta">${escapeHtml(Object.keys(params.columns ?? {}).length)} mappings in this step.</div>
+            </div>
+          `;
+        }
+
+        if (step.operation === "parse_date") {
+          const mappings = Array.isArray(params.mappings) ? params.mappings : [];
+          return `
+            <div class="control wide">
+              <label>Date mappings</label>
+              <div class="mapping-grid">
+                ${mappings.map((mapping, index) => `
+                  <div class="mapping-row">
+                    <input data-step-param="mappings" data-param-index="${escapeHtml(index)}" data-param-key="source" value="${escapeHtml(mapping.source ?? "")}" />
+                    <input data-step-param="mappings" data-param-index="${escapeHtml(index)}" data-param-key="target" value="${escapeHtml(mapping.target ?? "")}" />
+                    <input data-step-param="mappings" data-param-index="${escapeHtml(index)}" data-param-key="invalid_flag" value="${escapeHtml(mapping.invalid_flag ?? "")}" placeholder="optional flag" />
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        }
+
+        if (["normalize_text", "normalize_category", "normalize_boolean", "to_float", "validate_required_columns"].includes(step.operation)) {
+          const key = step.operation === "validate_required_columns" ? "columns" : "fields";
+          return renderCsvParam(key, key === "columns" ? "Columns" : "Fields", params[key]);
+        }
+
+        if (step.operation === "remove_stub_rows") {
+          return renderTextParam("id_column", "Identifier column", params.id_column ?? "patient_id");
+        }
+
+        if (step.operation === "lookup_mapping") {
+          return `
+            ${renderCsvParam("fields", "Fields", params.fields)}
+            ${renderTextParam("mapping_file", "Mapping file", params.mapping_file ?? "")}
+          `;
+        }
+
+        if (step.operation === "join_data_file") {
+          return `
+            <div class="control wide">
+              <label>Data file</label>
+              <select data-step-param="file">
+                ${renderDataFileOptions(params.file)}
+              </select>
+            </div>
+            ${renderTextParam("left_key", "Left key", params.left_key ?? "patient_id")}
+            ${renderTextParam("right_key", "Right key", params.right_key ?? "k_number")}
+            <div class="control">
+              <label>Join type</label>
+              <select data-step-param="join_type">
+                ${["left", "inner", "outer"].map((value) => selectedOption(value, value, value === (params.join_type ?? "left"))).join("")}
+              </select>
+            </div>
+            ${renderCsvParam("columns", "Columns to join", params.columns)}
+            ${renderTextParam("right_prefix", "Output prefix", params.right_prefix ?? "")}
+            <div class="control">
+              <label>Pivot index</label>
+              <input data-step-param="pivot" data-param-key="index" value="${escapeHtml(params.pivot?.index ?? "")}" />
+            </div>
+            <div class="control">
+              <label>Pivot columns</label>
+              <input data-step-param="pivot" data-param-key="columns" value="${escapeHtml(params.pivot?.columns ?? "")}" />
+            </div>
+            <div class="control">
+              <label>Pivot values</label>
+              <input data-step-param="pivot" data-param-key="values" value="${escapeHtml(params.pivot?.values ?? "")}" />
+            </div>
+            <div class="control">
+              <label>Pivot prefix</label>
+              <input data-step-param="pivot" data-param-key="prefix" value="${escapeHtml(params.pivot?.prefix ?? "")}" />
+            </div>
+          `;
+        }
+
+        if (step.operation === "derive_age") {
+          return `
+            ${renderTextParam("source", "Source age", params.source ?? "")}
+            ${renderTextParam("dob", "Date of birth", params.dob ?? "")}
+            ${renderTextParam("presentation_date", "Presentation date", params.presentation_date ?? "")}
+            ${renderTextParam("output", "Output", params.output ?? "")}
+            ${renderTextParam("missing_flag", "Missing flag", params.missing_flag ?? "")}
+          `;
+        }
+
+        if (step.operation === "compute_ratio") {
+          return `
+            ${renderTextParam("numerator", "Numerator", params.numerator ?? "")}
+            ${renderTextParam("denominator", "Denominator", params.denominator ?? "")}
+            ${renderTextParam("output", "Output", params.output ?? "")}
+          `;
+        }
+
+        if (step.operation === "set_value") {
+          return `
+            ${renderTextParam("field", "Field", params.field ?? "")}
+            ${renderTextParam("value", "Value", params.value ?? "")}
+          `;
+        }
+
+        if (step.operation === "static_code") {
+          const functions = (adapter.operations.find((operation) => operation.operation === "static_code")?.functions ?? []);
+          return `
+            <div class="control wide">
+              <label for="ingestion-step-function">Static code function</label>
+              <select id="ingestion-step-function" data-step-field="custom-function">
+                ${functions.map((fn) => selectedOption(fn.function, fn.label, fn.function === params.function)).join("")}
+              </select>
+            </div>
+            ${renderCsvParam("inputs", "Inputs", params.inputs)}
+            ${renderCsvParam("outputs", "Outputs", params.outputs)}
+          `;
+        }
+
+        return '<div class="empty wide">This step has no configurable fields.</div>';
+      }
+
+      function renderCsvParam(key, label, value) {
+        const text = Array.isArray(value) ? value.join(", ") : (value ?? "");
+        return `
+          <div class="control wide">
+            <label>${escapeHtml(label)}</label>
+            <input data-step-param="${escapeHtml(key)}" data-param-kind="csv" value="${escapeHtml(text)}" />
+          </div>
+        `;
+      }
+
+      function renderTextParam(key, label, value) {
+        return `
+          <div class="control">
+            <label>${escapeHtml(label)}</label>
+            <input data-step-param="${escapeHtml(key)}" value="${escapeHtml(value)}" />
+          </div>
+        `;
+      }
+
+      function renderDataFileOptions(selectedPath) {
+        const files = state.payload?.ingestion_workbench?.data_files ?? [];
+        if (!files.length) return option("", "No data files found");
+        return files.map((file) => {
+          const latest = file.is_latest ? " latest" : "";
+          const rows = file.rows === null || file.rows === undefined ? "?" : file.rows;
+          return selectedOption(file.path, `${file.label}: ${file.name}${latest} (${rows} rows)`, file.path === selectedPath);
+        }).join("");
+      }
+
+      function renderIngestionPreview() {
+        const preview = state.ingestionPreview;
+        if (!preview) {
+          return `
+            <div class="panel panel-pad">
+              <div class="section-header">
+                <div>
+                  <div class="eyebrow">Preview</div>
+                  <h3 class="section-title">No preview yet</h3>
+                </div>
+              </div>
+              <div class="empty">Run preview to inspect transformed variables, row flags, and sample output before writing artifacts.</div>
+            </div>
+          `;
+        }
+        const transformed = preview.transformed_profile?.variables ?? [];
+        const source = preview.source_profile?.variables ?? [];
+        return `
+          <div class="panel panel-pad">
+            <div class="section-header">
+              <div>
+                <div class="eyebrow">Preview</div>
+                <h3 class="section-title">${escapeHtml(preview.summary?.rows_ingested ?? 0)} transformed rows</h3>
+                <p class="meta">${escapeHtml(preview.source_file)} | ${escapeHtml(preview.summary?.rows_stub ?? 0)} stub rows skipped</p>
+              </div>
+              <span class="pill">${escapeHtml(preview.steps?.length ?? 0)} steps</span>
+            </div>
+            <div class="preview-grid">
+              <div class="variable-list">
+                <div class="eyebrow">Source Variables</div>
+                ${source.slice(0, 12).map(renderCompactVariable).join("")}
+              </div>
+              <div class="variable-list">
+                <div class="eyebrow">Transformed Variables</div>
+                ${transformed.slice(0, 12).map(renderCompactVariable).join("")}
+              </div>
+              <div class="variable-list">
+                <div class="eyebrow">Quality Flags</div>
+                ${(preview.quality_report ?? []).filter((row) => row.flags?.length).slice(0, 12).map((row) => `
+                  <div class="variable-row">
+                    <div class="variable-name">${escapeHtml(row.patient_id ?? "Unknown")}</div>
+                    <div class="meta">${escapeHtml((row.flags ?? []).join(", "))}</div>
+                  </div>
+                `).join("") || '<div class="empty">No preview flags.</div>'}
+              </div>
+            </div>
+            <div class="preview-table">${renderDataTable(preview.rows ?? [])}</div>
+          </div>
+        `;
+      }
+
+      function renderCompactVariable(variable) {
+        return `
+          <div class="variable-row">
+            <div class="variable-row-top">
+              <div class="variable-name">${escapeHtml(variable.name)}</div>
+              <span class="badge">${escapeHtml(variable.type)}</span>
+            </div>
+            <div class="meta">${escapeHtml(variable.non_null)} present | ${escapeHtml(variable.missing_pct)}% missing | ${escapeHtml(variable.unique_count)} unique</div>
+          </div>
+        `;
+      }
+
+      function renderDataTable(rows) {
+        if (!rows.length) return '<div class="empty">No preview rows.</div>';
+        const columns = Object.keys(rows[0]).slice(0, 10);
+        return `
+          <table class="data-table">
+            <thead><tr>${columns.map((column) => `<th>${escapeHtml(column)}</th>`).join("")}</tr></thead>
+            <tbody>
+              ${rows.map((row) => `
+                <tr>${columns.map((column) => `<td>${escapeHtml(formatCellValue(row[column]))}</td>`).join("")}</tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+      }
+
+      function formatCellValue(value) {
+        if (Array.isArray(value)) return value.join(", ");
+        if (value && typeof value === "object") return JSON.stringify(value);
+        return value ?? "";
       }
 
       function currentStage() {
@@ -1646,18 +2352,34 @@
       }
 
       function renderTemplateSelector(templates) {
-        els.templateSelector.innerHTML = templates.length
-          ? templates.map((template) => `
+        const categories = uniqueValues(templates.map((template) => template.category).filter(Boolean));
+        if (state.templateCategory !== "all" && !categories.includes(state.templateCategory)) state.templateCategory = "all";
+        const query = state.templateSearch.trim().toLowerCase();
+        const visibleTemplates = templates.filter((template) => {
+          const matchesCategory = state.templateCategory === "all" || template.category === state.templateCategory;
+          const searchable = [template.title, template.description, template.output, template.category]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase();
+          return matchesCategory && (!query || searchable.includes(query));
+        });
+
+        els.templateSearch.value = state.templateSearch;
+        els.templateCategoryFilter.innerHTML = option("all", "All categories") + categories.map((category) => option(category, category)).join("");
+        els.templateCategoryFilter.value = categories.includes(state.templateCategory) ? state.templateCategory : "all";
+        els.templateCount.textContent = `${visibleTemplates.length}/${templates.length} tools`;
+        els.templateSelector.innerHTML = visibleTemplates.length
+          ? visibleTemplates.map((template) => `
             <button class="template-card ${template.template_id === state.selectedTemplateId ? "active" : ""}" type="button" data-template-id="${escapeHtml(template.template_id)}">
               <span class="tool-icon">${escapeHtml(template.icon ?? "GL")}</span>
               <span class="tool-card-body">
                 <span class="tool-card-title">${escapeHtml(template.title)}</span>
                 <span class="tool-card-meta">${escapeHtml(template.output)}</span>
-                <span class="badge">${escapeHtml(template.category ?? "Analysis")}</span>
               </span>
+              <span class="badge">${escapeHtml(template.category ?? "Analysis")}</span>
             </button>
           `).join("")
-          : '<div class="empty">No canned tools are available.</div>';
+          : '<div class="empty">No canned tools match the current filters.</div>';
       }
 
       function ensureTemplateParameters(template, variables) {
@@ -1720,13 +2442,30 @@
           const filterOptions = ["all", ...(parameter.accepted_types ?? [])]
             .map((type) => `<option value="${escapeHtml(type)}" ${type === filter ? "selected" : ""}>${escapeHtml(type === "all" ? "All modelable" : type)}</option>`)
             .join("");
+          const choices = candidates.length
+            ? candidates.map((variable) => `
+                <label class="variable-choice">
+                  <input
+                    type="checkbox"
+                    data-param-choice="${escapeHtml(parameter.name)}"
+                    value="${escapeHtml(variable.name)}"
+                    ${selected.has(variable.name) ? "checked" : ""}
+                  />
+                  <span class="variable-choice-name">${escapeHtml(variable.name)}</span>
+                  <span class="badge">${escapeHtml(variable.type)}</span>
+                </label>
+              `).join("")
+            : '<div class="empty">No variables match this filter.</div>';
           return `
             <div class="control wide">
-              <label for="analysis-param-${escapeHtml(parameter.name)}">${escapeHtml(parameter.label)}${requiredLabel}</label>
+              <div class="multi-choice-header">
+                <label for="analysis-param-${escapeHtml(parameter.name)}">${escapeHtml(parameter.label)}${requiredLabel}</label>
+                <span class="badge gold">${escapeHtml(selected.size)} selected</span>
+              </div>
               <select class="type-filter" data-param-filter="${escapeHtml(parameter.name)}">${filterOptions}</select>
-              <select id="analysis-param-${escapeHtml(parameter.name)}" data-param-name="${escapeHtml(parameter.name)}" data-param-kind="multi_variable" multiple>
-                ${candidates.map((variable) => `<option value="${escapeHtml(variable.name)}" ${selected.has(variable.name) ? "selected" : ""}>${escapeHtml(variable.name)} (${escapeHtml(variable.type)})</option>`).join("")}
-              </select>
+              <div class="multi-choice-list" id="analysis-param-${escapeHtml(parameter.name)}">
+                ${choices}
+              </div>
             </div>
           `;
         }
@@ -1777,6 +2516,38 @@
         }
 
         els.runAnalysis.disabled = false;
+        if (template.template_id === "multivariable_logistic_regression") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} multivariable logistic model</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} predictors</span>
+              </div>
+              <div class="meta">
+                Fits one user-selected logistic regression model and reports odds ratios, apparent AUC, and stratified CV AUC when feasible.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        if (template.template_id === "lasso_logistic_regression") {
+          const predictors = parameters.predictors ?? [];
+          els.analysisPreview.innerHTML = `
+            <div class="node">
+              <div class="artifact-title">
+                <span>${escapeHtml(parameters.outcome)} LASSO selection</span>
+                <span class="badge gold">${escapeHtml(predictors.length)} candidates</span>
+              </div>
+              <div class="meta">
+                Fits a multivariable L1-regularized logistic model, selects lambda by stratified cross-validation when feasible, and stores coefficient rankings for Results.
+              </div>
+            </div>
+          `;
+          return;
+        }
+
         if (template.template_id === "cox_regression") {
           const predictors = parameters.predictors ?? [];
           els.analysisPreview.innerHTML = `
@@ -1842,11 +2613,10 @@
           els.categoryFilter.value = "all";
           els.runFilter.value = "all";
           applyFilters();
+          state.selectedStage = "visualization";
           renderSummary();
           renderStageOverview();
           renderAnalysisSetup();
-          renderPipeline();
-          setTab("results");
         } catch (error) {
           els.analysisRunStatus.textContent = error.message;
           els.runAnalysis.disabled = false;
@@ -1891,7 +2661,7 @@
             <div>${analysis.is_latest ? '<span class="badge">latest</span>' : ""}</div>
           </div>
           <div class="meta">
-            Stats run ${escapeHtml(analysis.run_id)} | Ingestion run ${escapeHtml(analysis.manifest_run_id)} |
+            Analysis run ${escapeHtml(analysis.run_id)} | Ingestion run ${escapeHtml(analysis.manifest_run_id)} |
             n=${escapeHtml(analysis.metadata?.n ?? "NA")} | ${escapeHtml(formatDate(analysis.run_datetime))}
           </div>
           ${renderVisualization(analysis)}
@@ -1901,8 +2671,14 @@
 
       function renderVisualization(analysis) {
         const visualization = analysis.visualization ?? {};
+        if (analysis.script_id === "multivariable_logistic_regression") {
+          return renderMultivariableLogisticRegression(analysis.data ?? {});
+        }
         if (analysis.script_id === "univariate_auc_screen" || analysis.data?.roc_curves) {
           return renderAucComparison(analysis.data ?? {});
+        }
+        if (analysis.script_id === "lasso_logistic_regression") {
+          return renderLassoRegression(analysis.data ?? {});
         }
         if (analysis.script_id === "cox_regression" || analysis.data?.rows?.some((row) => row.hazard_ratio !== undefined)) {
           return renderCoxRegression(analysis.data ?? {});
@@ -2136,6 +2912,117 @@
         `;
       }
 
+      function renderMultivariableLogisticRegression(data) {
+        const rows = data.rows ?? [];
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+              <div class="meta">n=${escapeHtml(data.n ?? "NA")} | events=${escapeHtml(data.events ?? "NA")}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">CV AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.cv_auc, "float3"))}</div>
+              <div class="meta">${escapeHtml(data.cv_folds ?? 0)} folds | SE ${escapeHtml(formatValue(data.cv_auc_se, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Model terms</div>
+              <div class="card-value">${escapeHtml(data.term_count ?? "NA")}</div>
+              <div class="meta">${escapeHtml(data.predictor_count ?? "NA")} selected predictors</div>
+            </div>
+          </div>
+          ${renderRocOverlay(data.roc_curves ?? [], [{ predictor: "Multivariable model" }], false)}
+          ${renderLogisticTerms(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderLogisticTerms(rows) {
+        if (!rows.length) return '<div class="empty">No logistic model terms available.</div>';
+        const columns = [
+          { field: "term", label: "Term", format: "string" },
+          { field: "odds_ratio", label: "OR", format: "float3" },
+          { field: "ci_low", label: "95% CI low", format: "float3" },
+          { field: "ci_high", label: "95% CI high", format: "float3" },
+          { field: "p_value", label: "P", format: "pvalue" },
+        ];
+        return renderTable(columns, rows);
+      }
+
+      function renderLassoRegression(data) {
+        const rows = data.rows ?? [];
+        const method = data.selection_method === "cross_validation" ? "CV lambda" : "BIC fallback";
+        const methodDetail = data.selection_method === "cross_validation"
+          ? `${escapeHtml(data.selection_rule ?? "lambda_1se")} | ${escapeHtml(data.cv_folds ?? "NA")}-fold ${escapeHtml(data.cv_metric ?? "log_loss")}`
+          : "CV not feasible";
+        return `
+          <div class="cox-summary">
+            <div class="card">
+              <div class="metric-label">Selected terms</div>
+              <div class="card-value">${escapeHtml(data.selected_terms ?? "NA")}</div>
+              <div class="meta">of ${escapeHtml(data.candidate_terms ?? "NA")} candidates</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Apparent AUC</div>
+              <div class="card-value">${escapeHtml(formatValue(data.auc, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">${escapeHtml(method)}</div>
+              <div class="card-value">${escapeHtml(formatValue(data.penalty, "float3"))}</div>
+              <div class="meta">${methodDetail}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">CV loss</div>
+              <div class="card-value">${escapeHtml(formatValue(data.cv_mean_loss, "float3"))}</div>
+              <div class="meta">SE ${escapeHtml(formatValue(data.cv_se_loss, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">Lambda min / 1SE</div>
+              <div class="card-value">${escapeHtml(formatValue(data.lambda_min, "float3"))}</div>
+              <div class="meta">1SE ${escapeHtml(formatValue(data.lambda_1se, "float3"))}</div>
+            </div>
+            <div class="card">
+              <div class="metric-label">BIC fallback lambda</div>
+              <div class="card-value">${escapeHtml(formatValue(data.bic_penalty, "float3"))}</div>
+              <div class="meta">BIC ${escapeHtml(formatValue(data.bic, "float3"))}</div>
+            </div>
+          </div>
+          ${renderLassoTerms(rows)}
+          ${renderSkippedModels(data.skipped ?? [])}
+          ${data.warnings?.length ? `<div class="empty">${data.warnings.map(escapeHtml).join("<br />")}</div>` : ""}
+        `;
+      }
+
+      function renderLassoTerms(rows) {
+        const selected = rows.filter((row) => row.selected);
+        if (!selected.length) return '<div class="empty">No terms were selected at the chosen LASSO penalty.</div>';
+        const maxValue = Math.max(...selected.map((row) => Number(row.abs_standardized_coefficient) || 0), 1);
+        return `
+          <div class="auc-ranking">
+            ${selected.slice(0, 16).map((row, index) => {
+              const magnitude = Number(row.abs_standardized_coefficient) || 0;
+              const width = `${Math.max((magnitude / maxValue) * 100, 2)}%`;
+              const color = Number(row.standardized_coefficient) < 0 ? "#b42318" : "#0f766e";
+              return `
+                <div class="auc-rank-row" style="--rank-color:${color}">
+                  <div class="rank-number">${escapeHtml(row.selected_rank ?? index + 1)}</div>
+                  <div class="rank-main">
+                    <div class="rank-title" title="${escapeHtml(row.term)}">${escapeHtml(row.term)}</div>
+                    <div class="rank-track"><div class="rank-fill" style="--value:${width}"></div></div>
+                  </div>
+                  <div class="rank-auc">${escapeHtml(formatValue(row.standardized_coefficient, "float3"))}</div>
+                  <div class="rank-detail">
+                    OR=${escapeHtml(formatValue(row.odds_ratio, "float3"))} | coefficient=${escapeHtml(formatValue(row.coefficient, "float3"))} | predictor=${escapeHtml(row.predictor)}
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+        `;
+      }
+
       function renderCoxRegression(data) {
         const summary = data.survival_summary ?? {};
         return `
@@ -2203,66 +3090,13 @@
         return `<div class="empty">${notes.map(escapeHtml).join("<br />")}</div>`;
       }
 
-      function renderPipeline() {
-        const pipeline = state.payload?.pipeline ?? [];
-        els.pipelineCount.textContent = `${pipeline.length} ingestion lane${pipeline.length === 1 ? "" : "s"}`;
-        if (!pipeline.length) {
-          els.pipeline.innerHTML = '<div class="empty">No pipeline runs discovered yet.</div>';
-          return;
-        }
-        els.pipeline.innerHTML = pipeline
-          .map((lane) => `
-            <div class="pipeline-row">
-              <div class="pipeline-column">
-                <div class="eyebrow">Ingestion</div>
-                ${lane.ingestion ? renderPipelineNode(lane.ingestion, ["total_rows", "source_count"]) : '<div class="node">Missing ingestion manifest</div>'}
-              </div>
-              <div class="pipeline-arrow">→</div>
-              <div class="pipeline-column">
-                <div class="eyebrow">Stats Runs</div>
-                ${lane.stats_runs.length ? lane.stats_runs.map((node) => renderPipelineNode(node, ["script_id", "n"])).join("") : '<div class="node">No stats artifacts</div>'}
-              </div>
-              <div class="pipeline-arrow">→</div>
-              <div class="pipeline-column">
-                <div class="eyebrow">Visualizations</div>
-                ${lane.visualizations.length ? lane.visualizations.map((node) => renderPipelineNode(node, ["type", "script_id"])).join("") : '<div class="node">No visualizations generated</div>'}
-              </div>
-            </div>
-          `)
-          .join("");
-      }
-
-      function renderPipelineNode(node, fields) {
-        const details = fields
-          .map((field) => node[field] !== null && node[field] !== undefined ? `${field.replaceAll("_", " ")}: ${node[field]}` : null)
-          .filter(Boolean)
-          .join(" | ");
-        return `
-          <div class="node ${node.is_latest ? "latest" : ""}">
-            <div class="artifact-title">
-              <span>${escapeHtml(node.label)}</span>
-              ${node.is_latest ? '<span class="badge gold">latest</span>' : ""}
-            </div>
-            <div class="meta">${escapeHtml(formatDate(node.run_datetime))}${details ? ` | ${escapeHtml(details)}` : ""}</div>
-          </div>
-        `;
-      }
-
-      function setTab(tab) {
-        state.tab = tab;
-        els.tabs.forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-        els.overviewView.classList.toggle("hidden", tab !== "overview");
-        els.analysisView.classList.toggle("hidden", tab !== "analysis");
-        els.resultsView.classList.toggle("hidden", tab !== "results");
-        els.resultsBrowser.classList.toggle("hidden", tab !== "results");
-        els.pipelineView.classList.toggle("hidden", tab !== "runs");
-      }
-
       function metricCard(label, value, detail) {
         return `
           <section class="panel metric">
-            <div class="metric-label">${escapeHtml(label)}</div>
-            <div class="metric-value">${escapeHtml(value)}</div>
+            <div class="metric-line">
+              <div class="metric-label">${escapeHtml(label)}</div>
+              <div class="metric-value">${escapeHtml(value)}</div>
+            </div>
             <div class="meta">${escapeHtml(detail)}</div>
           </section>
         `;
@@ -2276,6 +3110,10 @@
         return `<option value="${escapeHtml(value)}">${escapeHtml(label)}</option>`;
       }
 
+      function selectedOption(value, label, selected) {
+        return `<option value="${escapeHtml(value)}" ${selected ? "selected" : ""}>${escapeHtml(label)}</option>`;
+      }
+
       function syncParameterControl(target) {
         const values = currentParameters();
         if (target.dataset.paramFilter) {
@@ -2284,11 +3122,22 @@
           renderAnalysisPreview();
           return;
         }
+        if (target.dataset.paramChoice) {
+          const name = target.dataset.paramChoice;
+          const selected = new Set(Array.isArray(values[name]) ? values[name] : []);
+          if (target.checked) {
+            selected.add(target.value);
+          } else {
+            selected.delete(target.value);
+          }
+          values[name] = Array.from(selected).sort((a, b) => String(a).localeCompare(String(b)));
+          renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+          renderAnalysisPreview();
+          return;
+        }
         const name = target.dataset.paramName;
         if (!name) return;
-        values[name] = target.dataset.paramKind === "multi_variable"
-          ? Array.from(target.selectedOptions ?? []).map((item) => item.value)
-          : target.value;
+        values[name] = target.value;
         renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
         renderAnalysisPreview();
       }
@@ -2302,6 +3151,272 @@
         return result;
       }
 
+      function syncIngestionControl(target) {
+        const control = target.dataset.ingestionControl;
+        if (!control) return;
+        if (control === "adapter") {
+          state.ingestionAdapterId = target.value;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "";
+          state.selectedIngestionStepIndex = 0;
+          ensureIngestionState();
+          renderStageDetail();
+          return;
+        }
+        if (control === "source") {
+          state.ingestionSourceFile = target.value || null;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "";
+          renderStageDetail();
+          return;
+        }
+      }
+
+      function syncIngestionStepField(target) {
+        const field = target.dataset.stepField;
+        const param = target.dataset.stepParam;
+        const step = selectedIngestionStep();
+        if (!step) return;
+
+        if (param) {
+          updateStepParam(step, target);
+          renderStageDetail();
+          return;
+        }
+
+        if (!field) return;
+        if (field === "custom-function") {
+          const adapter = currentIngestionAdapter();
+          const custom = (adapter?.operations ?? [])
+            .find((operation) => operation.operation === "static_code")
+            ?.functions
+            ?.find((fn) => fn.function === target.value);
+          step.params = {
+            ...(step.params ?? {}),
+            function: target.value,
+            inputs: custom?.inputs ?? step.params?.inputs ?? [],
+            outputs: custom?.outputs ?? step.params?.outputs ?? [],
+          };
+          renderStageDetail();
+          return;
+        }
+        step[field] = target.value;
+        if (field === "operation") {
+          const operation = currentIngestionAdapter()?.operations?.find((item) => item.operation === target.value);
+          step.label = operation?.label ?? target.value;
+          step.description = operation?.description ?? "";
+        }
+        if (field === "operation" && target.value === "static_code" && !step.params?.function) {
+          const custom = currentIngestionAdapter()?.operations
+            ?.find((operation) => operation.operation === "static_code")
+            ?.functions?.[0];
+          step.params = {
+            function: custom?.function ?? "",
+            inputs: custom?.inputs ?? [],
+            outputs: custom?.outputs ?? [],
+          };
+        } else if (field === "operation") {
+          step.params = defaultParamsForOperation(target.value, currentIngestionAdapter());
+        }
+        renderStageDetail();
+      }
+
+      function updateStepParam(step, target) {
+        step.params = step.params ?? {};
+        const key = target.dataset.stepParam;
+        if (key === "columns") {
+          const entries = Object.entries(step.params.columns ?? {});
+          const index = Number(target.dataset.paramIndex);
+          const current = entries[index] ?? ["", ""];
+          const source = target.dataset.paramSide === "source" ? target.value : current[0];
+          const output = target.dataset.paramSide === "target" ? target.value : current[1];
+          entries[index] = [source, output];
+          step.params.columns = Object.fromEntries(entries.filter(([itemSource]) => itemSource));
+          return;
+        }
+        if (key === "mappings") {
+          const index = Number(target.dataset.paramIndex);
+          const paramKey = target.dataset.paramKey;
+          const mappings = Array.isArray(step.params.mappings) ? step.params.mappings : [];
+          mappings[index] = { ...(mappings[index] ?? {}), [paramKey]: target.value };
+          step.params.mappings = mappings;
+          return;
+        }
+        if (key === "pivot") {
+          step.params.pivot = { ...(step.params.pivot ?? {}), [target.dataset.paramKey]: target.value };
+          return;
+        }
+        if (target.dataset.paramKind === "csv") {
+          step.params[key] = target.value.split(",").map((value) => value.trim()).filter(Boolean);
+          return;
+        }
+        step.params[key] = target.value;
+      }
+
+      function defaultParamsForOperation(operationId, adapter) {
+        if (["normalize_text", "normalize_category", "normalize_boolean", "to_float"].includes(operationId)) return { fields: [] };
+        if (operationId === "validate_required_columns") return { columns: [] };
+        if (operationId === "remove_stub_rows") return { id_column: "patient_id" };
+        if (operationId === "lookup_mapping") return { fields: [], mapping_file: "" };
+        if (operationId === "derive_age") return { source: "", dob: "", presentation_date: "", output: "", missing_flag: "" };
+        if (operationId === "compute_ratio") return { numerator: "", denominator: "", output: "" };
+        if (operationId === "join_data_file") {
+          const file = state.payload?.ingestion_workbench?.data_files?.find((item) => item.kind === "histology_dataset" && item.is_latest)
+            ?? state.payload?.ingestion_workbench?.data_files?.[0];
+          return {
+            file: file?.path ?? "",
+            left_key: "patient_id",
+            right_key: "k_number",
+            join_type: "left",
+            columns: [],
+            right_prefix: "",
+            pivot: { index: "k_number", columns: "marker", values: "value", prefix: "histology__" },
+          };
+        }
+        if (operationId === "set_value") return { field: "", value: "" };
+        if (operationId === "parse_date") return { mappings: [] };
+        if (operationId === "map_columns") return { columns: {} };
+        if (operationId === "static_code") {
+          const custom = adapter?.operations?.find((operation) => operation.operation === "static_code")?.functions?.[0];
+          return { function: custom?.function ?? "", inputs: custom?.inputs ?? [], outputs: custom?.outputs ?? [] };
+        }
+        return {};
+      }
+
+      function selectedIngestionStep() {
+        const spec = currentIngestionSpec();
+        return spec?.steps?.[state.selectedIngestionStepIndex] ?? null;
+      }
+
+      function addIngestionStep(operationId) {
+        const adapter = currentIngestionAdapter();
+        const spec = currentIngestionSpec();
+        const operation = adapter?.operations?.find((item) => item.operation === operationId);
+        if (!spec || !operation) return;
+        const custom = operation.operation === "static_code" ? operation.functions?.[0] : null;
+        const step = {
+          id: `${operation.operation}_${Date.now()}`,
+          operation: operation.operation,
+          label: operation.label,
+          description: operation.description,
+          params: custom ? { function: custom.function, inputs: custom.inputs ?? [], outputs: custom.outputs ?? [] } : defaultParamsForOperation(operation.operation, adapter),
+        };
+        spec.steps = [...(spec.steps ?? []), step];
+        state.selectedIngestionStepIndex = spec.steps.length - 1;
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      function handleIngestionAction(action) {
+        const spec = currentIngestionSpec();
+        if (!spec) return;
+        if (action === "add-selected-operation") {
+          addIngestionStep(document.getElementById("ingestion-add-operation")?.value);
+          return;
+        }
+        if (action === "preview") {
+          launchIngestionPreview();
+          return;
+        }
+        if (action === "run") {
+          launchIngestionRun();
+          return;
+        }
+        if (action === "reset") {
+          const adapter = currentIngestionAdapter();
+          if (!adapter) return;
+          state.ingestionSpecsByAdapter[adapter.adapter_id] = cloneJson(adapter.default_spec);
+          state.selectedIngestionStepIndex = 0;
+          state.ingestionPreview = null;
+          state.ingestionStatus = "Spec reset to packaged default.";
+          renderStageDetail();
+          return;
+        }
+
+        const steps = spec.steps ?? [];
+        const index = state.selectedIngestionStepIndex;
+        const step = steps[index];
+        if (!step) return;
+        if (action === "toggle-step") step.enabled = step.enabled === false;
+        if (action === "move-step-up" && index > 0) {
+          [steps[index - 1], steps[index]] = [steps[index], steps[index - 1]];
+          state.selectedIngestionStepIndex = index - 1;
+        }
+        if (action === "move-step-down" && index < steps.length - 1) {
+          [steps[index + 1], steps[index]] = [steps[index], steps[index + 1]];
+          state.selectedIngestionStepIndex = index + 1;
+        }
+        if (action === "duplicate-step") {
+          steps.splice(index + 1, 0, { ...cloneJson(step), id: `${step.id ?? step.operation}_copy_${Date.now()}` });
+          state.selectedIngestionStepIndex = index + 1;
+        }
+        if (action === "delete-step") {
+          steps.splice(index, 1);
+          state.selectedIngestionStepIndex = Math.max(0, Math.min(index, steps.length - 1));
+        }
+        state.ingestionPreview = null;
+        renderStageDetail();
+      }
+
+      async function launchIngestionPreview() {
+        const spec = currentIngestionSpec();
+        if (!state.ingestionAdapterId || !spec) return;
+        state.ingestionStatus = "Previewing...";
+        renderStageDetail();
+        try {
+          const response = await fetch("/api/ingestion-preview", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adapter_id: state.ingestionAdapterId,
+              source_file: state.ingestionSourceFile,
+              spec,
+            }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Ingestion preview returned ${response.status}`);
+          state.ingestionPreview = payload;
+          state.ingestionStatus = "Preview ready.";
+        } catch (error) {
+          state.ingestionStatus = error.message;
+        }
+        renderStageDetail();
+      }
+
+      async function launchIngestionRun() {
+        const spec = currentIngestionSpec();
+        if (!state.ingestionAdapterId || !spec) return;
+        state.ingestionStatus = "Running ingestion...";
+        renderStageDetail();
+        try {
+          const response = await fetch("/api/ingestion-runs", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              adapter_id: state.ingestionAdapterId,
+              source_file: state.ingestionSourceFile,
+              spec,
+            }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Ingestion API returned ${response.status}`);
+          state.payload = payload.dashboard;
+          ensureIngestionState();
+          state.ingestionPreview = null;
+          state.ingestionStatus = `Created ${payload.artifacts?.clean_dataset ?? "clean dataset"}.`;
+          state.selectedStage = "ingestion";
+          state.stageHistoryIndex = 0;
+          populateFilters();
+          applyFilters();
+          renderSummary();
+          renderStageOverview();
+          renderAnalysisSetup();
+        } catch (error) {
+          state.ingestionStatus = error.message;
+          renderStageDetail();
+        }
+      }
+
       function updateHeaderDensity() {
         els.header.classList.toggle("compact", window.scrollY > 18);
       }
@@ -2311,6 +3426,14 @@
       els.templateSelect.addEventListener("change", () => {
         state.selectedTemplateId = els.templateSelect.value;
         renderAnalysisSetup();
+      });
+      els.templateSearch.addEventListener("input", () => {
+        state.templateSearch = els.templateSearch.value;
+        renderTemplateSelector(state.payload?.analysis_templates ?? []);
+      });
+      els.templateCategoryFilter.addEventListener("change", () => {
+        state.templateCategory = els.templateCategoryFilter.value;
+        renderTemplateSelector(state.payload?.analysis_templates ?? []);
       });
       els.templateSelector.addEventListener("click", (event) => {
         const button = event.target.closest("[data-template-id]");
@@ -2338,17 +3461,31 @@
       els.stageMap.addEventListener("click", (event) => {
         const button = event.target.closest("[data-stage-id]");
         if (!button) return;
-        state.selectedStage = button.dataset.stageId;
+        state.selectedStage = state.selectedStage === button.dataset.stageId ? null : button.dataset.stageId;
         state.stageHistoryIndex = 0;
         renderStageOverview();
       });
       els.stageDetail.addEventListener("click", (event) => {
+        const action = event.target.closest("[data-ingestion-action]");
+        if (action) {
+          handleIngestionAction(action.dataset.ingestionAction);
+          return;
+        }
+        const stepButton = event.target.closest("[data-ingestion-step]");
+        if (stepButton) {
+          state.selectedIngestionStepIndex = Number(stepButton.dataset.ingestionStep);
+          renderStageDetail();
+          return;
+        }
         const button = event.target.closest("[data-history-step]");
         if (!button) return;
         moveStageHistory(button.dataset.historyStep);
       });
+      els.stageDetail.addEventListener("change", (event) => {
+        syncIngestionControl(event.target);
+        syncIngestionStepField(event.target);
+      });
       els.refresh.addEventListener("click", loadDashboard);
-      els.tabs.forEach((button) => button.addEventListener("click", () => setTab(button.dataset.tab)));
       window.addEventListener("scroll", updateHeaderDensity, { passive: true });
 
       updateHeaderDensity();

@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -46,14 +47,35 @@ class AdapterRunResult:
 class BaseAdapter(ABC):
     adapter_id: str = ""
     source_glob: str = ""
+    default_spec_id: str | None = None
 
     def match_files(self, project_root: Path) -> list[Path]:
         return sorted(project_root.glob(self.source_glob))
+
+    def default_spec(self) -> dict[str, Any] | None:
+        return None
+
+    def custom_operation_definitions(self) -> list[dict[str, Any]]:
+        return []
+
+    def apply_custom_operation(
+        self,
+        function_id: str,
+        dataframe: pd.DataFrame,
+        params: dict[str, Any],
+    ) -> pd.DataFrame:
+        raise ValueError(f"Adapter {self.adapter_id} does not allow custom operation {function_id}.")
 
     @abstractmethod
     def load_raw(self, source_path: Path) -> pd.DataFrame:
         raise NotImplementedError
 
     @abstractmethod
-    def transform(self, dataframe: pd.DataFrame, source_path: Path) -> AdapterRunResult:
+    def transform(
+        self,
+        dataframe: pd.DataFrame,
+        source_path: Path,
+        spec: dict[str, Any] | None = None,
+        paths: Any | None = None,
+    ) -> AdapterRunResult:
         raise NotImplementedError

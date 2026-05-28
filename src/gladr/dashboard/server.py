@@ -12,6 +12,11 @@ from urllib.parse import urlparse
 from gladr.analysis.runner import run_parameterized_analysis
 from gladr.core.paths import ProjectPaths
 from gladr.dashboard.manifest_loader import load_dashboard_payload
+from gladr.ingestion.workbench import (
+    build_ingestion_workbench_payload,
+    preview_ingestion_spec,
+    run_ingestion_spec_from_ui,
+)
 
 
 DEFAULT_HOST = "127.0.0.1"
@@ -48,14 +53,62 @@ def _handler_factory(paths: ProjectPaths) -> type[BaseHTTPRequestHandler]:
                 self._send_json(load_dashboard_payload(paths))
                 return
 
+            if route == "/api/ingestion-workbench":
+                self._send_json(build_ingestion_workbench_payload(paths))
+                return
+
             self.send_error(HTTPStatus.NOT_FOUND, "Not found")
 
         def do_POST(self) -> None:  # noqa: N802 - stdlib handler API.
             route = urlparse(self.path).path
+            if route == "/api/ingestion-preview":
+                self._handle_ingestion_preview()
+                return
+
+            if route == "/api/ingestion-runs":
+                self._handle_ingestion_run()
+                return
+
             if route != "/api/analysis-runs":
                 self.send_error(HTTPStatus.NOT_FOUND, "Not found")
                 return
 
+            self._handle_analysis_run()
+
+        def _handle_ingestion_preview(self) -> None:
+            try:
+                payload = self._read_json_body()
+                preview = preview_ingestion_spec(
+                    str(payload.get("adapter_id") or ""),
+                    payload.get("source_file") if payload.get("source_file") is not None else None,
+                    payload.get("spec") if isinstance(payload.get("spec"), dict) else None,
+                    paths=paths,
+                )
+            except (OSError, ValueError, KeyError) as error:
+                self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            self._send_json(preview)
+
+        def _handle_ingestion_run(self) -> None:
+            try:
+                payload = self._read_json_body()
+                written = run_ingestion_spec_from_ui(
+                    str(payload.get("adapter_id") or ""),
+                    payload.get("source_file") if payload.get("source_file") is not None else None,
+                    payload.get("spec") if isinstance(payload.get("spec"), dict) else None,
+                    paths=paths,
+                )
+            except (OSError, ValueError, KeyError) as error:
+                self._send_json({"error": str(error)}, status=HTTPStatus.BAD_REQUEST)
+                return
+
+            self._send_json({
+                "artifacts": {name: path.name for name, path in written.items()},
+                "dashboard": load_dashboard_payload(paths),
+            }, status=HTTPStatus.CREATED)
+
+        def _handle_analysis_run(self) -> None:
             try:
                 payload = self._read_json_body()
                 template_id = str(payload.get("template_id") or "")
