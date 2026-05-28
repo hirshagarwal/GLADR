@@ -81,6 +81,21 @@ OPERATION_LIBRARY: list[dict[str, Any]] = [
         },
     },
     {
+        "operation": "remap_values",
+        "label": "Remap Values",
+        "category": "Normalize",
+        "description": "Replace values in one field using inline key/value mappings.",
+        "schema": {
+            "expects": ["selected field", "inline key/value mappings"],
+            "produces": ["remapped field values"],
+            "config": [
+                {"name": "field", "kind": "field", "label": "Field"},
+                {"name": "value_mappings", "kind": "value_mappings", "label": "Value mappings"},
+                {"name": "case_sensitive", "kind": "boolean", "label": "Case sensitive"},
+            ],
+        },
+    },
+    {
         "operation": "derive_age",
         "label": "Derive Age",
         "category": "Derive",
@@ -421,6 +436,9 @@ def _apply_operation(
             )
         return working, {"fields": len(fields), "mapping_file": mapping_file}
 
+    if operation == "remap_values":
+        return _remap_values(working, params)
+
     if operation == "derive_age":
         output = str(params.get("output") or "age_at_presentation")
         source = str(params.get("source") or output)
@@ -557,6 +575,67 @@ def _finalize_output(dataframe: pd.DataFrame, params: dict[str, Any]) -> tuple[p
         "dropped_fields": len(drop_fields),
         "canonical_fields": sum(1 for field in canonical_fields if field in keep_fields),
     }
+
+
+def _remap_values(dataframe: pd.DataFrame, params: dict[str, Any]) -> tuple[pd.DataFrame, dict[str, Any]]:
+    working = dataframe.copy()
+    field = str(params.get("field") or "")
+    if field not in working.columns:
+        return working, {"field": field, "mappings": 0, "remapped_values": 0, "missing_field": bool(field)}
+
+    mapping = _value_mapping(params)
+    case_sensitive = bool(params.get("case_sensitive"))
+    keyed_mapping = {
+        _mapping_key(source, case_sensitive): target
+        for source, target in mapping.items()
+        if _mapping_key(source, case_sensitive) is not None
+    }
+    if not keyed_mapping:
+        return working, {"field": field, "mappings": 0, "remapped_values": 0}
+
+    remapped_values = 0
+
+    def remap(value: object) -> object:
+        nonlocal remapped_values
+        key = _mapping_key(value, case_sensitive)
+        if key in keyed_mapping:
+            remapped_values += 1
+            return keyed_mapping[key]
+        return value
+
+    working[field] = working[field].apply(remap)
+    return working, {"field": field, "mappings": len(keyed_mapping), "remapped_values": remapped_values}
+
+
+def _value_mapping(params: dict[str, Any]) -> dict[object, object]:
+    raw = params.get("value_mappings", params.get("mappings", {}))
+    if isinstance(raw, dict):
+        return {source: _remap_target(target) for source, target in raw.items()}
+    if not isinstance(raw, list):
+        return {}
+
+    mapping: dict[object, object] = {}
+    for item in raw:
+        if not isinstance(item, dict):
+            continue
+        source = item.get("key", item.get("from", item.get("source")))
+        if source in (None, ""):
+            continue
+        mapping[source] = _remap_target(item.get("value", item.get("to", item.get("target", ""))))
+    return mapping
+
+
+def _remap_target(value: object) -> object | None:
+    if value == "":
+        return None
+    return value
+
+
+def _mapping_key(value: object, case_sensitive: bool) -> str | None:
+    normalized = normalize_text(value)
+    if normalized is None:
+        return None
+    return normalized if case_sensitive else normalized.lower()
 
 
 def _join_data_file(dataframe: pd.DataFrame, params: dict[str, Any], paths: ProjectPaths) -> pd.DataFrame:

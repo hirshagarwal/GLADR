@@ -35,6 +35,7 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertIn("rename_columns", operation_ids)
             self.assertIn("filter_rows", operation_ids)
             self.assertIn("normalize_fields", operation_ids)
+            self.assertIn("remap_values", operation_ids)
             self.assertIn("math", operation_ids)
             self.assertIn("derive_age", operation_ids)
             self.assertIn("join_data_file", operation_ids)
@@ -113,6 +114,59 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertEqual(preview["rows"][0]["data_quality_flags"], [])
             self.assertFalse(paths.registry_datasets_outputs_dir.exists())
 
+    def test_preview_can_remap_values_inline_for_selected_field(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = payload["adapters"][0]
+            spec = json.loads(json.dumps(adapter["default_spec"]))
+            finalize_index = next(index for index, step in enumerate(spec["steps"]) if step["operation"] == "finalize_output")
+            spec["steps"].insert(
+                finalize_index,
+                {
+                    "id": "remap_patient_id",
+                    "operation": "remap_values",
+                    "label": "Remap patient id",
+                    "params": {
+                        "field": "patient_id",
+                        "value_mappings": [{"key": "k0000001", "value": "K9999999"}],
+                        "case_sensitive": False,
+                    },
+                },
+            )
+
+            preview = preview_ingestion_spec("gbm_registry", adapter["source_files"][0]["path"], spec, paths=paths)
+
+            self.assertEqual(preview["rows"][0]["patient_id"], "K9999999")
+            remap_step = next(step for step in preview["steps"] if step["metrics"]["operation"] == "remap_values")
+            self.assertEqual(remap_step["metrics"]["remapped_values"], 1)
+
+    def test_preview_can_remap_values_to_blank(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = payload["adapters"][0]
+            spec = json.loads(json.dumps(adapter["default_spec"]))
+            finalize_index = next(index for index, step in enumerate(spec["steps"]) if step["operation"] == "finalize_output")
+            spec["steps"].insert(
+                finalize_index,
+                {
+                    "id": "blank_contributor",
+                    "operation": "remap_values",
+                    "label": "Blank contributor",
+                    "params": {
+                        "field": "contributor",
+                        "value_mappings": [{"key": "QMC", "value": ""}],
+                    },
+                },
+            )
+
+            preview = preview_ingestion_spec("gbm_registry", adapter["source_files"][0]["path"], spec, paths=paths)
+
+            self.assertIsNone(preview["rows"][0]["contributor"])
+            remap_step = next(step for step in preview["steps"] if step["metrics"]["operation"] == "remap_values")
+            self.assertEqual(remap_step["metrics"]["remapped_values"], 1)
+
     def test_preview_quality_report_includes_value_level_flag_details(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             paths = self._make_project(Path(directory))
@@ -184,8 +238,8 @@ class IngestionWorkbenchTests(unittest.TestCase):
         (reference_dir / "lobe_mapping.json").write_text("{}", encoding="utf-8")
         (source_dir / "main_sheet_example.csv").write_text(
             "K-number,DOB,Presentation Date,Age at presentation,Neutrophils (presentation),"
-            "Lymphocytes (presentation),QMC Local\n"
-            "K0000001,01/01/1960,01/01/2020,,4,2,QMC\n",
+            "Lymphocytes (presentation),QMC Local,Contributor\n"
+            "K0000001,01/01/1960,01/01/2020,,4,2,QMC,QMC\n",
             encoding="utf-8",
         )
         (histology_dataset_dir / "histology_dataset_test.json").write_text(

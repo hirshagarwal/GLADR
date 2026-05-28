@@ -2481,6 +2481,7 @@
 
       function ingestionStepCardTitle(step) {
         const label = step.label ?? step.id ?? step.operation;
+        if (step.operation === "remap_values") return { label, detail: step.params?.field ?? "" };
         if (step.operation !== "filter_rows") return { label, detail: "" };
         return { label, detail: filterStepLabel(step.params ?? {}, label) };
       }
@@ -2793,6 +2794,29 @@
           return `
             ${renderFieldListParam("fields", "Fields", params.fields, ingestionFieldsBeforeStep(state.selectedIngestionStepIndex))}
             ${renderTextParam("mapping_file", "Mapping file", params.mapping_file ?? "")}
+          `;
+        }
+
+        if (step.operation === "remap_values") {
+          const currentFields = ingestionFieldsBeforeStep(state.selectedIngestionStepIndex);
+          const mappings = Array.isArray(params.value_mappings) ? params.value_mappings : Object.entries(params.value_mappings ?? {}).map(([key, value]) => ({ key, value }));
+          const rows = [...mappings, { key: "", value: "" }];
+          return `
+            ${renderFieldSelectParam("field", "Field", params.field ?? "", currentFields)}
+            ${renderBooleanParam("case_sensitive", "Case sensitive", params.case_sensitive ?? false)}
+            <div class="control wide">
+              <label>Value mappings</label>
+              <div class="mapping-grid">
+                ${rows.map((mapping, index) => `
+                  <div class="mapping-row">
+                    <input data-step-param="value_mappings" data-param-index="${escapeHtml(index)}" data-param-key="key" value="${escapeHtml(mapping.key ?? mapping.from ?? mapping.source ?? "")}" placeholder="source value" />
+                    <input data-step-param="value_mappings" data-param-index="${escapeHtml(index)}" data-param-key="value" value="${escapeHtml(mapping.value ?? mapping.to ?? mapping.target ?? "")}" placeholder="replacement value" />
+                    <span class="meta">key → value</span>
+                  </div>
+                `).join("")}
+              </div>
+              <div class="meta">Fill the blank row to add another mapping. Clearing a source value removes that row.</div>
+            </div>
           `;
         }
 
@@ -3440,6 +3464,21 @@
         els.parameterControls.innerHTML = (template.parameters ?? [])
           .map((parameter) => renderParameterControl(parameter, variables))
           .join("");
+      }
+
+      function renderParameterControlsPreservingScroll() {
+        const listScroll = new Map(
+          Array.from(els.parameterControls.querySelectorAll(".multi-choice-list"))
+            .map((list) => [list.id, list.scrollTop])
+        );
+        const pageScroll = { x: window.scrollX, y: window.scrollY };
+        renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+        requestAnimationFrame(() => {
+          for (const list of els.parameterControls.querySelectorAll(".multi-choice-list")) {
+            if (listScroll.has(list.id)) list.scrollTop = listScroll.get(list.id);
+          }
+          window.scrollTo(pageScroll.x, pageScroll.y);
+        });
       }
 
       function renderParameterControl(parameter, variables) {
@@ -4224,7 +4263,7 @@
         const values = currentParameters();
         if (target.dataset.paramFilter) {
           values[`${target.dataset.paramFilter}__filter`] = target.value;
-          renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+          renderParameterControlsPreservingScroll();
           renderAnalysisPreview();
           return;
         }
@@ -4237,14 +4276,14 @@
             selected.delete(target.value);
           }
           values[name] = Array.from(selected).sort((a, b) => String(a).localeCompare(String(b)));
-          renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+          renderParameterControlsPreservingScroll();
           renderAnalysisPreview();
           return;
         }
         const name = target.dataset.paramName;
         if (!name) return;
         values[name] = target.value;
-        renderParameterControls(currentTemplate(), state.payload?.dataset_profile?.variables ?? []);
+        renderParameterControlsPreservingScroll();
         renderAnalysisPreview();
       }
 
@@ -4389,6 +4428,16 @@
           step.params.conditions = conditions;
           return;
         }
+        if (key === "value_mappings") {
+          const index = Number(target.dataset.paramIndex);
+          const paramKey = target.dataset.paramKey;
+          const mappings = Array.isArray(step.params.value_mappings)
+            ? [...step.params.value_mappings]
+            : Object.entries(step.params.value_mappings ?? {}).map(([itemKey, itemValue]) => ({ key: itemKey, value: itemValue }));
+          mappings[index] = { ...(mappings[index] ?? {}), [paramKey]: target.value };
+          step.params.value_mappings = mappings.filter((mapping) => String(mapping?.key ?? mapping?.from ?? mapping?.source ?? "").trim());
+          return;
+        }
         if (key === "pivot") {
           step.params.pivot = { ...(step.params.pivot ?? {}), [target.dataset.paramKey]: target.value };
           return;
@@ -4434,6 +4483,7 @@
         if (operationId === "remove_stub_rows") return { id_column: "patient_id" };
         if (operationId === "filter_rows") return { action: "keep", match: "all", conditions: [{ field: "", operator: "equals", value: "" }], minimum_populated_fields: "", ignored_fields: [] };
         if (operationId === "lookup_mapping") return { fields: [], mapping_file: "" };
+        if (operationId === "remap_values") return { field: "", value_mappings: [], case_sensitive: false };
         if (operationId === "derive_age") return { source: "", dob: "", presentation_date: "", output: "", missing_flag: "" };
         if (operationId === "compute_ratio") return { numerator: "", denominator: "", output: "" };
         if (operationId === "math") return { operator: "divide", left_field: "", left_value: "", right_field: "", right_value: "", output: "", precision: "" };
