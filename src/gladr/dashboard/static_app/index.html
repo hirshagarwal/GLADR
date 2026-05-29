@@ -455,6 +455,11 @@
         grid-template-columns: 1fr;
       }
 
+      .stage-detail-full {
+        grid-column: 1 / -1;
+        min-width: 0;
+      }
+
       .detail-summary {
         display: grid;
         gap: 10px;
@@ -587,6 +592,7 @@
       .control {
         display: grid;
         gap: 7px;
+        min-width: 0;
       }
 
       input,
@@ -2330,7 +2336,7 @@
               </div>
             </div>
             <div class="empty">Status: ${escapeHtml(stage.status)}</div>
-            ${stage.id === "ingestion" ? renderIngestionWorkbench() : ""}
+            ${stage.id === "ingestion" ? `<div class="stage-detail-full">${renderIngestionWorkbench()}</div>` : ""}
           `;
           return;
         }
