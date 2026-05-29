@@ -9,12 +9,12 @@
       "id": "finalize_output",
       "operation": "finalize_output",
       "label": "Finalize output",
-      "description": "Add any missing canonical fields and place canonical fields first while preserving imported fields.",
+      "description": "Preserve imported columns as output fields without adding canonical placeholders.",
       "outputs": ["clean records"],
       "params": {
         "drop_fields": [],
-        "canonical_fields_first": true,
-        "add_missing_canonical_fields": true
+        "canonical_fields_first": false,
+        "add_missing_canonical_fields": false
       }
     }
   ]

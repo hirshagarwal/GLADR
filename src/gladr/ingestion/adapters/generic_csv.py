@@ -15,6 +15,7 @@ class GenericCSVAdapter(BaseAdapter):
     adapter_id = "generic_csv"
     source_glob = "data/raw/imports/*.csv"
     default_spec_id = "generic_csv_default"
+    publish_without_matches = True
 
     def match_files(self, project_root: Path) -> list[Path]:
         patterns = [

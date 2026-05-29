@@ -20,6 +20,16 @@ from gladr.ingestion.workbench import (
 
 
 class IngestionWorkbenchTests(unittest.TestCase):
+    def test_empty_project_publishes_generic_csv_but_not_gbm_registry(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = ProjectPaths.from_root(Path(directory))
+
+            payload = build_ingestion_workbench_payload(paths)
+            adapter_ids = [adapter["adapter_id"] for adapter in payload["adapters"]]
+
+            self.assertEqual(adapter_ids, ["generic_csv"])
+            self.assertEqual(payload["adapters"][0]["source_files"], [])
+
     def test_workbench_exposes_default_spec_operations_and_static_code(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             paths = self._make_project(Path(directory))
@@ -142,6 +152,25 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertEqual(preview["rows"][0]["patient_id"], "S001")
             self.assertEqual(preview["rows"][0]["cohort_label"], "Treatment")
             self.assertEqual(preview["rows"][0]["source"], "generic_csv")
+
+    def test_generic_csv_default_spec_maps_columns_one_to_one(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = next(item for item in payload["adapters"] if item["adapter_id"] == "generic_csv")
+
+            mapping_step = adapter["default_spec"]["steps"][0]
+            finalizer = adapter["default_spec"]["steps"][-1]
+            preview = preview_ingestion_spec("generic_csv", adapter["source_files"][0]["path"], adapter["default_spec"], paths=paths)
+
+            self.assertEqual(mapping_step["operation"], "rename_columns")
+            self.assertEqual(mapping_step["params"]["columns"], {"Subject ID": "Subject ID", "Study Arm": "Study Arm", "Score": "Score"})
+            self.assertFalse(finalizer["params"]["canonical_fields_first"])
+            self.assertFalse(finalizer["params"]["add_missing_canonical_fields"])
+            self.assertEqual(preview["rows"][0]["Subject ID"], "S001")
+            self.assertEqual(preview["rows"][0]["Study Arm"], "Treatment")
+            self.assertEqual(preview["rows"][0]["Score"], "42")
+            self.assertNotIn("patient_id", preview["rows"][0])
 
     def test_preview_can_remap_values_inline_for_selected_field(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

@@ -20,8 +20,13 @@ from gladr.ingestion.spec_engine import operation_library
 def build_ingestion_workbench_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
     project_paths = paths or ProjectPaths.discover()
     adapters = instantiate_discovered("gladr.ingestion.adapters", BaseAdapter)
+    adapter_payloads = [_adapter_payload(adapter, project_paths) for adapter in adapters]
     return {
-        "adapters": [_adapter_payload(adapter, project_paths) for adapter in adapters],
+        "adapters": [
+            payload
+            for adapter, payload in zip(adapters, adapter_payloads, strict=False)
+            if _should_publish_adapter(adapter, payload)
+        ],
         "canonical_fields": load_contract("canonical_schema.json")["fields"],
         "data_files": discover_data_files(project_paths),
     }
@@ -117,6 +122,7 @@ def _adapter_payload(adapter: BaseAdapter, paths: ProjectPaths) -> dict[str, Any
         }
         for path in files
     ]
+    default_spec = _workbench_default_spec(adapter, default_spec, default_spec_source, source_files)
     return {
         "adapter_id": adapter.adapter_id,
         "source_glob": adapter.source_glob,
@@ -127,6 +133,54 @@ def _adapter_payload(adapter: BaseAdapter, paths: ProjectPaths) -> dict[str, Any
         "source_files": source_files,
         "field_options": _field_options(default_spec, source_files),
     }
+
+
+def _should_publish_adapter(adapter: BaseAdapter, payload: dict[str, Any]) -> bool:
+    if payload.get("source_files"):
+        return True
+    if payload.get("default_spec_source") == "saved":
+        return True
+    return bool(getattr(adapter, "publish_without_matches", False))
+
+
+def _workbench_default_spec(
+    adapter: BaseAdapter,
+    default_spec: dict[str, Any] | None,
+    default_spec_source: str,
+    source_files: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    if adapter.adapter_id != "generic_csv" or default_spec_source != "packaged":
+        return default_spec
+    columns = [str(column) for column in (source_files[0].get("columns", []) if source_files else []) if str(column)]
+    return _with_identity_column_mapping(default_spec, columns)
+
+
+def _with_identity_column_mapping(default_spec: dict[str, Any] | None, columns: list[str]) -> dict[str, Any] | None:
+    active = copy.deepcopy(default_spec)
+    if not isinstance(active, dict) or not columns:
+        return active
+
+    steps = active.get("steps")
+    if not isinstance(steps, list):
+        steps = []
+    if any(isinstance(step, dict) and step.get("operation") in {"rename_columns", "map_columns"} for step in steps):
+        active["steps"] = steps
+        return active
+
+    identity_step = {
+        "id": "identity_column_mapping",
+        "operation": "rename_columns",
+        "label": "Map source columns",
+        "description": "Default one-to-one source column to output column mapping for generic CSV imports.",
+        "outputs": ["mapped columns"],
+        "params": {"columns": {column: column for column in columns}},
+    }
+    finalize_index = next(
+        (index for index, step in enumerate(steps) if isinstance(step, dict) and step.get("operation") == "finalize_output"),
+        len(steps),
+    )
+    active["steps"] = [*steps[:finalize_index], identity_step, *steps[finalize_index:]]
+    return active
 
 
 def _get_adapter(adapter_id: str) -> BaseAdapter:

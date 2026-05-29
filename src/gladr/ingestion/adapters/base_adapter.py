@@ -48,6 +48,7 @@ class BaseAdapter(ABC):
     adapter_id: str = ""
     source_glob: str = ""
     default_spec_id: str | None = None
+    publish_without_matches: bool = False
 
     def match_files(self, project_root: Path) -> list[Path]:
         return sorted(project_root.glob(self.source_glob))
