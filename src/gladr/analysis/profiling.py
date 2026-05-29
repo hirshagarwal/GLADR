@@ -122,6 +122,8 @@ def _normalize_binary_value(value: object) -> object | None:
         if float(value) in {0.0, 1.0}:
             return int(value)
     normalized = str(value).strip().lower()
+    if not normalized:
+        return None
     if normalized in {"true", "false", "yes", "no", "y", "n", "0", "1", "m", "f"}:
         return normalized
     leading_token = normalized.replace("–", "-").replace("—", "-").split(maxsplit=1)[0].strip(":-;,.")

@@ -49,6 +49,26 @@ class AnalysisTemplateTests(unittest.TestCase):
             self.assertEqual(variables["tumour_lobe"]["value_counts"][0], {"value": "Frontal", "count": 2})
             self.assertFalse(variables["tumour_lobe"]["value_counts_truncated"])
 
+    def test_profile_binary_detection_handles_blank_strings(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = ProjectPaths.from_root(Path(directory))
+            paths.ensure_runtime_dirs()
+            _write_latest_clean_dataset(
+                paths,
+                records=[
+                    {"patient_id": "A", "residual_enhancement": "Yes - inferolateral margin"},
+                    {"patient_id": "B", "residual_enhancement": ""},
+                    {"patient_id": "C", "residual_enhancement": "   "},
+                    {"patient_id": "D", "residual_enhancement": "No"},
+                ],
+            )
+
+            profile = build_dataset_profile(paths)
+
+            variables = {variable["name"]: variable for variable in profile["variables"]}
+            self.assertEqual(variables["residual_enhancement"]["type"], "binary")
+            self.assertTrue(variables["residual_enhancement"]["is_binary"])
+
     def test_univariate_auc_screen_builds_ranked_models(self) -> None:
         dataframe = pd.DataFrame(
             [
@@ -458,13 +478,13 @@ class AnalysisTemplateTests(unittest.TestCase):
         self.assertTrue(all("p_value" in row for row in artifact["data"]["rows"]))
 
 
-def _write_latest_clean_dataset(paths: ProjectPaths) -> None:
+def _write_latest_clean_dataset(paths: ProjectPaths, records: list[dict[str, object]] | None = None) -> None:
     manifest = {
         "run_id": "20260510_120000",
         "run_datetime": "2026-05-10T12:00:00-04:00",
     }
     dataset = {
-        "records": [
+        "records": records or [
             {"patient_id": "A", "recurrence": True, "age_at_presentation": 61, "tumour_lobe": "Frontal"},
             {
                 "patient_id": "B",
