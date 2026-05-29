@@ -12,16 +12,23 @@ Every pipeline output is versioned by run id. `latest.json` files point downstre
 
 ## Quick Start
 
+Commands can be run either through uv or through an already prepared Python environment:
+
+- Preferred: `uv run python main.py ...`, which uses the locked project environment.
+- Also valid: `python main.py ...`, after activating an environment with the project dependencies installed.
+
+The examples below use `uv run python`. Drop `uv run` if you are intentionally using raw Python from your active environment.
+
 Run the full pipeline:
 
 ```bash
-python main.py run-all --project-root /path/to/project
+uv run python main.py run-all --project-root /path/to/project
 ```
 
 Serve the dynamic dashboard:
 
 ```bash
-python main.py dashboard --serve --project-root /path/to/project
+uv run python main.py dashboard --serve --project-root /path/to/project
 ```
 
 Open:
@@ -36,20 +43,20 @@ If you generate new ingestion or analysis artifacts while the server is running,
 
 ```bash
 # Ingestion
-python main.py ingest --project-root /path/to/project
-python main.py ingest --project-root /path/to/project --adapter gbm_registry
-python main.py ingest --project-root /path/to/project --adapter gbm_registry --file data/raw/registry/main_sheet/example.csv
+uv run python main.py ingest --project-root /path/to/project
+uv run python main.py ingest --project-root /path/to/project --adapter gbm_registry
+uv run python main.py ingest --project-root /path/to/project --adapter gbm_registry --file data/raw/registry/main_sheet/example.csv
 
 # Analysis
-python main.py analyze --project-root /path/to/project
-python main.py analyze --project-root /path/to/project --scripts cohort_summary age_distribution sex_breakdown
+uv run python main.py analyze --project-root /path/to/project
+uv run python main.py analyze --project-root /path/to/project --scripts cohort_summary age_distribution sex_breakdown
 
 # Dashboard
-python main.py dashboard --project-root /path/to/project
-python main.py dashboard --serve --project-root /path/to/project
+uv run python main.py dashboard --project-root /path/to/project
+uv run python main.py dashboard --serve --project-root /path/to/project
 
 # Full pipeline
-python main.py run-all --project-root /path/to/project
+uv run python main.py run-all --project-root /path/to/project
 ```
 
 ## Runtime Flow
@@ -80,10 +87,10 @@ Histology text reports follow their own ingestion source lane:
 The dashboard shell can be rebuilt into the active project's `outputs/dashboard/builds/index.html` with:
 
 ```bash
-python main.py dashboard --project-root /path/to/project
+uv run python main.py dashboard --project-root /path/to/project
 ```
 
-For normal use, prefer `python main.py dashboard --serve --project-root /path/to/project`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
+For normal use, prefer `uv run python main.py dashboard --serve --project-root /path/to/project`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
 
 ## Repository Layout
 
@@ -251,8 +258,8 @@ There is no pruning command yet. Old outputs should be kept unless intentionally
 Recommended future cleanup behavior:
 
 ```bash
-python main.py artifacts list
-python main.py artifacts prune --keep-latest 10 --archive
+uv run python main.py artifacts list
+uv run python main.py artifacts prune --keep-latest 10 --archive
 ```
 
 That command does not exist yet; for now, artifact cleanup is manual and should be done carefully.
@@ -277,7 +284,7 @@ The adapter discovery system picks up `BaseAdapter` subclasses automatically.
 5. Run:
 
 ```bash
-python main.py analyze --scripts <script_id>
+uv run python main.py analyze --scripts <script_id>
 ```
 
 6. Open the dashboard and inspect the artifact in the Analysis tab and pipeline overview.
@@ -293,13 +300,13 @@ Prefer one focused script per analysis question so outputs stay easy to version 
 5. Rebuild the static shell:
 
 ```bash
-python main.py dashboard --project-root /path/to/project
+uv run python main.py dashboard --project-root /path/to/project
 ```
 
 6. Serve and verify:
 
 ```bash
-python main.py dashboard --serve --project-root /path/to/project
+uv run python main.py dashboard --serve --project-root /path/to/project
 ```
 
 ## Testing
@@ -307,7 +314,7 @@ python main.py dashboard --serve --project-root /path/to/project
 Run the test suite:
 
 ```bash
-python -B -m unittest discover -s tests
+uv run python -B -m unittest discover -s tests
 ```
 
 Current test coverage includes:
