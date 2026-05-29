@@ -2863,15 +2863,18 @@
       function renderOperationParams(step, adapter) {
         const params = step.params ?? {};
         if (["rename_columns", "map_columns"].includes(step.operation)) {
-          const mappings = Object.entries(params.columns ?? {}).slice(0, 18);
-          const rows = [...mappings, ["", ""]];
+          const mappings = Object.entries(params.columns ?? {});
+          const sourceOptions = ingestionSourceFieldOptions();
+          const mappedSources = new Set(mappings.map(([source]) => source).filter(Boolean));
+          const unmappedSources = sourceOptions.filter((field) => !mappedSources.has(field));
+          const rows = unmappedSources.length ? [...mappings, ["", ""]] : mappings;
           return `
             <div class="control wide">
               <label>Column renames</label>
               <div class="mapping-grid">
                 ${rows.map(([source, target], index) => `
                   <div class="mapping-row">
-                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "source" }, source, ingestionSourceFieldOptions())}
+                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "source" }, source, source ? [source, ...unmappedSources] : unmappedSources)}
                     <input list="ingestion-field-options" data-step-param="columns" data-param-index="${escapeHtml(index)}" data-param-side="target" value="${escapeHtml(target)}" placeholder="output field" />
                     <span class="meta">source → output</span>
                   </div>
