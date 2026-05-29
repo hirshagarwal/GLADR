@@ -28,7 +28,7 @@ uv run python main.py run-all --project-root /path/to/project
 Serve the dynamic dashboard:
 
 ```bash
-uv run python main.py dashboard --serve --project-root /path/to/project
+uv run python main.py dashboard --serve
 ```
 
 Open:
@@ -38,6 +38,8 @@ http://127.0.0.1:8765
 ```
 
 If you generate new ingestion or analysis artifacts while the server is running, refresh the browser. The dashboard API scans the active project's `outputs/ingestion/` and `outputs/analysis/` directories on each request.
+
+On first run, the served dashboard opens without requiring a project root. Create a project from the dashboard UI; new local projects default to `projects/<project_id>/`, which is gitignored along with the local `.gladr/` project registry.
 
 ## Current Commands
 
@@ -53,6 +55,7 @@ uv run python main.py analyze --project-root /path/to/project --scripts cohort_s
 
 # Dashboard
 uv run python main.py dashboard --project-root /path/to/project
+uv run python main.py dashboard --serve
 uv run python main.py dashboard --serve --project-root /path/to/project
 
 # Full pipeline
@@ -90,7 +93,7 @@ The dashboard shell can be rebuilt into the active project's `outputs/dashboard/
 uv run python main.py dashboard --project-root /path/to/project
 ```
 
-For normal use, prefer `uv run python main.py dashboard --serve --project-root /path/to/project`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts.
+For normal use, prefer `uv run python main.py dashboard --serve`; the dynamic server exposes `/api/dashboard-data`, which the browser uses to load current artifacts for the selected project.
 
 ## Repository Layout
 

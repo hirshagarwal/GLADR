@@ -160,6 +160,12 @@
         justify-content: flex-end;
       }
 
+      .project-select {
+        min-width: 190px;
+        min-height: 34px;
+        padding: 6px 10px;
+      }
+
       .tab,
       select,
       .icon-button,
@@ -219,6 +225,18 @@
         align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 10px;
+      }
+
+      .project-start {
+        display: grid;
+        gap: 14px;
+      }
+
+      .project-form {
+        display: grid;
+        grid-template-columns: minmax(180px, 1fr) minmax(160px, 0.7fr) auto;
+        gap: 10px;
+        align-items: end;
       }
 
       .section-title,
@@ -1796,6 +1814,7 @@
         .summary-grid,
         .pipeline-map,
         .controls,
+        .project-form,
         .tool-library-controls,
         .cards {
           grid-template-columns: 1fr;
@@ -1855,11 +1874,35 @@
         <p class="lede">Pipeline stages, data quality, analysis setup, and visualization artifacts for the current GLADR workspace.</p>
       </div>
       <nav class="toolbar" aria-label="Dashboard actions">
+        <select class="project-select" id="project-select" aria-label="Project"></select>
+        <button class="tab" id="new-project" type="button">New project</button>
         <button class="tab" id="refresh" type="button">Refresh</button>
       </nav>
     </header>
 
     <main>
+      <section class="project-start panel panel-pad hidden" id="project-start">
+        <div class="section-header">
+          <div>
+            <div class="eyebrow">Project Workspace</div>
+            <h2 class="section-title" id="project-start-title">Create a project</h2>
+            <p class="subtle" id="project-start-copy">Projects are created under the local projects folder and stay out of git.</p>
+          </div>
+        </div>
+        <form class="project-form" id="project-form">
+          <div class="control">
+            <label for="project-label">Project name</label>
+            <input id="project-label" type="text" placeholder="GBM Registry" autocomplete="off" required />
+          </div>
+          <div class="control">
+            <label for="project-id">Project id</label>
+            <input id="project-id" type="text" placeholder="gbm_registry" autocomplete="off" required />
+          </div>
+          <button class="icon-button" id="create-project" type="submit">Create project</button>
+        </form>
+        <div class="meta" id="project-status"></div>
+      </section>
+
       <section class="pipeline-hero" id="overview-view">
         <div class="section-header">
           <div>
@@ -1955,10 +1998,23 @@
         expandedAnalysisVariables: {},
         expandedPreviewVariables: {},
         ingestionStatus: "",
+        projectFormVisible: false,
+        projectStatus: "",
+        projectIdAuto: true,
       };
 
       const els = {
         header: document.querySelector("header"),
+        projectSelect: document.getElementById("project-select"),
+        newProject: document.getElementById("new-project"),
+        projectStart: document.getElementById("project-start"),
+        projectStartTitle: document.getElementById("project-start-title"),
+        projectStartCopy: document.getElementById("project-start-copy"),
+        projectForm: document.getElementById("project-form"),
+        projectLabel: document.getElementById("project-label"),
+        projectId: document.getElementById("project-id"),
+        createProject: document.getElementById("create-project"),
+        projectStatus: document.getElementById("project-status"),
         summary: document.getElementById("summary"),
         overviewView: document.getElementById("overview-view"),
         stageMap: document.getElementById("stage-map"),
@@ -2030,16 +2086,91 @@
           const response = await fetch("/api/dashboard-data", { cache: "no-store" });
           if (!response.ok) throw new Error(`Dashboard API returned ${response.status}`);
           state.payload = await response.json();
-          ensureIngestionState();
+          renderProjectControls();
+          if (!state.payload?.project) {
+            renderNoProject();
+            return;
+          }
           if (state.selectedStage && !currentStage()) state.selectedStage = null;
-          populateFilters();
-          applyFilters();
-          renderSummary();
-          renderStageOverview();
-          renderAnalysisSetup();
+          renderLoadedProjectDashboard();
         } catch (error) {
           renderApiError(error);
         }
+      }
+
+      function renderProjectControls() {
+        const registry = state.payload?.projects ?? {};
+        const projects = registry.projects ?? [];
+        const activeId = state.payload?.project?.id ?? registry.active_project ?? "";
+        els.projectSelect.innerHTML = projects.length
+          ? projects.map((project) => selectedOption(project.id, project.label || project.id, project.id === activeId)).join("")
+          : option("", "No projects");
+        els.projectSelect.value = activeId ?? "";
+        els.projectSelect.disabled = !projects.length;
+        els.newProject.textContent = state.projectFormVisible && state.payload?.project ? "Cancel" : "New project";
+        els.projectStatus.textContent = state.projectStatus;
+      }
+
+      function updateProjectPanel() {
+        const noProject = !state.payload?.project;
+        const visible = noProject || state.projectFormVisible;
+        els.projectStart.classList.toggle("hidden", !visible);
+        els.projectStartTitle.textContent = noProject ? "Create your first project" : "Create another project";
+        els.projectStartCopy.textContent = noProject
+          ? "Create a local GLADR workspace to start using the dashboard."
+          : "New projects are created under the local projects folder and become the active dashboard workspace.";
+        els.projectStatus.textContent = state.projectStatus;
+      }
+
+      function renderNoProject() {
+        state.selectedStage = null;
+        state.filtered = [];
+        state.projectFormVisible = true;
+        renderProjectControls();
+        updateProjectPanel();
+        els.summary.classList.add("hidden");
+        els.overviewView.classList.add("hidden");
+        els.analysisView.classList.add("hidden");
+        els.resultsView.classList.add("hidden");
+        els.resultsBrowser.classList.add("hidden");
+        els.stageMap.innerHTML = "";
+        els.stageDetail.innerHTML = "";
+        els.artifactList.innerHTML = "";
+        els.visualOutput.innerHTML = "";
+        els.variableList.innerHTML = "";
+      }
+
+      function resetProjectScopedState() {
+        state.filtered = [];
+        state.selectedFilename = null;
+        state.selectedStage = null;
+        state.stageHistoryIndex = 0;
+        state.selectedTemplateId = null;
+        state.templateSearch = "";
+        state.expandedTemplateGroups = {};
+        state.parametersByTemplate = {};
+        state.ingestionAdapterId = null;
+        state.ingestionSourceFile = null;
+        state.ingestionSpecsByAdapter = {};
+        state.selectedIngestionStepIndex = 0;
+        state.ingestionPreview = null;
+        state.expandedAnalysisVariables = {};
+        state.expandedPreviewVariables = {};
+        state.ingestionStatus = "";
+        els.templateSearch.value = "";
+      }
+
+      function renderLoadedProjectDashboard() {
+        renderProjectControls();
+        updateProjectPanel();
+        els.overviewView.classList.remove("hidden");
+        els.summary.classList.remove("hidden");
+        ensureIngestionState();
+        populateFilters();
+        applyFilters();
+        renderSummary();
+        renderStageOverview();
+        renderAnalysisSetup();
       }
 
       function showLoading() {
@@ -5566,6 +5697,89 @@
         els.header.classList.toggle("compact", window.scrollY > 18);
       }
 
+      function projectIdFromLabel(value) {
+        return String(value ?? "")
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9_-]+/g, "_")
+          .replace(/^[_-]+|[_-]+$/g, "")
+          .slice(0, 63);
+      }
+
+      async function createProject(event) {
+        event.preventDefault();
+        const id = els.projectId.value.trim();
+        const label = els.projectLabel.value.trim();
+        if (!id || !label) return;
+        state.projectStatus = "Creating project...";
+        els.projectStatus.textContent = state.projectStatus;
+        els.createProject.disabled = true;
+        try {
+          const response = await fetch("/api/projects", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, label }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Project API returned ${response.status}`);
+          resetProjectScopedState();
+          state.payload = payload.dashboard;
+          state.projectFormVisible = false;
+          state.projectStatus = `Created ${payload.project?.label ?? id}.`;
+          els.projectLabel.value = "";
+          els.projectId.value = "";
+          state.projectIdAuto = true;
+          renderLoadedProjectDashboard();
+        } catch (error) {
+          state.projectStatus = error.message;
+          els.projectStatus.textContent = state.projectStatus;
+        } finally {
+          els.createProject.disabled = false;
+        }
+      }
+
+      async function switchProject(projectId) {
+        if (!projectId || projectId === state.payload?.project?.id) return;
+        state.projectStatus = "Switching project...";
+        els.projectStatus.textContent = state.projectStatus;
+        els.projectSelect.disabled = true;
+        try {
+          const response = await fetch("/api/projects/active", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: projectId }),
+          });
+          const payload = await response.json();
+          if (!response.ok) throw new Error(payload.error || `Project API returned ${response.status}`);
+          resetProjectScopedState();
+          state.payload = payload.dashboard;
+          state.projectFormVisible = false;
+          state.projectStatus = `Switched to ${payload.project?.label ?? projectId}.`;
+          renderLoadedProjectDashboard();
+        } catch (error) {
+          state.projectStatus = error.message;
+          els.projectStatus.textContent = state.projectStatus;
+          renderProjectControls();
+        } finally {
+          els.projectSelect.disabled = false;
+        }
+      }
+
+      els.projectSelect.addEventListener("change", () => switchProject(els.projectSelect.value));
+      els.newProject.addEventListener("click", () => {
+        state.projectFormVisible = state.payload?.project ? !state.projectFormVisible : true;
+        state.projectStatus = "";
+        renderProjectControls();
+        updateProjectPanel();
+      });
+      els.projectForm.addEventListener("submit", createProject);
+      els.projectLabel.addEventListener("input", () => {
+        if (!state.projectIdAuto) return;
+        els.projectId.value = projectIdFromLabel(els.projectLabel.value);
+      });
+      els.projectId.addEventListener("input", () => {
+        state.projectIdAuto = !els.projectId.value.trim();
+      });
       els.categoryFilter.addEventListener("change", applyFilters);
       els.runFilter.addEventListener("change", applyFilters);
       els.templateSelect.addEventListener("change", () => {

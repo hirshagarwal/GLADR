@@ -14,7 +14,7 @@ examples:
   - examples/dashboard_payload_sample.json
 commands:
   build: python main.py dashboard --project-root /path/to/project
-  serve: python main.py dashboard --serve --project-root /path/to/project
+  serve: python main.py dashboard --serve
   test: python -B -m unittest discover -s tests
 llm_rules:
   - Treat project outputs/ingestion and outputs/analysis as read-only inputs.

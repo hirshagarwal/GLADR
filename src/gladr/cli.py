@@ -86,10 +86,15 @@ def main() -> None:
         return
 
     if args.command == "dashboard":
-        paths = paths_from_project_args(project_root=args.project_root, project_id=args.project)
         if args.serve:
+            paths = (
+                paths_from_project_args(project_root=args.project_root, project_id=args.project)
+                if args.project_root or args.project
+                else None
+            )
             serve_dashboard(host=args.host, port=args.port, paths=paths)
             return
+        paths = paths_from_project_args(project_root=args.project_root, project_id=args.project)
         build_dashboard(paths)
         return
 

@@ -38,11 +38,12 @@ The dashboard API payload is described by `contracts/dashboard_payload_schema.js
 <project>/outputs/dashboard/builds/index.html
 ```
 
-`python main.py dashboard --serve --project-root /path/to/project` starts the local dynamic dashboard and exposes:
+`python main.py dashboard --serve` starts the local dynamic dashboard. It can start without an active project, then create or switch projects through the UI. The server exposes:
 
 ```text
 /
 /api/dashboard-data
+/api/projects
 ```
 
 ## Design principle
