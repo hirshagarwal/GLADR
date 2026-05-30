@@ -15,6 +15,7 @@ from gladr.core.latest_pointer import write_latest_pointer
 from gladr.core.paths import ProjectPaths
 from gladr.core.run_context import RunContext
 from gladr.ingestion.adapters.base_adapter import BaseAdapter, IngestionStep
+from gladr.ingestion.normalizers import normalize_missing
 
 
 PIPELINE_VERSION = "0.1.0"
@@ -70,7 +71,7 @@ def run_ingestion(
         "run_id": run_context.run_id,
         "run_datetime": run_context.run_datetime,
         "canonical_schema_version": load_contract("canonical_schema.json")["version"],
-        "records": clean_df.to_dict(orient="records"),
+        "records": _clean_records(clean_df),
     }
 
     manifest_summary = _build_manifest_summary(source_summaries, ingestion_report, total_rows=int(len(clean_df)))
@@ -146,6 +147,27 @@ def _write_json(path: Path, payload: object) -> None:
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, indent=2)
         handle.write("\n")
+
+
+def _clean_records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
+    return [
+        {str(key): _json_value(value) for key, value in record.items()}
+        for record in dataframe.to_dict(orient="records")
+    ]
+
+
+def _json_value(value: object) -> Any:
+    if isinstance(value, dict):
+        return {str(key): _json_value(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_json_value(item) for item in value]
+    if normalize_missing(value) is None:
+        return None
+    if hasattr(value, "item"):
+        return value.item()
+    if hasattr(value, "isoformat"):
+        return value.isoformat()
+    return value
 
 
 def _normalize_steps(steps: list[IngestionStep | dict[str, object]]) -> list[dict[str, object]]:

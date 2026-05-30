@@ -13,6 +13,7 @@ from gladr.contracts import load_contract
 from gladr.core.discovery import filter_by_ids, instantiate_discovered
 from gladr.core.paths import ProjectPaths
 from gladr.ingestion.adapters.base_adapter import BaseAdapter
+from gladr.ingestion.normalizers import normalize_missing
 from gladr.ingestion.runner import run_ingestion
 from gladr.ingestion.spec_engine import operation_library
 
@@ -265,18 +266,19 @@ def _profile_dataframe(dataframe: pd.DataFrame) -> dict[str, Any]:
 
 
 def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
-    non_null = series.dropna()
-    missing = int(series.isna().sum())
-    value_counts = non_null.astype(str).value_counts()
+    present_mask = ~series.apply(_is_missing)
+    present = series[present_mask]
+    missing = int((~present_mask).sum())
+    value_counts = present.astype(str).value_counts()
     top_values = value_counts.head(5)
     return {
         "name": name,
-        "type": _infer_type(name, non_null),
-        "non_null": int(non_null.shape[0]),
+        "type": _infer_type(name, present),
+        "non_null": int(present.shape[0]),
         "missing": missing,
         "missing_pct": round((missing / len(series)) * 100, 1) if len(series) else 0,
-        "unique_count": _unique_count(non_null),
-        "sample_values": [_json_safe(value) for value in non_null.head(4).tolist()],
+        "unique_count": _unique_count(present),
+        "sample_values": [_json_safe(value) for value in present.head(4).tolist()],
         "top_values": [
             {"value": _json_safe(value), "count": int(count)}
             for value, count in top_values.items()
@@ -323,7 +325,7 @@ def _hashable(value: object) -> object:
 def _is_missing(value: object) -> bool:
     if isinstance(value, (dict, list, tuple, set)):
         return False
-    return bool(pd.isna(value))
+    return normalize_missing(value) is None
 
 
 def _records(dataframe: pd.DataFrame) -> list[dict[str, Any]]:
@@ -399,10 +401,10 @@ def _data_file_column_values(path: Path, *, limit: int = 200) -> dict[str, list[
         return {}
     values: dict[str, list[str]] = {}
     for column in dataframe.columns:
-        non_null = dataframe[column].dropna()
-        if non_null.empty:
+        present = dataframe[column][~dataframe[column].apply(_is_missing)]
+        if present.empty:
             continue
-        unique = sorted({str(value) for value in non_null.tolist() if str(value)})
+        unique = sorted({str(value) for value in present.tolist() if str(value)})
         values[str(column)] = unique[:limit]
     return values
 

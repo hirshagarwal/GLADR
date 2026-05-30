@@ -9,6 +9,7 @@ import pandas as pd
 
 from gladr.core.latest_pointer import read_latest_pointer
 from gladr.core.paths import ProjectPaths
+from gladr.ingestion.normalizers import normalize_missing
 
 
 def load_latest_clean_dataframe(paths: ProjectPaths | None = None) -> tuple[pd.DataFrame, dict[str, Any]]:
@@ -26,7 +27,7 @@ def load_latest_clean_dataframe(paths: ProjectPaths | None = None) -> tuple[pd.D
     with manifest_path.open("r", encoding="utf-8") as handle:
         manifest = json.load(handle)
 
-    return pd.DataFrame(clean_payload["records"]), manifest
+    return _normalize_missing_frame(pd.DataFrame(clean_payload["records"])), manifest
 
 
 def build_dataset_profile(paths: ProjectPaths | None = None) -> dict[str, Any]:
@@ -48,25 +49,26 @@ def build_dataset_profile(paths: ProjectPaths | None = None) -> dict[str, Any]:
 
 
 def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
-    non_null = series.dropna()
-    unique_count = _unique_count(non_null)
-    missing = int(series.isna().sum())
-    variable_type = _infer_variable_type(name, non_null, unique_count, len(series))
+    present_mask = ~series.apply(_is_missing)
+    present = series[present_mask]
+    unique_count = _unique_count(present)
+    missing = int((~present_mask).sum())
+    variable_type = _infer_variable_type(name, present, unique_count, len(series))
     profile: dict[str, Any] = {
         "name": name,
         "type": variable_type,
-        "non_null": int(non_null.shape[0]),
+        "non_null": int(present.shape[0]),
         "missing": missing,
         "missing_pct": round((missing / len(series)) * 100, 1) if len(series) else 0,
         "unique_count": unique_count,
-        "sample_values": [_json_safe(value) for value in non_null.head(4).tolist()],
-        "present_rows": [int(index) for index in series[series.notna()].index.tolist()],
-        "is_binary": _is_binary(non_null),
-        "is_numeric": bool(pd.api.types.is_numeric_dtype(non_null)),
+        "sample_values": [_json_safe(value) for value in present.head(4).tolist()],
+        "present_rows": [int(index) for index in series[present_mask].index.tolist()],
+        "is_binary": _is_binary(present),
+        "is_numeric": bool(pd.api.types.is_numeric_dtype(present)),
     }
 
-    if pd.api.types.is_numeric_dtype(non_null):
-        numeric = pd.to_numeric(non_null, errors="coerce").dropna()
+    if pd.api.types.is_numeric_dtype(present):
+        numeric = pd.to_numeric(present, errors="coerce").dropna()
         if not numeric.empty:
             profile["numeric_summary"] = {
                 "min": _round_float(numeric.min()),
@@ -74,7 +76,7 @@ def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
                 "max": _round_float(numeric.max()),
             }
 
-    value_counts = non_null.astype(str).value_counts()
+    value_counts = present.astype(str).value_counts()
     top_values = value_counts.head(5)
     profile["top_values"] = [
         {"value": _json_safe(value), "count": int(count)}
@@ -166,4 +168,16 @@ def _hashable_value(value: object) -> object:
 def _is_missing(value: object) -> bool:
     if isinstance(value, (dict, list, tuple, set)):
         return False
-    return bool(pd.isna(value))
+    return normalize_missing(value) is None
+
+
+def _normalize_missing_frame(dataframe: pd.DataFrame) -> pd.DataFrame:
+    return dataframe.apply(lambda column: column.map(_normalize_missing_value))
+
+
+def _normalize_missing_value(value: object) -> object | None:
+    if isinstance(value, dict):
+        return {str(key): _normalize_missing_value(inner_value) for key, inner_value in value.items()}
+    if isinstance(value, (list, tuple, set)):
+        return [_normalize_missing_value(inner_value) for inner_value in value]
+    return normalize_missing(value)

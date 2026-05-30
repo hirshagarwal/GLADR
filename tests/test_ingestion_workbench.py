@@ -222,6 +222,12 @@ class IngestionWorkbenchTests(unittest.TestCase):
             preview = preview_ingestion_spec("gbm_registry", adapter["source_files"][0]["path"], spec, paths=paths)
 
             self.assertIsNone(preview["rows"][0]["contributor"])
+            contributor_profile = next(
+                variable for variable in preview["transformed_profile"]["variables"] if variable["name"] == "contributor"
+            )
+            self.assertEqual(contributor_profile["missing"], 1)
+            self.assertEqual(contributor_profile["non_null"], 0)
+            self.assertEqual(contributor_profile["value_counts"], [])
             remap_step = next(step for step in preview["steps"] if step["metrics"]["operation"] == "remap_values")
             self.assertEqual(remap_step["metrics"]["remapped_values"], 1)
 
@@ -295,6 +301,19 @@ class IngestionWorkbenchTests(unittest.TestCase):
             adapter = payload["adapters"][0]
             spec = json.loads(json.dumps(adapter["default_spec"]))
             spec["steps"][0]["label"] = "Saved map source columns"
+            finalize_index = next(index for index, step in enumerate(spec["steps"]) if step["operation"] == "finalize_output")
+            spec["steps"].insert(
+                finalize_index,
+                {
+                    "id": "blank_contributor",
+                    "operation": "remap_values",
+                    "label": "Blank contributor",
+                    "params": {
+                        "field": "contributor",
+                        "value_mappings": [{"key": "QMC", "value": ""}],
+                    },
+                },
+            )
 
             written = run_ingestion_spec_from_ui(
                 "gbm_registry",
@@ -306,6 +325,8 @@ class IngestionWorkbenchTests(unittest.TestCase):
             self.assertTrue(written["clean_dataset"].exists())
             self.assertTrue(written["manifest"].exists())
             self.assertTrue((paths.canonical_ingestion_outputs_dir / "latest.json").exists())
+            clean_dataset = json.loads(written["clean_dataset"].read_text(encoding="utf-8"))
+            self.assertIsNone(clean_dataset["records"][0]["contributor"])
             manifest = json.loads(written["manifest"].read_text(encoding="utf-8"))
             self.assertTrue(manifest["specs"][0]["transient"])
             self.assertEqual(manifest["specs"][0]["adapter_id"], "gbm_registry")

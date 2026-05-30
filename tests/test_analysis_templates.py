@@ -60,6 +60,7 @@ class AnalysisTemplateTests(unittest.TestCase):
                     {"patient_id": "B", "residual_enhancement": ""},
                     {"patient_id": "C", "residual_enhancement": "   "},
                     {"patient_id": "D", "residual_enhancement": "No"},
+                    {"patient_id": "E", "residual_enhancement": "Not Documented"},
                 ],
             )
 
@@ -68,6 +69,9 @@ class AnalysisTemplateTests(unittest.TestCase):
             variables = {variable["name"]: variable for variable in profile["variables"]}
             self.assertEqual(variables["residual_enhancement"]["type"], "binary")
             self.assertTrue(variables["residual_enhancement"]["is_binary"])
+            self.assertEqual(variables["residual_enhancement"]["missing"], 3)
+            self.assertEqual(variables["residual_enhancement"]["non_null"], 2)
+            self.assertEqual(variables["residual_enhancement"]["present_rows"], [0, 3])
 
     def test_univariate_auc_screen_builds_ranked_models(self) -> None:
         dataframe = pd.DataFrame(
