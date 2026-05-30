@@ -225,6 +225,39 @@ class IngestionWorkbenchTests(unittest.TestCase):
             remap_step = next(step for step in preview["steps"] if step["metrics"]["operation"] == "remap_values")
             self.assertEqual(remap_step["metrics"]["remapped_values"], 1)
 
+    def test_preview_can_remap_missing_token_values_inline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = self._make_project(Path(directory))
+            payload = build_ingestion_workbench_payload(paths)
+            adapter = next(item for item in payload["adapters"] if item["adapter_id"] == "generic_csv")
+            source_path = paths.root / adapter["source_files"][0]["path"]
+            source_path.write_text(
+                "Subject ID,Study Arm,Score\n"
+                "S001,Not Documented,42\n",
+                encoding="utf-8",
+            )
+            spec = json.loads(json.dumps(adapter["default_spec"]))
+            finalize_index = next(index for index, step in enumerate(spec["steps"]) if step["operation"] == "finalize_output")
+            spec["steps"].insert(
+                finalize_index,
+                {
+                    "id": "remap_study_arm",
+                    "operation": "remap_values",
+                    "label": "Remap study arm",
+                    "params": {
+                        "field": "Study Arm",
+                        "value_mappings": [{"key": "not documented", "value": "Unknown"}],
+                        "case_sensitive": False,
+                    },
+                },
+            )
+
+            preview = preview_ingestion_spec("generic_csv", adapter["source_files"][0]["path"], spec, paths=paths)
+
+            self.assertEqual(preview["rows"][0]["Study Arm"], "Unknown")
+            remap_step = next(step for step in preview["steps"] if step["metrics"]["operation"] == "remap_values")
+            self.assertEqual(remap_step["metrics"]["remapped_values"], 1)
+
     def test_preview_quality_report_includes_value_level_flag_details(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             paths = self._make_project(Path(directory))

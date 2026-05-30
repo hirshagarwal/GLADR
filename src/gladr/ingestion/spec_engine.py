@@ -585,11 +585,11 @@ def _remap_values(dataframe: pd.DataFrame, params: dict[str, Any]) -> tuple[pd.D
 
     mapping = _value_mapping(params)
     case_sensitive = bool(params.get("case_sensitive"))
-    keyed_mapping = {
-        _mapping_key(source, case_sensitive): target
-        for source, target in mapping.items()
-        if _mapping_key(source, case_sensitive) is not None
-    }
+    keyed_mapping = {}
+    for source, target in mapping.items():
+        key = _mapping_key(source, case_sensitive)
+        if key is not None:
+            keyed_mapping[key] = target
     if not keyed_mapping:
         return working, {"field": field, "mappings": 0, "remapped_values": 0}
 
@@ -632,8 +632,12 @@ def _remap_target(value: object) -> object | None:
 
 
 def _mapping_key(value: object, case_sensitive: bool) -> str | None:
-    normalized = normalize_text(value)
-    if normalized is None:
+    if value is None:
+        return None
+    if not isinstance(value, (dict, list, tuple, set)) and pd.isna(value):
+        return None
+    normalized = str(value).strip()
+    if not normalized:
         return None
     return normalized if case_sensitive else normalized.lower()
 
