@@ -1867,6 +1867,234 @@
           opacity: 0.24;
         }
       }
+
+      /* ── Type-colored badges ── */
+      .badge.type-numeric { background: #dbeafe; color: #1d4ed8; }
+      .badge.type-date { background: #ede9fe; color: #6d28d9; }
+      .badge.type-categorical { background: #ccfbf1; color: #065f46; }
+      .badge.type-binary,
+      .badge.type-binary-like { background: #fef3c7; color: #92400e; }
+      .badge.type-text { background: #f1f5f9; color: #475569; }
+      .badge.type-identifier { background: #fce7f3; color: #9d174d; }
+
+      /* ── Presence bar ── */
+      .presence-track {
+        height: 4px;
+        border-radius: 999px;
+        background: #e5edf6;
+        overflow: hidden;
+        margin-top: 3px;
+        grid-column: 1 / -1;
+      }
+      .presence-fill {
+        height: 100%;
+        border-radius: inherit;
+        width: var(--p, 0%);
+      }
+      .presence-fill.ok { background: var(--success); }
+      .presence-fill.warn { background: var(--pending); }
+      .presence-fill.bad { background: var(--failed); }
+
+      /* ── Column mapping editor ── */
+      .mapping-toolbar {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .mapping-toolbar input[type="search"] {
+        flex: 1;
+        min-width: 140px;
+        min-height: 30px;
+        font-size: 0.82rem;
+      }
+      .filter-chips {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .filter-chip {
+        padding: 3px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: background 140ms, border-color 140ms, color 140ms;
+      }
+      .filter-chip.active,
+      .filter-chip:hover {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: white;
+      }
+      .column-map-list {
+        display: grid;
+        gap: 5px;
+        max-height: 380px;
+        overflow: auto;
+        padding: 2px;
+      }
+      .column-map-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 26px;
+        gap: 6px;
+        align-items: center;
+        padding: 5px 8px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+        transition: border-color 120ms;
+      }
+      .column-map-row.is-mapped {
+        border-color: rgba(15, 118, 110, 0.4);
+        background: #f0fdf9;
+      }
+      .column-map-source {
+        font-size: 0.82rem;
+        font-weight: 760;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--muted);
+      }
+      .column-map-input {
+        min-height: 28px;
+        padding: 0 7px;
+        font-size: 0.82rem;
+      }
+      .column-map-clear {
+        min-width: 24px;
+        min-height: 24px;
+        padding: 2px 4px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: transparent;
+        color: var(--muted-2);
+        cursor: pointer;
+        font-size: 0.9rem;
+        line-height: 1;
+        transition: color 120ms, border-color 120ms;
+      }
+      .column-map-clear:hover {
+        color: var(--failed);
+        border-color: var(--failed);
+      }
+      .bulk-action-row {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+
+      /* ── Field list tools ── */
+      .field-list-tools {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        margin-bottom: 6px;
+        flex-wrap: wrap;
+      }
+      .field-list-tools input[type="search"] {
+        flex: 1;
+        min-width: 120px;
+        min-height: 30px;
+        font-size: 0.82rem;
+      }
+
+      /* ── Variable search + type filter ── */
+      .variable-controls {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 150px;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      /* ── Multi-variable picker search row ── */
+      .choice-filters {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 150px;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+      .choice-filters input[type="search"] {
+        min-height: 36px;
+      }
+
+      /* ── Variable filter panel (results browser) ── */
+      .var-filter-section {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+      .var-filter-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .var-filter-row input[type="search"] {
+        flex: 1;
+        min-height: 32px;
+        font-size: 0.84rem;
+      }
+      .var-filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        max-height: 120px;
+        overflow: auto;
+        margin-top: 8px;
+        padding: 2px;
+      }
+      .var-chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        font-size: 0.75rem;
+        font-weight: 760;
+        cursor: pointer;
+        transition: all 140ms;
+        white-space: nowrap;
+      }
+      .var-chip:hover {
+        border-color: var(--ink);
+      }
+      .var-chip.active {
+        background: var(--ink);
+        border-color: var(--ink);
+        color: white;
+      }
+      .var-filter-active {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-top: 6px;
+      }
+      .var-active-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: var(--ink);
+        color: white;
+        font-size: 0.72rem;
+        font-weight: 780;
+      }
+      .var-active-x {
+        cursor: pointer;
+        opacity: 0.7;
+        font-size: 0.85rem;
+        line-height: 1;
+      }
+      .var-active-x:hover { opacity: 1; }
     </style>
   </head>
   <body>
@@ -1932,6 +2160,17 @@
               <h2 class="section-title">Variables</h2>
               <p class="subtle" id="dataset-summary">Loading dataset profile.</p>
             </div>
+            <span class="pill" id="variable-count"></span>
+          </div>
+          <div class="variable-controls">
+            <div class="control">
+              <label for="variable-search">Find variable</label>
+              <input id="variable-search" type="search" placeholder="Search by name" autocomplete="off" />
+            </div>
+            <div class="control">
+              <label for="variable-type-filter">Type</label>
+              <select id="variable-type-filter"></select>
+            </div>
           </div>
           <div class="variable-list analysis-variable-list" id="variable-list"></div>
         </section>
@@ -1977,6 +2216,15 @@
             <select id="run-filter"></select>
           </div>
         </div>
+        <div class="var-filter-section">
+          <div class="var-filter-row">
+            <span class="eyebrow" style="flex:0 0 auto;">Filter by variable</span>
+            <input id="var-filter-input" type="search" placeholder="Search variables in results..." autocomplete="off" />
+            <button class="small-button" id="var-filter-clear" type="button">Clear</button>
+          </div>
+          <div class="var-filter-chips" id="var-filter-chips"></div>
+          <div class="var-filter-active" id="var-filter-active"></div>
+        </div>
       </section>
 
       <section class="analysis-layout hidden" id="results-browser">
@@ -2007,6 +2255,12 @@
         projectFormVisible: false,
         projectStatus: "",
         projectIdAuto: true,
+        variableSearch: "",
+        variableTypeFilter: "all",
+        mappingSearch: "",
+        mappingFilter: "all",
+        variableFilter: [],
+        variableFilterSearch: "",
       };
 
       const els = {
@@ -2047,6 +2301,13 @@
         artifactList: document.getElementById("artifact-list"),
         visualOutput: document.getElementById("visual-output"),
         refresh: document.getElementById("refresh"),
+        variableSearch: document.getElementById("variable-search"),
+        variableTypeFilter: document.getElementById("variable-type-filter"),
+        variableCount: document.getElementById("variable-count"),
+        varFilterInput: document.getElementById("var-filter-input"),
+        varFilterChips: document.getElementById("var-filter-chips"),
+        varFilterActive: document.getElementById("var-filter-active"),
+        varFilterClear: document.getElementById("var-filter-clear"),
       };
 
       function escapeHtml(value) {
@@ -2163,7 +2424,15 @@
         state.expandedAnalysisVariables = {};
         state.expandedPreviewVariables = {};
         state.ingestionStatus = "";
+        state.variableSearch = "";
+        state.variableTypeFilter = "all";
+        state.mappingSearch = "";
+        state.mappingFilter = "all";
+        state.variableFilter = [];
+        state.variableFilterSearch = "";
         els.templateSearch.value = "";
+        if (els.variableSearch) els.variableSearch.value = "";
+        if (els.varFilterInput) els.varFilterInput.value = "";
       }
 
       function renderLoadedProjectDashboard() {
@@ -2222,10 +2491,14 @@
           : state.payload?.analyses ?? [];
         const category = els.categoryFilter.value;
         const runId = els.runFilter.value;
+        const varFilter = state.variableFilter;
         state.filtered = analyses.filter((analysis) => {
           const categoryMatches = category === "all" || (analysis.category || "Uncategorized") === category;
           const runMatches = runId === "all" || analysis.run_id === runId;
-          return categoryMatches && runMatches;
+          if (!categoryMatches || !runMatches) return false;
+          if (!varFilter.length) return true;
+          const vars = new Set(artifactVariableNames(analysis));
+          return varFilter.some((v) => vars.has(v));
         }).sort(compareArtifactsByRuntime);
 
         if (!state.filtered.some((analysis) => analysis.filename === state.selectedFilename)) {
@@ -2236,6 +2509,7 @@
           ? state.filtered.map((analysis) => option(analysis.filename, `${analysis.title} | ${analysis.run_id}`)).join("")
           : option("", "No analysis artifacts");
         els.analysisSelect.value = state.selectedFilename ?? "";
+        populateVariableFilter();
         renderArtifactList();
         renderSelectedAnalysis();
       }
@@ -2863,26 +3137,7 @@
       function renderOperationParams(step, adapter) {
         const params = step.params ?? {};
         if (["rename_columns", "map_columns"].includes(step.operation)) {
-          const mappings = Object.entries(params.columns ?? {});
-          const sourceOptions = ingestionSourceFieldOptions();
-          const mappedSources = new Set(mappings.map(([source]) => source).filter(Boolean));
-          const unmappedSources = sourceOptions.filter((field) => !mappedSources.has(field));
-          const rows = unmappedSources.length ? [...mappings, ["", ""]] : mappings;
-          return `
-            <div class="control wide">
-              <label>Column renames</label>
-              <div class="mapping-grid">
-                ${rows.map(([source, target], index) => `
-                  <div class="mapping-row">
-                    ${renderFieldSelect({ "data-step-param": "columns", "data-param-index": index, "data-param-side": "source" }, source, source ? [source, ...unmappedSources] : unmappedSources)}
-                    <input list="ingestion-field-options" data-step-param="columns" data-param-index="${escapeHtml(index)}" data-param-side="target" value="${escapeHtml(target)}" placeholder="output field" />
-                    <span class="meta">source → output</span>
-                  </div>
-                `).join("")}
-              </div>
-              <div class="meta">${escapeHtml(Object.keys(params.columns ?? {}).length)} mappings in this step.</div>
-            </div>
-          `;
+          return renderColumnMappingEditor(params);
         }
 
         if (step.operation === "normalize_fields") {
@@ -3173,12 +3428,20 @@
         const selected = new Set(Array.isArray(value) ? value : String(value ?? "").split(",").map((item) => item.trim()).filter(Boolean));
         const merged = uniqueValues([...options, ...selected].filter(Boolean));
         const selectedItems = Array.from(selected).filter(Boolean);
+        const large = merged.length > 8;
         return `
           <div class="control wide">
-            <label>${escapeHtml(label)}</label>
+            <label>${escapeHtml(label)} <span class="pill">${escapeHtml(selectedItems.length)}</span></label>
+            ${large ? `
+              <div class="field-list-tools">
+                <input type="search" data-field-list-search="${escapeHtml(key)}" placeholder="Search ${escapeHtml(label.toLowerCase())}..." />
+                <button class="small-button" type="button" data-field-list-action="select-shown" data-field-list-key="${escapeHtml(key)}">Select shown</button>
+                <button class="small-button" type="button" data-field-list-action="clear-shown" data-field-list-key="${escapeHtml(key)}">Clear shown</button>
+              </div>
+            ` : ""}
             <div class="field-check-list">
               ${merged.map((field) => `
-                <label class="variable-choice">
+                <label class="variable-choice" data-field-item="${escapeHtml(field)}">
                   <input type="checkbox" data-step-param="${escapeHtml(key)}" data-param-kind="csv" value="${escapeHtml(field)}" ${selected.has(field) ? "checked" : ""} />
                   <span class="variable-choice-name">${escapeHtml(field)}</span>
                   ${selected.has(field) ? '<span class="badge gold">selected</span>' : ""}
@@ -3358,8 +3621,9 @@
           <button class="variable-row ${expanded ? "expanded" : ""}" type="button" data-preview-variable="${escapeHtml(key)}">
             <div class="variable-row-top">
               <div class="variable-name">${escapeHtml(variable.name)}</div>
-              <span class="badge">${escapeHtml(variable.type)}</span>
+              ${typeBadge(variable.type)}
             </div>
+            ${presenceBar(variable.missing_pct)}
             <div class="meta">${escapeHtml(variable.non_null)} present | ${escapeHtml(variable.missing_pct)}% missing | ${escapeHtml(variable.unique_count)} unique</div>
             ${expanded ? renderValueCounts(counts, variable.value_counts_truncated) : ""}
           </button>
@@ -3485,9 +3749,7 @@
           ? `${dataset.rows} rows, ${dataset.columns} variables | ingestion run ${dataset.run_id}`
           : "No clean dataset is available.";
 
-        els.variableList.innerHTML = variables.length
-          ? variables.map(renderVariableRow).join("")
-          : '<div class="empty">No variables discovered.</div>';
+        renderVariableList();
 
         els.templateSelect.innerHTML = templates.length
           ? templates.map((template) => option(template.template_id, template.title)).join("")
@@ -3717,7 +3979,10 @@
                 <span class="meta">Complete data</span>
                 <span class="badge">${escapeHtml(coverage.label)}</span>
               </div>` : ""}
-              <select class="type-filter" data-param-filter="${escapeHtml(parameter.name)}">${filterOptions}</select>
+              <div class="choice-filters">
+                <input type="search" data-param-search="${escapeHtml(parameter.name)}" placeholder="Search ${escapeHtml(parameter.label.toLowerCase())}..." />
+                <select data-param-filter="${escapeHtml(parameter.name)}">${filterOptions}</select>
+              </div>
               <div class="multi-choice-list" id="analysis-param-${escapeHtml(parameter.name)}">
                 ${choices}
               </div>
@@ -3770,6 +4035,217 @@
         return { count, pct, label: `${count}/${datasetRows} (${pct.toFixed(1)}%)` };
       }
 
+      function typeBadge(type) {
+        const safe = String(type ?? "").toLowerCase().replace(/[^a-z-]/g, "");
+        return `<span class="badge type-${escapeHtml(safe)}">${escapeHtml(type ?? "unknown")}</span>`;
+      }
+
+      function presenceBar(missingPct) {
+        const missing = Math.max(0, Math.min(100, Number(missingPct) || 0));
+        const present = 100 - missing;
+        const level = missing <= 5 ? "ok" : missing <= 40 ? "warn" : "bad";
+        return `<div class="presence-track" title="${escapeHtml(present.toFixed(1))}% present"><div class="presence-fill ${level}" style="--p:${present.toFixed(1)}%"></div></div>`;
+      }
+
+      function slugifyColumn(value) {
+        return String(value ?? "")
+          .trim()
+          .toLowerCase()
+          .replace(/[\s\-]+/g, "_")
+          .replace(/[^a-z0-9_]/g, "")
+          .replace(/^_+|_+$/g, "")
+          || String(value ?? "").trim().toLowerCase();
+      }
+
+      function artifactVariableNames(analysis) {
+        const vars = new Set();
+        const rows = analysis.data?.rows ?? [];
+        rows.forEach((row) => {
+          if (row.predictor) vars.add(String(row.predictor));
+          if (row.term) vars.add(String(row.term));
+        });
+        (analysis.data?.roc_curves ?? []).forEach((curve) => {
+          if (curve.predictor) vars.add(String(curve.predictor));
+        });
+        return Array.from(vars);
+      }
+
+      function renderVariableList() {
+        const allVars = state.payload?.dataset_profile?.variables ?? [];
+        const query = state.variableSearch.toLowerCase();
+        const typeFilter = state.variableTypeFilter;
+        const types = uniqueValues(allVars.map((v) => v.type).filter(Boolean));
+        const optionHtml = option("all", "All types") + types.map((t) => selectedOption(t, t, t === typeFilter)).join("");
+        els.variableTypeFilter.innerHTML = optionHtml;
+        els.variableTypeFilter.value = typeFilter;
+        const filtered = allVars.filter((v) => {
+          if (typeFilter !== "all" && v.type !== typeFilter) return false;
+          if (query && !v.name.toLowerCase().includes(query)) return false;
+          return true;
+        });
+        els.variableCount.textContent = `${filtered.length}/${allVars.length}`;
+        els.variableList.innerHTML = filtered.length
+          ? filtered.map(renderVariableRow).join("")
+          : allVars.length
+            ? '<div class="empty">No variables match the current filter.</div>'
+            : '<div class="empty">No variables discovered.</div>';
+      }
+
+      function renderColumnMappingEditor(params) {
+        const columns = params.columns ?? {};
+        const sourceOptions = ingestionSourceFieldOptions();
+        const mappedBySource = new Map(Object.entries(columns).map(([src, tgt]) => [String(src), String(tgt ?? "")]));
+        const customSources = Object.keys(columns).filter((src) => src && !sourceOptions.includes(src));
+        const allSources = [...sourceOptions, ...customSources];
+        const query = state.mappingSearch.toLowerCase();
+        const filter = state.mappingFilter;
+        const visibleRows = allSources.filter((source) => {
+          const target = mappedBySource.get(source) ?? "";
+          if (query && !source.toLowerCase().includes(query) && !target.toLowerCase().includes(query)) return false;
+          if (filter === "renamed") return Boolean(target && target !== source);
+          if (filter === "unchanged") return !target || target === source;
+          return true;
+        });
+        const totalMapped = allSources.filter((src) => {
+          const tgt = mappedBySource.get(src) ?? "";
+          return tgt && tgt !== src;
+        }).length;
+        return `
+          <div class="control wide">
+            <label>Column renames <span class="pill">${escapeHtml(totalMapped)} renamed</span></label>
+            <div class="mapping-toolbar">
+              <input type="search" data-mapping-search placeholder="Search columns…" value="${escapeHtml(state.mappingSearch)}" />
+              <div class="filter-chips">
+                <button class="filter-chip ${filter === "all" ? "active" : ""}" type="button" data-mapping-filter="all">All</button>
+                <button class="filter-chip ${filter === "renamed" ? "active" : ""}" type="button" data-mapping-filter="renamed">Renamed</button>
+                <button class="filter-chip ${filter === "unchanged" ? "active" : ""}" type="button" data-mapping-filter="unchanged">Unchanged</button>
+              </div>
+            </div>
+            <div class="column-map-list" data-mapping-list>
+              ${visibleRows.length ? visibleRows.map((source) => {
+                const target = mappedBySource.get(source) ?? "";
+                const isMapped = Boolean(target && target !== source);
+                return `
+                  <div class="column-map-row ${isMapped ? "is-mapped" : ""}" data-mapping-source="${escapeHtml(source)}">
+                    <div class="column-map-source" title="${escapeHtml(source)}">${escapeHtml(source)}</div>
+                    <input class="column-map-input"
+                      type="text"
+                      list="ingestion-field-options"
+                      data-step-param="columns"
+                      data-mapping-source-key="${escapeHtml(source)}"
+                      value="${escapeHtml(target)}"
+                      placeholder="output name…"
+                    />
+                    ${isMapped
+                      ? `<button class="column-map-clear" type="button" data-ingestion-action="remove-column-mapping" data-mapping-key="${escapeHtml(source)}" title="Clear mapping">×</button>`
+                      : "<span></span>"
+                    }
+                  </div>
+                `;
+              }).join("") : '<div class="empty">No columns match the current filter.</div>'}
+            </div>
+            <div class="bulk-action-row">
+              <button class="small-button" type="button" data-ingestion-action="map-all-columns">Map all 1:1</button>
+              <button class="small-button" type="button" data-ingestion-action="tidy-column-names">Tidy names (snake_case)</button>
+              <button class="small-button" type="button" data-ingestion-action="clear-column-mappings">Clear all mappings</button>
+            </div>
+          </div>
+        `;
+      }
+
+      function applyMappingFilters() {
+        const list = els.stageDetail.querySelector("[data-mapping-list]");
+        if (!list) return;
+        const query = state.mappingSearch.toLowerCase();
+        const filter = state.mappingFilter;
+        list.querySelectorAll("[data-mapping-source]").forEach((row) => {
+          const source = row.dataset.mappingSource ?? "";
+          const input = row.querySelector("input");
+          const target = input?.value ?? "";
+          const isMapped = Boolean(target && target !== source);
+          const matchesSearch = !query || source.toLowerCase().includes(query) || target.toLowerCase().includes(query);
+          let matchesFilter = true;
+          if (filter === "renamed") matchesFilter = isMapped;
+          if (filter === "unchanged") matchesFilter = !isMapped;
+          row.classList.toggle("hidden", !matchesSearch || !matchesFilter);
+        });
+        els.stageDetail.querySelectorAll("[data-mapping-filter]").forEach((chip) => {
+          chip.classList.toggle("active", chip.dataset.mappingFilter === filter);
+        });
+      }
+
+      function applyFieldListFilter(input) {
+        const key = input.dataset.fieldListSearch;
+        if (!key) return;
+        const control = input.closest(".control");
+        if (!control) return;
+        const query = input.value.toLowerCase();
+        control.querySelectorAll("[data-field-item]").forEach((label) => {
+          const name = label.dataset.fieldItem ?? "";
+          label.classList.toggle("hidden", Boolean(query && !name.toLowerCase().includes(query)));
+        });
+      }
+
+      function handleFieldListAction(button) {
+        const key = button.dataset.fieldListKey;
+        const action = button.dataset.fieldListAction;
+        if (!key || !action) return;
+        const control = button.closest(".control");
+        if (!control) return;
+        const step = selectedIngestionStep();
+        if (!step) return;
+        const selected = new Set(Array.isArray(step.params[key]) ? step.params[key] : []);
+        const visible = Array.from(control.querySelectorAll(`[data-field-item]:not(.hidden) input[type="checkbox"]`));
+        if (action === "select-shown") {
+          visible.forEach((cb) => selected.add(cb.value));
+        } else if (action === "clear-shown") {
+          visible.forEach((cb) => selected.delete(cb.value));
+        }
+        step.params[key] = Array.from(selected).sort((a, b) => String(a).localeCompare(String(b)));
+        state.ingestionPreview = null;
+        refreshFieldListControl(control, step.params[key]);
+      }
+
+      function applyParamSearch(input) {
+        const paramName = input.dataset.paramSearch;
+        if (!paramName) return;
+        const control = input.closest(".control");
+        if (!control) return;
+        const query = input.value.toLowerCase();
+        control.querySelectorAll(".variable-choice").forEach((label) => {
+          const name = label.querySelector(".variable-choice-name")?.textContent ?? "";
+          label.classList.toggle("hidden", Boolean(query && !name.toLowerCase().includes(query)));
+        });
+      }
+
+      function populateVariableFilter() {
+        if (!els.varFilterChips || !els.varFilterActive) return;
+        const baseAnalyses = (state.selectedStage === "visualization"
+          ? (state.payload?.analyses ?? []).filter((a) => a.visualization)
+          : state.payload?.analyses ?? []).filter((analysis) => {
+          const cat = els.categoryFilter.value;
+          const run = els.runFilter.value;
+          return (cat === "all" || (analysis.category || "Uncategorized") === cat)
+            && (run === "all" || analysis.run_id === run);
+        });
+        const allVarNames = uniqueValues(baseAnalyses.flatMap(artifactVariableNames));
+        const query = state.variableFilterSearch.toLowerCase();
+        const visible = query ? allVarNames.filter((v) => v.toLowerCase().includes(query)) : allVarNames;
+        els.varFilterChips.innerHTML = visible.slice(0, 100).map((name) => {
+          const active = state.variableFilter.includes(name);
+          return `<button class="var-chip ${active ? "active" : ""}" type="button" data-var-chip="${escapeHtml(name)}">${escapeHtml(name)}</button>`;
+        }).join("") || (allVarNames.length
+          ? '<span class="meta">No variables match search.</span>'
+          : '<span class="meta">No variable-level data in these results.</span>'
+        );
+        els.varFilterActive.innerHTML = state.variableFilter.map((name) => `
+          <span class="var-active-chip">
+            ${escapeHtml(name)}
+            <span class="var-active-x" data-remove-var="${escapeHtml(name)}" title="Remove filter" role="button">×</span>
+          </span>
+        `).join("");
+      }
+
       function renderVariableRow(variable) {
         const numeric = variable.numeric_summary
           ? `min ${formatValue(variable.numeric_summary.min, "float1")} | median ${formatValue(variable.numeric_summary.median, "float1")} | max ${formatValue(variable.numeric_summary.max, "float1")}`
@@ -3787,7 +4263,8 @@
             <div class="meta variable-summary-line">
               ${escapeHtml(variable.non_null)} present | ${escapeHtml(variable.missing_pct)}% missing | ${escapeHtml(variable.unique_count)} unique
             </div>
-            <span class="badge">${escapeHtml(variable.type)}</span>
+            ${typeBadge(variable.type)}
+            ${presenceBar(variable.missing_pct)}
             <div class="meta analysis-variable-samples">${escapeHtml(numeric || topValues || "No summary available")}</div>
             ${expanded ? renderValueCounts(counts, variable.value_counts_truncated) : ""}
           </button>
@@ -3985,17 +4462,26 @@
         }
 
         els.artifactList.innerHTML = state.filtered
-          .map((analysis) => `
-            <button class="artifact-button ${analysis.filename === state.selectedFilename ? "active" : ""}" type="button" data-filename="${escapeHtml(analysis.filename)}">
-              <div class="artifact-title">
-                <span>${escapeHtml(analysis.title)}</span>
-                ${analysis.is_latest ? '<span class="badge">latest</span>' : ""}
-              </div>
-              <div class="meta">
-                ${escapeHtml(analysis.category)} | ${escapeHtml(analysis.visualization_type || "data")} | ${escapeHtml(formatDate(analysis.run_datetime))}
-              </div>
-            </button>
-          `)
+          .map((analysis) => {
+            const vars = artifactVariableNames(analysis);
+            const varBadges = vars.slice(0, 4).map((v) => {
+              const isSelected = state.variableFilter.includes(v);
+              return `<span class="badge${isSelected ? " gold" : ""}" style="text-transform:none;">${escapeHtml(v)}</span>`;
+            }).join("");
+            const moreCount = vars.length > 4 ? `<span class="meta">+${escapeHtml(vars.length - 4)} more</span>` : "";
+            return `
+              <button class="artifact-button ${analysis.filename === state.selectedFilename ? "active" : ""}" type="button" data-filename="${escapeHtml(analysis.filename)}">
+                <div class="artifact-title">
+                  <span>${escapeHtml(analysis.title)}</span>
+                  ${analysis.is_latest ? '<span class="badge">latest</span>' : ""}
+                </div>
+                <div class="meta">
+                  ${escapeHtml(analysis.category)} | ${escapeHtml(analysis.visualization_type || "data")} | ${escapeHtml(formatDate(analysis.run_datetime))}
+                </div>
+                ${vars.length ? `<div style="display:flex; flex-wrap:wrap; gap:4px; margin-top:4px;">${varBadges}${moreCount}</div>` : ""}
+              </button>
+            `;
+          })
           .join("");
       }
 
@@ -4261,6 +4747,12 @@
         const rows = data.rows ?? [];
         const curves = data.roc_curves ?? [];
         if (!rows.length) return '<div class="empty">No fitted AUC models available.</div>';
+        const varFilter = state.variableFilter;
+        const filteredRows = varFilter.length ? rows.filter((row) => varFilter.includes(row.predictor)) : rows;
+        const filteredCurves = varFilter.length ? curves.filter((curve) => varFilter.includes(curve.predictor)) : curves;
+        const filterNote = varFilter.length
+          ? `<span class="badge gold">${escapeHtml(filteredRows.length)}/${escapeHtml(rows.length)} shown</span>`
+          : `<span class="badge">${escapeHtml(rows.length)} predictors</span>`;
         return `
           <div class="auc-comparison">
             <div class="auc-panel">
@@ -4268,14 +4760,17 @@
                 <div class="eyebrow">ROC Overlay</div>
                 <p class="meta">Top ranked variables for ${escapeHtml(data.outcome ?? "selected outcome")}.</p>
               </div>
-              ${renderRocOverlay(curves, rows, false)}
+              ${renderRocOverlay(filteredCurves.length ? filteredCurves : curves, filteredRows.length ? filteredRows : rows, false)}
             </div>
             <div class="auc-panel">
-              <div>
-                <div class="eyebrow">Ranked Variables</div>
-                <p class="meta">Sorted by apparent AUC. Each model uses complete cases for that predictor.</p>
+              <div style="display:flex; gap:8px; align-items:center; justify-content:space-between;">
+                <div>
+                  <div class="eyebrow">Ranked Variables</div>
+                  <p class="meta">Sorted by apparent AUC. Each model uses complete cases for that predictor.</p>
+                </div>
+                ${filterNote}
               </div>
-              ${renderAucRankList(rows)}
+              ${renderAucRankList(filteredRows.length ? filteredRows : rows)}
               ${renderSkippedModels(data.skipped ?? [])}
             </div>
           </div>
@@ -5007,6 +5502,28 @@
             refreshFieldListControl(target.closest(".control"), step.params?.[param] ?? []);
             return;
           }
+          if (target.dataset.mappingSourceKey !== undefined) {
+            const row = target.closest(".column-map-row");
+            if (row) {
+              const isMapped = Boolean(target.value.trim() && target.value.trim() !== target.dataset.mappingSourceKey);
+              row.classList.toggle("is-mapped", isMapped);
+              const existingClear = row.querySelector(".column-map-clear");
+              if (isMapped && !existingClear) {
+                const clearBtn = document.createElement("button");
+                clearBtn.className = "column-map-clear";
+                clearBtn.type = "button";
+                clearBtn.dataset.ingestionAction = "remove-column-mapping";
+                clearBtn.dataset.mappingKey = target.dataset.mappingSourceKey;
+                clearBtn.title = "Clear mapping";
+                clearBtn.textContent = "×";
+                row.children[2]?.replaceWith(clearBtn);
+              } else if (!isMapped && existingClear) {
+                const emptySpan = document.createElement("span");
+                existingClear.replaceWith(emptySpan);
+              }
+            }
+            return;
+          }
           renderStageDetail();
           return;
         }
@@ -5069,14 +5586,16 @@
           step.params[key] = target.checked;
           return;
         }
-        if (key === "columns") {
-          const entries = Object.entries(step.params.columns ?? {});
-          const index = Number(target.dataset.paramIndex);
-          const current = entries[index] ?? ["", ""];
-          const source = target.dataset.paramSide === "source" ? target.value : current[0];
-          const output = target.dataset.paramSide === "target" ? target.value : current[1];
-          entries[index] = [source, output];
-          step.params.columns = Object.fromEntries(entries.filter(([itemSource]) => itemSource));
+        if (key === "columns" && target.dataset.mappingSourceKey !== undefined) {
+          const source = target.dataset.mappingSourceKey;
+          const columns = { ...(step.params.columns ?? {}) };
+          const output = target.value.trim();
+          if (output) {
+            columns[source] = output;
+          } else {
+            delete columns[source];
+          }
+          step.params.columns = columns;
           return;
         }
         if (key === "mappings") {
@@ -5217,7 +5736,7 @@
         renderStageDetail();
       }
 
-      function handleIngestionAction(action, actionIndex = null) {
+      function handleIngestionAction(action, actionIndex = null, trigger = null) {
         const spec = currentIngestionSpec();
         if (!spec) return;
         if (action === "add-selected-operation") {
@@ -5241,6 +5760,44 @@
           state.ingestionStatus = "Spec reset to default.";
           renderStageDetail();
           return;
+        }
+        const mappingStep = selectedIngestionStep();
+        if (mappingStep && ["rename_columns", "map_columns"].includes(mappingStep.operation)) {
+          if (action === "map-all-columns") {
+            const sourceOptions = ingestionSourceFieldOptions();
+            const columns = { ...(mappingStep.params.columns ?? {}) };
+            sourceOptions.forEach((src) => { if (!columns[src]) columns[src] = src; });
+            mappingStep.params.columns = columns;
+            state.ingestionPreview = null;
+            renderStageDetailPreservingStepChain();
+            return;
+          }
+          if (action === "tidy-column-names") {
+            const sourceOptions = ingestionSourceFieldOptions();
+            const columns = { ...(mappingStep.params.columns ?? {}) };
+            sourceOptions.forEach((src) => { columns[src] = slugifyColumn(src); });
+            mappingStep.params.columns = columns;
+            state.ingestionPreview = null;
+            renderStageDetailPreservingStepChain();
+            return;
+          }
+          if (action === "clear-column-mappings") {
+            mappingStep.params.columns = {};
+            state.ingestionPreview = null;
+            renderStageDetailPreservingStepChain();
+            return;
+          }
+          if (action === "remove-column-mapping") {
+            const mapKey = trigger?.dataset?.mappingKey;
+            if (mapKey) {
+              const columns = { ...(mappingStep.params.columns ?? {}) };
+              delete columns[mapKey];
+              mappingStep.params.columns = columns;
+              state.ingestionPreview = null;
+              renderStageDetailPreservingStepChain();
+            }
+            return;
+          }
         }
 
         const steps = spec.steps ?? [];
@@ -5817,6 +6374,11 @@
         els.analysisRunStatus.textContent = "";
         renderAnalysisSetup();
       });
+      els.parameterControls.addEventListener("input", (event) => {
+        if (event.target.dataset.paramSearch !== undefined) {
+          applyParamSearch(event.target);
+        }
+      });
       els.parameterControls.addEventListener("change", (event) => syncParameterControl(event.target));
       els.runAnalysis.addEventListener("click", launchAnalysisRun);
       els.variableList.addEventListener("click", (event) => {
@@ -5863,12 +6425,23 @@
           return;
         }
         if (event.target.closest("[data-step-enabled-index]")) return;
+        const filterChip = event.target.closest("[data-mapping-filter]");
+        if (filterChip) {
+          state.mappingFilter = filterChip.dataset.mappingFilter;
+          applyMappingFilters();
+          return;
+        }
+        const fieldListAction = event.target.closest("[data-field-list-action]");
+        if (fieldListAction) {
+          handleFieldListAction(fieldListAction);
+          return;
+        }
         const action = event.target.closest("[data-ingestion-action]");
         if (action) {
           const actionIndex = action.dataset.ingestionStepActionIndex === undefined
             ? null
             : Number(action.dataset.ingestionStepActionIndex);
-          handleIngestionAction(action.dataset.ingestionAction, actionIndex);
+          handleIngestionAction(action.dataset.ingestionAction, actionIndex, action);
           return;
         }
         const stepButton = event.target.closest("[data-ingestion-step]");
@@ -5880,6 +6453,17 @@
         const button = event.target.closest("[data-history-step]");
         if (!button) return;
         moveStageHistory(button.dataset.historyStep);
+      });
+      els.stageDetail.addEventListener("input", (event) => {
+        if (event.target.dataset.mappingSearch !== undefined) {
+          state.mappingSearch = event.target.value;
+          applyMappingFilters();
+          return;
+        }
+        if (event.target.dataset.fieldListSearch !== undefined) {
+          applyFieldListFilter(event.target);
+          return;
+        }
       });
       els.stageDetail.addEventListener("change", (event) => {
         if (event.target.dataset.ingestionUpload) {
@@ -5930,6 +6514,40 @@
         els.stageDetail.querySelectorAll(".dragging, .drop-target").forEach((item) => item.classList.remove("dragging", "drop-target"));
       });
       els.refresh.addEventListener("click", loadDashboard);
+      els.variableSearch.addEventListener("input", () => {
+        state.variableSearch = els.variableSearch.value;
+        renderVariableList();
+      });
+      els.variableTypeFilter.addEventListener("change", () => {
+        state.variableTypeFilter = els.variableTypeFilter.value;
+        renderVariableList();
+      });
+      els.varFilterInput.addEventListener("input", () => {
+        state.variableFilterSearch = els.varFilterInput.value;
+        populateVariableFilter();
+      });
+      els.varFilterChips.addEventListener("click", (event) => {
+        const chip = event.target.closest("[data-var-chip]");
+        if (!chip) return;
+        const name = chip.dataset.varChip;
+        const idx = state.variableFilter.indexOf(name);
+        if (idx >= 0) state.variableFilter.splice(idx, 1);
+        else state.variableFilter.push(name);
+        applyFilters();
+      });
+      els.varFilterActive.addEventListener("click", (event) => {
+        const x = event.target.closest("[data-remove-var]");
+        if (!x) return;
+        const name = x.dataset.removeVar;
+        state.variableFilter = state.variableFilter.filter((v) => v !== name);
+        applyFilters();
+      });
+      els.varFilterClear.addEventListener("click", () => {
+        state.variableFilter = [];
+        state.variableFilterSearch = "";
+        els.varFilterInput.value = "";
+        applyFilters();
+      });
       window.addEventListener("scroll", updateHeaderDensity, { passive: true });
 
       updateHeaderDensity();
