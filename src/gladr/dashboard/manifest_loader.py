@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from gladr.analysis.profiling import build_dataset_profile
+from gladr.analysis.profiling import build_dataset_graph_payload, build_dataset_profile
 from gladr.analysis.templates import list_analysis_templates
 from gladr.core.latest_pointer import read_latest_pointer
 from gladr.core.paths import ProjectPaths
@@ -53,6 +53,7 @@ def load_dashboard_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
             "visualizations": sum(1 for analysis in analyses if analysis.get("visualization")),
         },
         "dataset_profile": build_dataset_profile(project_paths),
+        "dataset_graph": build_dataset_graph_payload(project_paths),
         "analysis_templates": list_analysis_templates(),
         "ingestion_workbench": build_ingestion_workbench_payload(project_paths),
         "ingestion_runs": ingestion_runs,
@@ -217,6 +218,13 @@ def build_stage_summaries(
             "history": [_ingestion_stage_item(run) for run in ingestion_runs],
         },
         {
+            "id": "graph",
+            "label": "Cohort Graph",
+            "status": "completed" if latest_ingestion else "pending",
+            "current": _graph_stage_item(latest_ingestion),
+            "history": [_graph_stage_item(run) for run in ingestion_runs],
+        },
+        {
             "id": "analysis",
             "label": "Analysis",
             "status": "completed" if latest_analysis else ("failed" if latest_ingestion else "pending"),
@@ -279,6 +287,25 @@ def _ingestion_stage_item(run: dict[str, Any] | None) -> dict[str, Any] | None:
         ],
         "files": files,
         "flow": _ingestion_flow(run, sources, files),
+        "is_latest": run.get("is_latest", False),
+    }
+
+
+def _graph_stage_item(run: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not run:
+        return None
+
+    return {
+        "title": f"Cohort graph for ingestion run {run.get('run_id')}",
+        "run_id": run.get("run_id"),
+        "run_datetime": run.get("run_datetime"),
+        "description": "Interactive post-ingestion cohort splitting and variable comparison workspace.",
+        "metrics": [
+            {"label": "Rows", "value": run.get("total_rows", "NA")},
+            {"label": "Mode", "value": "Explore"},
+        ],
+        "outputs": [],
+        "files": [run.get("clean_dataset_filename")] if run.get("clean_dataset_filename") else [],
         "is_latest": run.get("is_latest", False),
     }
 

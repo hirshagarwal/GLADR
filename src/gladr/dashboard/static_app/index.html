@@ -221,10 +221,15 @@
 
       .section-header {
         display: flex;
+        flex-wrap: wrap;
         gap: 12px;
         align-items: flex-start;
         justify-content: space-between;
         margin-bottom: 10px;
+      }
+
+      .section-header > div {
+        min-width: 0;
       }
 
       .project-start {
@@ -297,7 +302,7 @@
       .pipeline-map {
         position: relative;
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
         gap: 8px;
         isolation: isolate;
       }
@@ -627,9 +632,202 @@
 
       .analysis-workbench {
         display: grid;
-        grid-template-columns: minmax(340px, 0.9fr) minmax(420px, 1.1fr);
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
         gap: 12px;
         align-items: start;
+      }
+
+      .graph-workbench {
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+      }
+
+      .graph-controls {
+        display: grid;
+        gap: 12px;
+      }
+
+      .graph-comparison-list {
+        display: grid;
+        max-height: 260px;
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+      }
+
+      .graph-board {
+        min-width: 0;
+        overflow: auto;
+        padding: 18px 8px 8px;
+      }
+
+      .graph-tree {
+        display: grid;
+        justify-items: center;
+        gap: 18px;
+        min-width: min-content;
+      }
+
+      .graph-node-wrap {
+        display: grid;
+        position: relative;
+        justify-items: center;
+        gap: 20px;
+      }
+
+      .graph-node {
+        display: grid;
+        gap: 8px;
+        width: min(100%, 380px);
+        padding: 10px;
+        text-align: left;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface);
+        cursor: pointer;
+      }
+
+      .graph-node.active {
+        border-color: var(--accent-2);
+        box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
+      }
+
+      .graph-node-title {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .graph-node-label {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        font-weight: 820;
+      }
+
+      .graph-children {
+        position: relative;
+        display: flex;
+        gap: 18px;
+        align-items: flex-start;
+        justify-content: center;
+        padding-top: 28px;
+      }
+
+      .graph-children::before {
+        position: absolute;
+        top: 0;
+        left: 9%;
+        right: 9%;
+        height: 2px;
+        content: "";
+        background: var(--line-strong);
+      }
+
+      .graph-children > .graph-node-wrap {
+        padding-top: 18px;
+      }
+
+      .graph-children > .graph-node-wrap::before {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 2px;
+        height: 18px;
+        content: "";
+        background: var(--line-strong);
+        transform: translateX(-50%);
+      }
+
+      .graph-children > .graph-node-wrap::after {
+        position: absolute;
+        top: 13px;
+        left: 50%;
+        width: 0;
+        height: 0;
+        content: "";
+        border-right: 5px solid transparent;
+        border-left: 5px solid transparent;
+        border-top: 7px solid var(--accent-2);
+        transform: translateX(-50%);
+      }
+
+      .graph-mini-list {
+        display: grid;
+        gap: 7px;
+      }
+
+      .graph-mini {
+        display: grid;
+        gap: 4px;
+        padding: 7px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: var(--surface-soft);
+      }
+
+      .graph-mini-top {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 0.78rem;
+        font-weight: 780;
+      }
+
+      .graph-bars {
+        display: grid;
+        gap: 4px;
+      }
+
+      .graph-bar-row {
+        display: grid;
+        grid-template-columns: minmax(0, 96px) minmax(0, 1fr) auto;
+        gap: 6px;
+        align-items: center;
+        font-size: 0.74rem;
+      }
+
+      .graph-bar-label {
+        overflow: hidden;
+        color: var(--muted);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .graph-bar-track {
+        display: block;
+        height: 8px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #dfe8f3;
+      }
+
+      .graph-bar-fill {
+        display: block;
+        width: var(--value);
+        height: 100%;
+        border-radius: inherit;
+        background: var(--accent);
+      }
+
+      .graph-hist {
+        display: flex;
+        gap: 3px;
+        align-items: end;
+        height: 32px;
+      }
+
+      .graph-hist-bin {
+        display: block;
+        flex: 1;
+        height: var(--value);
+        min-height: 2px;
+        border-radius: 3px 3px 0 0;
+        background: var(--accent-2);
       }
 
       .variable-list {
@@ -672,11 +870,13 @@
 
       .analysis-variable-list {
         gap: 5px;
+        max-height: none;
+        overflow: visible;
       }
 
       .analysis-variable-row {
-        grid-template-columns: minmax(220px, 32%) minmax(260px, 1fr) 120px;
-        column-gap: 16px;
+        grid-template-columns: minmax(0, 32%) minmax(0, 1fr) max-content;
+        column-gap: clamp(8px, 1.4vw, 16px);
         row-gap: 4px;
         align-items: center;
         min-height: 54px;
@@ -688,12 +888,14 @@
       }
 
       .analysis-variable-row .variable-name {
+        min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
       .variable-summary-line {
+        min-width: 0;
         margin-top: 0;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -1792,6 +1994,7 @@
         .stage-detail,
         .flow-summary,
         .analysis-workbench,
+        .graph-workbench,
         .ingestion-workbench,
         .auc-comparison,
         .canned-tool-selector,
@@ -1856,6 +2059,15 @@
         }
 
         .pipeline-map::before {
+          display: none;
+        }
+
+        .graph-children {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .graph-children::before {
           display: none;
         }
       }
@@ -2009,7 +2221,7 @@
       /* ── Variable search + type filter ── */
       .variable-controls {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 150px;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
         gap: 8px;
         margin-bottom: 8px;
       }
@@ -2152,6 +2364,54 @@
 
       <section class="summary-grid" id="summary"></section>
 
+      <section class="graph-workbench hidden" id="graph-view">
+        <section class="panel panel-pad graph-controls">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Post-Ingestion</div>
+              <h2 class="section-title">Cohort Graph</h2>
+              <p class="subtle" id="graph-summary">Loading graph payload.</p>
+            </div>
+            <span class="pill" id="graph-node-count">0 nodes</span>
+          </div>
+          <div class="control">
+            <label for="graph-index-variable">Index variable</label>
+            <select id="graph-index-variable"></select>
+          </div>
+          <div class="control">
+            <label for="graph-split-variable">Split active node by</label>
+            <select id="graph-split-variable"></select>
+          </div>
+          <div class="action-row">
+            <button class="icon-button" id="graph-split-active" type="button">Split node</button>
+            <button class="small-button" id="graph-reset" type="button">Reset</button>
+          </div>
+          <div class="control">
+            <label for="graph-value-mode">Mini-chart values</label>
+            <select id="graph-value-mode">
+              <option value="percent">Percent</option>
+              <option value="count">Count</option>
+            </select>
+          </div>
+          <div class="control">
+            <label>Node mini-charts</label>
+            <div class="graph-comparison-list" id="graph-comparison-list"></div>
+          </div>
+          <p class="meta" id="graph-status"></p>
+        </section>
+
+        <section class="panel panel-pad">
+          <div class="section-header">
+            <div>
+              <div class="eyebrow">Visual Split</div>
+              <h2 class="section-title">Cohort Tree</h2>
+              <p class="subtle">Select a node, choose a categorical or binary variable, then split.</p>
+            </div>
+          </div>
+          <div class="graph-board" id="graph-board"></div>
+        </section>
+      </section>
+
       <section class="analysis-workbench hidden" id="analysis-view">
         <section class="panel panel-pad">
           <div class="section-header">
@@ -2261,6 +2521,14 @@
         mappingFilter: "all",
         variableFilter: [],
         variableFilterSearch: "",
+        graphDatasetKey: null,
+        graphIndexVariable: null,
+        graphSplitVariable: null,
+        graphComparisonVariables: [],
+        graphValueMode: "percent",
+        graphActiveNodeId: "root",
+        graphTree: null,
+        graphStatus: "",
       };
 
       const els = {
@@ -2281,6 +2549,17 @@
         stageDetail: document.getElementById("stage-detail"),
         stageGenerated: document.getElementById("stage-generated"),
         analysisView: document.getElementById("analysis-view"),
+        graphView: document.getElementById("graph-view"),
+        graphSummary: document.getElementById("graph-summary"),
+        graphNodeCount: document.getElementById("graph-node-count"),
+        graphIndexVariable: document.getElementById("graph-index-variable"),
+        graphSplitVariable: document.getElementById("graph-split-variable"),
+        graphValueMode: document.getElementById("graph-value-mode"),
+        graphSplitActive: document.getElementById("graph-split-active"),
+        graphReset: document.getElementById("graph-reset"),
+        graphComparisonList: document.getElementById("graph-comparison-list"),
+        graphStatus: document.getElementById("graph-status"),
+        graphBoard: document.getElementById("graph-board"),
         resultsView: document.getElementById("results-view"),
         resultsBrowser: document.getElementById("results-browser"),
         datasetSummary: document.getElementById("dataset-summary"),
@@ -2397,6 +2676,7 @@
         updateProjectPanel();
         els.summary.classList.add("hidden");
         els.overviewView.classList.add("hidden");
+        els.graphView.classList.add("hidden");
         els.analysisView.classList.add("hidden");
         els.resultsView.classList.add("hidden");
         els.resultsBrowser.classList.add("hidden");
@@ -2405,6 +2685,7 @@
         els.artifactList.innerHTML = "";
         els.visualOutput.innerHTML = "";
         els.variableList.innerHTML = "";
+        els.graphBoard.innerHTML = "";
       }
 
       function resetProjectScopedState() {
@@ -2430,6 +2711,14 @@
         state.mappingFilter = "all";
         state.variableFilter = [];
         state.variableFilterSearch = "";
+        state.graphDatasetKey = null;
+        state.graphIndexVariable = null;
+        state.graphSplitVariable = null;
+        state.graphComparisonVariables = [];
+        state.graphValueMode = "percent";
+        state.graphActiveNodeId = "root";
+        state.graphTree = null;
+        state.graphStatus = "";
         els.templateSearch.value = "";
         if (els.variableSearch) els.variableSearch.value = "";
         if (els.varFilterInput) els.varFilterInput.value = "";
@@ -2441,6 +2730,7 @@
         els.overviewView.classList.remove("hidden");
         els.summary.classList.remove("hidden");
         ensureIngestionState();
+        ensureGraphState();
         populateFilters();
         applyFilters();
         renderSummary();
@@ -2452,6 +2742,7 @@
         els.summary.innerHTML = metricCard("Loading", "...", "Scanning runtime artifacts");
         els.stageMap.innerHTML = '<div class="empty">Loading pipeline state...</div>';
         els.stageDetail.innerHTML = "";
+        els.graphBoard.innerHTML = '<div class="empty">Loading cohort graph...</div>';
         els.artifactList.innerHTML = '<div class="empty">Loading analysis artifacts...</div>';
         els.visualOutput.innerHTML = '<div class="empty">Waiting for dashboard data...</div>';
         els.variableList.innerHTML = '<div class="empty">Loading variables...</div>';
@@ -2461,6 +2752,7 @@
         state.selectedStage = null;
         els.summary.classList.remove("hidden");
         els.stageDetail.classList.remove("hidden", "flow-detail");
+        els.graphView.classList.add("hidden");
         els.analysisView.classList.add("hidden");
         els.resultsView.classList.add("hidden");
         els.resultsBrowser.classList.add("hidden");
@@ -2474,6 +2766,7 @@
           </div>
         `;
         els.variableList.innerHTML = '<div class="empty">Start the dynamic dashboard server to profile variables.</div>';
+        els.graphBoard.innerHTML = '<div class="empty">Start the dynamic dashboard server to explore the cohort graph.</div>';
       }
 
       function populateFilters() {
@@ -2547,11 +2840,13 @@
 
       function renderSelectedStageView() {
         const showOverview = !state.selectedStage;
+        const showGraph = state.selectedStage === "graph";
         const showAnalysis = state.selectedStage === "analysis";
         const showVisualization = state.selectedStage === "visualization";
-        const showStageDetail = Boolean(state.selectedStage && !showAnalysis && !showVisualization);
+        const showStageDetail = Boolean(state.selectedStage && !showGraph && !showAnalysis && !showVisualization);
 
         els.summary.classList.toggle("hidden", !showOverview);
+        els.graphView.classList.toggle("hidden", !showGraph);
         els.analysisView.classList.toggle("hidden", !showAnalysis);
         els.resultsView.classList.toggle("hidden", !showVisualization);
         els.resultsBrowser.classList.toggle("hidden", !showVisualization);
@@ -2560,6 +2855,10 @@
         if (showStageDetail) {
           renderStageDetail();
           return;
+        }
+
+        if (showGraph) {
+          renderGraphExplorer();
         }
 
         els.stageDetail.classList.remove("flow-detail");
@@ -2783,6 +3082,354 @@
           </div>
         `);
         return `<div class="output-list">${outputRows.concat(fileRows).join("")}</div>`;
+      }
+
+      function graphPayload() {
+        return state.payload?.dataset_graph ?? { dataset: null, variables: [], columns: {} };
+      }
+
+      function graphDatasetKey(payload = graphPayload()) {
+        const dataset = payload.dataset ?? {};
+        return `${dataset.run_id ?? "none"}:${dataset.rows ?? 0}:${dataset.columns ?? 0}`;
+      }
+
+      function ensureGraphState() {
+        const payload = graphPayload();
+        const variables = payload.variables ?? [];
+        const dataset = payload.dataset;
+        if (!dataset || !variables.length) {
+          state.graphTree = null;
+          state.graphDatasetKey = null;
+          return;
+        }
+
+        const key = graphDatasetKey(payload);
+        const names = variables.map((variable) => variable.name);
+        const splitVariables = graphSplitVariables();
+        if (state.graphDatasetKey !== key || !state.graphTree) {
+          state.graphDatasetKey = key;
+          state.graphIndexVariable = payload.default_index_variable && names.includes(payload.default_index_variable)
+            ? payload.default_index_variable
+            : names[0];
+          state.graphSplitVariable = splitVariables.find((variable) => variable.name !== state.graphIndexVariable)?.name ?? splitVariables[0]?.name ?? "";
+          state.graphComparisonVariables = defaultGraphComparisonVariables();
+          resetGraphTree();
+          return;
+        }
+
+        if (!names.includes(state.graphIndexVariable)) state.graphIndexVariable = payload.default_index_variable ?? names[0];
+        if (!splitVariables.some((variable) => variable.name === state.graphSplitVariable)) {
+          state.graphSplitVariable = splitVariables.find((variable) => variable.name !== state.graphIndexVariable)?.name ?? splitVariables[0]?.name ?? "";
+        }
+        state.graphComparisonVariables = state.graphComparisonVariables.filter((name) => names.includes(name));
+        if (!state.graphComparisonVariables.length) state.graphComparisonVariables = defaultGraphComparisonVariables();
+      }
+
+      function defaultGraphComparisonVariables() {
+        const variables = graphPayload().variables ?? [];
+        const preferred = variables
+          .filter((variable) => variable.is_default_comparison && variable.name !== state.graphIndexVariable)
+          .map((variable) => variable.name);
+        const fallback = variables
+          .filter((variable) => variable.name !== state.graphIndexVariable && variable.type !== "identifier")
+          .map((variable) => variable.name);
+        return uniqueValues([...preferred, ...fallback]).slice(0, 4);
+      }
+
+      function resetGraphTree() {
+        const payload = graphPayload();
+        const rows = Number(payload.dataset?.rows ?? 0);
+        state.graphTree = {
+          id: "root",
+          label: state.graphIndexVariable || "Cohort",
+          depth: 0,
+          rowIndexes: Array.from({ length: rows }, (_, index) => index),
+          splitBy: null,
+          children: [],
+        };
+        state.graphActiveNodeId = "root";
+        state.graphStatus = rows ? "Select a node and split variable to explore subgroups." : "No clean dataset is available.";
+      }
+
+      function renderGraphExplorer() {
+        ensureGraphState();
+        const payload = graphPayload();
+        const dataset = payload.dataset;
+        if (!dataset || !state.graphTree) {
+          els.graphSummary.textContent = "Run ingestion to create a clean dataset first.";
+          els.graphNodeCount.textContent = "0 nodes";
+          els.graphBoard.innerHTML = '<div class="empty">No clean dataset is available yet.</div>';
+          els.graphIndexVariable.innerHTML = option("", "No variables");
+          els.graphSplitVariable.innerHTML = option("", "No split variables");
+          els.graphValueMode.value = state.graphValueMode;
+          els.graphComparisonList.innerHTML = '<div class="empty">No variables available.</div>';
+          els.graphSplitActive.disabled = true;
+          els.graphStatus.textContent = "";
+          return;
+        }
+
+        const variables = payload.variables ?? [];
+        const splitVariables = graphSplitVariables();
+        els.graphSummary.textContent = `${dataset.rows} rows, ${dataset.columns} variables | ingestion run ${dataset.run_id}`;
+        els.graphNodeCount.textContent = `${countGraphNodes(state.graphTree)} nodes`;
+        els.graphIndexVariable.innerHTML = variables
+          .map((variable) => selectedOption(variable.name, `${variable.name} (${variable.type})`, variable.name === state.graphIndexVariable))
+          .join("");
+        els.graphSplitVariable.innerHTML = splitVariables.length
+          ? splitVariables.map((variable) => selectedOption(variable.name, `${variable.name} (${variable.unique_count})`, variable.name === state.graphSplitVariable)).join("")
+          : option("", "No binary/categorical variables");
+        els.graphValueMode.value = state.graphValueMode;
+        els.graphComparisonList.innerHTML = renderGraphComparisonChoices(variables);
+        const active = findGraphNode(state.graphTree, state.graphActiveNodeId);
+        els.graphSplitActive.disabled = !active || !state.graphSplitVariable || active.depth >= 3;
+        els.graphStatus.textContent = state.graphStatus;
+        els.graphBoard.innerHTML = `<div class="graph-tree">${renderGraphNode(state.graphTree)}</div>`;
+      }
+
+      function graphSplitVariables() {
+        return (graphPayload().variables ?? [])
+          .filter((variable) => variable.is_split_eligible && variable.name !== state.graphIndexVariable);
+      }
+
+      function renderGraphComparisonChoices(variables) {
+        const selected = new Set(state.graphComparisonVariables);
+        const choices = variables.filter((variable) => variable.name !== state.graphIndexVariable);
+        if (!choices.length) return '<div class="empty">No comparison variables available.</div>';
+        return choices.map((variable) => `
+          <label class="variable-choice">
+            <input
+              type="checkbox"
+              data-graph-comparison="${escapeHtml(variable.name)}"
+              value="${escapeHtml(variable.name)}"
+              ${selected.has(variable.name) ? "checked" : ""}
+            />
+            <span class="variable-choice-name">${escapeHtml(variable.name)}</span>
+            <span class="badge">${escapeHtml(variable.type)}</span>
+          </label>
+        `).join("");
+      }
+
+      function renderGraphNode(node) {
+        const active = node.id === state.graphActiveNodeId;
+        const parentPct = node.parentSize ? ` | ${((node.rowIndexes.length / node.parentSize) * 100).toFixed(1)}% of parent` : "";
+        return `
+          <div class="graph-node-wrap">
+            <button class="graph-node ${active ? "active" : ""}" type="button" data-graph-node="${escapeHtml(node.id)}">
+              <div class="graph-node-title">
+                <span class="graph-node-label">${escapeHtml(node.label)}</span>
+                ${active ? '<span class="badge gold">active</span>' : ""}
+              </div>
+              <div class="meta">n=${escapeHtml(node.rowIndexes.length)}${escapeHtml(parentPct)}${node.splitBy ? ` | split by ${escapeHtml(node.splitBy)}` : ""}</div>
+              ${renderGraphNodeSummaries(node)}
+            </button>
+            ${node.children?.length ? `<div class="graph-children">${node.children.map(renderGraphNode).join("")}</div>` : ""}
+          </div>
+        `;
+      }
+
+      function renderGraphNodeSummaries(node) {
+        const variables = state.graphComparisonVariables
+          .map((name) => graphVariable(name))
+          .filter(Boolean);
+        if (!variables.length) return '<div class="meta">Select comparison variables to show mini-charts.</div>';
+        return `<div class="graph-mini-list">${variables.map((variable) => renderGraphMiniSummary(variable, node.rowIndexes)).join("")}</div>`;
+      }
+
+      function renderGraphMiniSummary(variable, rowIndexes) {
+        const values = graphColumnValues(variable.name, rowIndexes);
+        if (variable.type === "numeric") return renderGraphNumericSummary(variable, values);
+        if (["binary", "categorical"].includes(variable.type)) return renderGraphCategoricalSummary(variable, values);
+        return renderGraphPresenceSummary(variable, values);
+      }
+
+      function renderGraphNumericSummary(variable, values) {
+        const numeric = values.map((value) => Number(value)).filter((value) => Number.isFinite(value)).sort((a, b) => a - b);
+        if (!numeric.length) return renderGraphPresenceSummary(variable, values);
+        const bins = graphHistogramBins(numeric, 6);
+        return `
+          <div class="graph-mini">
+            <div class="graph-mini-top">
+              <span>${escapeHtml(variable.name)}</span>
+              <span class="meta">median ${escapeHtml(formatValue(percentile(numeric, 0.5), "float1"))}</span>
+            </div>
+            <div class="graph-hist">
+              ${bins.map((bin) => `<span class="graph-hist-bin" style="--value:${escapeHtml(bin.heightPct)}%" title="${escapeHtml(graphValueDisplay(bin.count, numeric.length))}"></span>`).join("")}
+            </div>
+            <div class="meta">range ${escapeHtml(formatValue(numeric[0], "float1"))}-${escapeHtml(formatValue(numeric[numeric.length - 1], "float1"))} | missing ${escapeHtml(graphValueDisplay(values.length - numeric.length, values.length))}</div>
+          </div>
+        `;
+      }
+
+      function renderGraphCategoricalSummary(variable, values) {
+        const counts = countGraphValues(values);
+        const total = values.length || 1;
+        const rows = counts.slice(0, 4);
+        return `
+          <div class="graph-mini">
+            <div class="graph-mini-top">
+              <span>${escapeHtml(variable.name)}</span>
+              <span class="meta">${escapeHtml(counts.length)} values</span>
+            </div>
+            <div class="graph-bars">
+              ${rows.map((item) => {
+                const pct = (item.count / total) * 100;
+                return `
+                  <div class="graph-bar-row">
+                    <span class="graph-bar-label" title="${escapeHtml(item.label)}">${escapeHtml(item.label)}</span>
+                    <span class="graph-bar-track"><span class="graph-bar-fill" style="--value:${escapeHtml(pct.toFixed(1))}%"></span></span>
+                    <span>${escapeHtml(graphValueDisplay(item.count, total))}</span>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderGraphPresenceSummary(variable, values) {
+        const present = values.filter((value) => !isGraphMissing(value)).length;
+        const total = values.length || 1;
+        const pct = (present / total) * 100;
+        return `
+          <div class="graph-mini">
+            <div class="graph-mini-top">
+              <span>${escapeHtml(variable.name)}</span>
+              <span class="meta">${escapeHtml(variable.type)}</span>
+            </div>
+            <div class="graph-bar-row">
+              <span class="graph-bar-label">present</span>
+              <span class="graph-bar-track"><span class="graph-bar-fill" style="--value:${escapeHtml(pct.toFixed(1))}%"></span></span>
+              <span>${escapeHtml(graphValueDisplay(present, total))}</span>
+            </div>
+            <div class="meta">missing ${escapeHtml(graphValueDisplay(values.length - present, total))}</div>
+          </div>
+        `;
+      }
+
+      function splitActiveGraphNode() {
+        ensureGraphState();
+        const active = findGraphNode(state.graphTree, state.graphActiveNodeId);
+        const splitVariable = state.graphSplitVariable;
+        if (!active || !splitVariable) return;
+        if (active.depth >= 3) {
+          state.graphStatus = "MVP graph depth is capped at 3 split levels.";
+          renderGraphExplorer();
+          return;
+        }
+
+        const column = graphPayload().columns?.[splitVariable] ?? [];
+        const groups = new Map();
+        for (const rowIndex of active.rowIndexes) {
+          const label = graphValueLabel(column[rowIndex]);
+          if (!groups.has(label)) groups.set(label, []);
+          groups.get(label).push(rowIndex);
+        }
+        const sortedGroups = Array.from(groups.entries()).sort((left, right) => {
+          if (left[0] === "Missing") return 1;
+          if (right[0] === "Missing") return -1;
+          return right[1].length - left[1].length || left[0].localeCompare(right[0]);
+        });
+        const missingGroup = sortedGroups.find((group) => group[0] === "Missing");
+        const nonMissingGroups = sortedGroups.filter((group) => group[0] !== "Missing");
+        let visibleGroups = missingGroup ? [...nonMissingGroups, missingGroup] : nonMissingGroups;
+        if (visibleGroups.length > 12) {
+          const topCount = missingGroup ? 10 : 11;
+          const topGroups = nonMissingGroups.slice(0, topCount);
+          const otherRows = nonMissingGroups.slice(topCount).flatMap((group) => group[1]);
+          visibleGroups = [...topGroups, ["Other", otherRows]];
+          if (missingGroup) visibleGroups.push(missingGroup);
+        }
+        active.splitBy = splitVariable;
+        active.children = visibleGroups.map(([label, rowIndexes], index) => ({
+          id: `${active.id}:${splitVariable}:${index}`,
+          label: `${splitVariable} = ${label}`,
+          depth: active.depth + 1,
+          parentSize: active.rowIndexes.length,
+          rowIndexes,
+          splitBy: null,
+          children: [],
+        }));
+        state.graphStatus = `Split ${active.label} by ${splitVariable}.`;
+        renderGraphExplorer();
+      }
+
+      function graphVariable(name) {
+        return (graphPayload().variables ?? []).find((variable) => variable.name === name) ?? null;
+      }
+
+      function graphColumnValues(name, rowIndexes) {
+        const column = graphPayload().columns?.[name] ?? [];
+        return rowIndexes.map((index) => column[index]);
+      }
+
+      function findGraphNode(node, id) {
+        if (!node) return null;
+        if (node.id === id) return node;
+        for (const child of node.children ?? []) {
+          const found = findGraphNode(child, id);
+          if (found) return found;
+        }
+        return null;
+      }
+
+      function countGraphNodes(node) {
+        if (!node) return 0;
+        return 1 + (node.children ?? []).reduce((total, child) => total + countGraphNodes(child), 0);
+      }
+
+      function countGraphValues(values) {
+        const counts = new Map();
+        for (const value of values) {
+          const label = graphValueLabel(value);
+          counts.set(label, (counts.get(label) ?? 0) + 1);
+        }
+        return Array.from(counts.entries())
+          .map(([label, count]) => ({ label, count }))
+          .sort((left, right) => {
+            if (left.label === "Missing") return 1;
+            if (right.label === "Missing") return -1;
+            return right.count - left.count || left.label.localeCompare(right.label);
+          });
+      }
+
+      function graphValueLabel(value) {
+        if (isGraphMissing(value)) return "Missing";
+        if (Array.isArray(value)) return value.length ? value.join(", ") : "Missing";
+        if (value && typeof value === "object") return JSON.stringify(value);
+        return String(value);
+      }
+
+      function isGraphMissing(value) {
+        return value === null || value === undefined || String(value).trim() === "";
+      }
+
+      function graphValueDisplay(count, total) {
+        const numericCount = Number(count) || 0;
+        const numericTotal = Number(total) || 0;
+        if (state.graphValueMode === "count" || !numericTotal) return String(numericCount);
+        return `${((numericCount / numericTotal) * 100).toFixed(1)}%`;
+      }
+
+      function graphHistogramBins(values, binCount) {
+        const min = values[0];
+        const max = values[values.length - 1];
+        if (min === max) return [{ count: values.length, heightPct: 100 }];
+        const bins = Array.from({ length: binCount }, () => 0);
+        for (const value of values) {
+          const index = Math.min(binCount - 1, Math.floor(((value - min) / (max - min)) * binCount));
+          bins[index] += 1;
+        }
+        const maxCount = Math.max(...bins, 1);
+        return bins.map((count) => ({ count, heightPct: ((count / maxCount) * 100).toFixed(1) }));
+      }
+
+      function percentile(sortedValues, p) {
+        if (!sortedValues.length) return null;
+        const index = (sortedValues.length - 1) * p;
+        const lower = Math.floor(index);
+        const upper = Math.ceil(index);
+        if (lower === upper) return sortedValues[lower];
+        return sortedValues[lower] + (sortedValues[upper] - sortedValues[lower]) * (index - lower);
       }
 
       function ensureIngestionState() {
@@ -6512,6 +7159,43 @@
       });
       els.stageDetail.addEventListener("dragend", () => {
         els.stageDetail.querySelectorAll(".dragging, .drop-target").forEach((item) => item.classList.remove("dragging", "drop-target"));
+      });
+      els.graphIndexVariable.addEventListener("change", () => {
+        state.graphIndexVariable = els.graphIndexVariable.value;
+        state.graphComparisonVariables = state.graphComparisonVariables.filter((name) => name !== state.graphIndexVariable);
+        if (!state.graphComparisonVariables.length) state.graphComparisonVariables = defaultGraphComparisonVariables();
+        const splitVariables = graphSplitVariables();
+        state.graphSplitVariable = splitVariables[0]?.name ?? "";
+        resetGraphTree();
+        renderGraphExplorer();
+      });
+      els.graphSplitVariable.addEventListener("change", () => {
+        state.graphSplitVariable = els.graphSplitVariable.value;
+        renderGraphExplorer();
+      });
+      els.graphValueMode.addEventListener("change", () => {
+        state.graphValueMode = els.graphValueMode.value;
+        renderGraphExplorer();
+      });
+      els.graphSplitActive.addEventListener("click", splitActiveGraphNode);
+      els.graphReset.addEventListener("click", () => {
+        resetGraphTree();
+        renderGraphExplorer();
+      });
+      els.graphComparisonList.addEventListener("change", (event) => {
+        const name = event.target.dataset.graphComparison;
+        if (!name) return;
+        const selected = new Set(state.graphComparisonVariables);
+        if (event.target.checked) selected.add(name);
+        else selected.delete(name);
+        state.graphComparisonVariables = Array.from(selected);
+        renderGraphExplorer();
+      });
+      els.graphBoard.addEventListener("click", (event) => {
+        const node = event.target.closest("[data-graph-node]");
+        if (!node) return;
+        state.graphActiveNodeId = node.dataset.graphNode;
+        renderGraphExplorer();
       });
       els.refresh.addEventListener("click", loadDashboard);
       els.variableSearch.addEventListener("input", () => {

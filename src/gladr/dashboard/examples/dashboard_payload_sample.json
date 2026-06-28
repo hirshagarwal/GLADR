@@ -15,6 +15,20 @@
     "analysis_artifacts": 1,
     "visualizations": 1
   },
+  "dataset_graph": {
+    "dataset": {"run_id": "20260101_120000", "run_datetime": "2026-01-01T12:00:00-05:00", "rows": 2, "columns": 3},
+    "default_index_variable": "patient_id",
+    "variables": [
+      {"name": "patient_id", "type": "identifier", "non_null": 2, "missing": 0, "missing_pct": 0, "unique_count": 2, "is_split_eligible": false, "is_default_comparison": false},
+      {"name": "sex", "type": "binary", "non_null": 2, "missing": 0, "missing_pct": 0, "unique_count": 2, "is_split_eligible": true, "is_default_comparison": true},
+      {"name": "age_at_presentation", "type": "numeric", "non_null": 2, "missing": 0, "missing_pct": 0, "unique_count": 2, "is_split_eligible": false, "is_default_comparison": true}
+    ],
+    "columns": {
+      "patient_id": ["K000001", "K000002"],
+      "sex": ["F", "M"],
+      "age_at_presentation": [61, 55]
+    }
+  },
   "ingestion_runs": [
     {
       "run_id": "20260101_120000",
@@ -68,7 +82,22 @@
         "is_latest": true
       },
       "history": []
+    },
+    {
+      "id": "graph",
+      "label": "Cohort Graph",
+      "status": "completed",
+      "current": {
+        "title": "Cohort graph for ingestion run 20260101_120000",
+        "run_id": "20260101_120000",
+        "run_datetime": "2026-01-01T12:00:00-05:00",
+        "description": "Interactive post-ingestion cohort splitting and variable comparison workspace.",
+        "metrics": [{"label": "Rows", "value": 2}, {"label": "Mode", "value": "Explore"}],
+        "outputs": [],
+        "files": ["clean_dataset_20260101_120000.json"],
+        "is_latest": true
+      },
+      "history": []
     }
   ]
 }
-

@@ -7,7 +7,8 @@
     "ingestion_runs",
     "analyses",
     "pipeline",
-    "stage_summaries"
+    "stage_summaries",
+    "dataset_graph"
   ],
   "summary_fields": ["ingestion_runs", "analysis_artifacts", "visualizations"],
   "stage_summary": {
@@ -30,4 +31,3 @@
     "is_latest"
   ]
 }
-

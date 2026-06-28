@@ -48,6 +48,42 @@ def build_dataset_profile(paths: ProjectPaths | None = None) -> dict[str, Any]:
     }
 
 
+def build_dataset_graph_payload(paths: ProjectPaths | None = None) -> dict[str, Any]:
+    try:
+        dataframe, manifest = load_latest_clean_dataframe(paths)
+    except FileNotFoundError:
+        return {"dataset": None, "default_index_variable": None, "variables": [], "columns": {}}
+
+    variables = [_profile_series(name, dataframe[name]) for name in dataframe.columns]
+    variable_summaries = [
+        {
+            "name": variable["name"],
+            "type": variable["type"],
+            "non_null": variable["non_null"],
+            "missing": variable["missing"],
+            "missing_pct": variable["missing_pct"],
+            "unique_count": variable["unique_count"],
+            "is_split_eligible": _is_graph_split_eligible(variable),
+            "is_default_comparison": _is_default_graph_comparison(variable),
+        }
+        for variable in variables
+    ]
+    return {
+        "dataset": {
+            "run_id": manifest.get("run_id"),
+            "run_datetime": manifest.get("run_datetime"),
+            "rows": int(len(dataframe)),
+            "columns": int(len(dataframe.columns)),
+        },
+        "default_index_variable": _default_index_variable(variables),
+        "variables": variable_summaries,
+        "columns": {
+            str(column): [_json_safe(value) for value in dataframe[column].tolist()]
+            for column in dataframe.columns
+        },
+    }
+
+
 def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
     present_mask = ~series.apply(_is_missing)
     present = series[present_mask]
@@ -88,6 +124,27 @@ def _profile_series(name: str, series: pd.Series) -> dict[str, Any]:
     ]
     profile["value_counts_truncated"] = int(value_counts.shape[0]) > 100
     return profile
+
+
+def _default_index_variable(variables: list[dict[str, Any]]) -> str | None:
+    names = [str(variable["name"]) for variable in variables]
+    if "patient_id" in names:
+        return "patient_id"
+    identifier = next((variable for variable in variables if variable.get("type") == "identifier"), None)
+    if identifier:
+        return str(identifier["name"])
+    return names[0] if names else None
+
+
+def _is_graph_split_eligible(variable: dict[str, Any]) -> bool:
+    return str(variable.get("type")) in {"binary", "categorical"} and int(variable.get("unique_count") or 0) > 0
+
+
+def _is_default_graph_comparison(variable: dict[str, Any]) -> bool:
+    preferred = {"age_at_presentation", "sex", "tumour_lobe", "recurrence_type", "recurrence_local"}
+    if variable.get("name") in preferred:
+        return True
+    return str(variable.get("type")) in {"binary", "categorical", "numeric"} and int(variable.get("unique_count") or 0) > 1
 
 
 def _infer_variable_type(name: str, non_null: pd.Series, unique_count: int, row_count: int) -> str:

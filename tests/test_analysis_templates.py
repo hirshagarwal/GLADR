@@ -14,7 +14,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-from gladr.analysis.profiling import build_dataset_profile
+from gladr.analysis.profiling import build_dataset_graph_payload, build_dataset_profile
 from gladr.analysis.templates import (
     build_bootstrapped_multivariable_logistic_regression,
     build_cox_regression,
@@ -48,6 +48,24 @@ class AnalysisTemplateTests(unittest.TestCase):
             self.assertEqual(variables["age_at_presentation"]["present_rows"], [0, 1, 2])
             self.assertEqual(variables["tumour_lobe"]["value_counts"][0], {"value": "Frontal", "count": 2})
             self.assertFalse(variables["tumour_lobe"]["value_counts_truncated"])
+
+    def test_builds_dataset_graph_payload_from_latest_clean_dataset(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            paths = ProjectPaths.from_root(Path(directory))
+            paths.ensure_runtime_dirs()
+            _write_latest_clean_dataset(paths)
+
+            graph = build_dataset_graph_payload(paths)
+
+            self.assertEqual(graph["dataset"]["rows"], 4)
+            self.assertEqual(graph["default_index_variable"], "patient_id")
+            self.assertEqual(graph["columns"]["patient_id"], ["A", "B", "C", "D"])
+            self.assertEqual(graph["columns"]["age_at_presentation"], [61.0, 55.0, 70.0, None])
+            variables = {variable["name"]: variable for variable in graph["variables"]}
+            self.assertTrue(variables["tumour_lobe"]["is_split_eligible"])
+            self.assertTrue(variables["recurrence"]["is_split_eligible"])
+            self.assertFalse(variables["age_at_presentation"]["is_split_eligible"])
+            self.assertTrue(variables["age_at_presentation"]["is_default_comparison"])
 
     def test_profile_binary_detection_handles_blank_strings(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

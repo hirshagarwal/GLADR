@@ -343,6 +343,7 @@ def _empty_dashboard_payload() -> dict[str, Any]:
             "visualizations": 0,
         },
         "dataset_profile": {"dataset": None, "variables": []},
+        "dataset_graph": {"dataset": None, "default_index_variable": None, "variables": [], "columns": {}},
         "analysis_templates": list_analysis_templates(),
         "ingestion_workbench": {"adapters": [], "canonical_fields": [], "data_files": []},
         "ingestion_runs": [],
